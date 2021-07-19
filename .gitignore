@@ -1,3 +1,14 @@
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+*/*/.idea
+*/*/.git*
+*/*/*.iml
+*/*/out
+*/*/gen
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
