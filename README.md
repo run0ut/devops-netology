@@ -188,4 +188,21 @@ $ git log -L :globalPluginDirs:plugins.go  -s --oneline
 
 ### 7. Кто автор функции synchronizedWriters?
 
+Автор функции `synchronizedWriters` Martin Atkins. Он добавил её  `2017-05-03` коммитом `5ac311e2a`
 
+Примерно в то же время, когда Андрей записывал курс, James Bardin удалил эту функцию коммитом `bdfea50cc` от `Mon Nov 30 18:02:04 2020` с комментарием `remove unused`.
+
+```
+$ git log -S'func synchronizedWriters' --oneline
+bdfea50cc remove unused
+5ac311e2a main: synchronize writes to VT100-faker on Windows
+```
+`git checkout 5ac311e2a`
+``` 
+$ git grep -n 'func synchronizedWriters(.*)'
+synchronized_writers.go:15:func synchronizedWriters(targets ...io.Writer) []io.Writer {
+```
+```
+$ git blame -L 15,15 synchronized_writers.go
+5ac311e2a9 (Martin Atkins 2017-05-03 16:25:41 -0700 15) func synchronizedWriters(targets ...io.Writer) []io.Writer {
+```
