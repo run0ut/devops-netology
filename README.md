@@ -103,8 +103,8 @@ commit aefead2207ef7e2aa5dc81a34aedf0cad4c32545
 Тегу v0.12.23
 
 ```
-git show 85024d3 --decorate | head -n 1
-commit 85024d3100126de36331c6982bfaac02cdab9e76 (tag: v0.12.23)
+$ git tag -l --points-at 85024d3
+v0.12.23
 ```
 
 ### 3. Сколько родителей у коммита b8d720? Напишите их хеши.
