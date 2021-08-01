@@ -171,6 +171,21 @@ $ git blame -L 19,19 provider_source.go
 
 ### 6. Найдите все коммиты в которых была изменена функция globalPluginDirs.
 
+Функцию globalPluginDirs исправляли в пяти коммитах.
+
+```
+$ git grep 'func globalPluginDirs(.*)'
+plugins.go:func globalPluginDirs() []string {
+```
+```
+$ git log -L :globalPluginDirs:plugins.go  -s --oneline
+78b122055 Remove config.go and update things using its aliases
+52dbf9483 keep .terraform.d/plugins for discovery
+41ab0aef7 Add missing OS_ARCH dir to global plugin paths
+66ebff90c move some more plugin search path logic to command
+8364383c3 Push plugin discovery down into command package
+```
+
 ### 7. Кто автор функции synchronizedWriters?
 
 
