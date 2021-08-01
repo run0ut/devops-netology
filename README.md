@@ -112,17 +112,8 @@ v0.12.23
 Два: 56cd7859e05c36c06b56d013b55a252d0bb7e158 и 9ea88f22fc6269854151c571162c5bcf958bee2b
 
 ```
-$ git show b8d720 --decorate | head -n 2
-commit b8d720f8340221f2146e4e4870bf2ee0bc48f2d5
-Merge: 56cd7859e 9ea88f22f
-```
-```
-$ git show 56cd7859e --decorate | head -n 1
-commit 56cd7859e05c36c06b56d013b55a252d0bb7e158
-```
-```
-$ git show 9ea88f22f --decorate | head -n 1
-commit 9ea88f22fc6269854151c571162c5bcf958bee2b
+$ git show --pretty=%P b8d720
+56cd7859e05c36c06b56d013b55a252d0bb7e158 9ea88f22fc6269854151c571162c5bcf958bee2b
 ```
 
 ### 4. Перечислите хеши и комментарии всех коммитов которые были сделаны между тегами v0.12.23 и v0.12.24.
