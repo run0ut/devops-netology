@@ -215,7 +215,7 @@ $ git blame -L 15,15 synchronized_writers.go
 
 ### 10. ...как создать однократным вызовом touch 100000 файлов?..
 * 100000 - да:\
-`touch file{1..100000}
+`touch file{1..100000}`
 * 300000 - нет:
 ```
 $ touch file{1..300000}
