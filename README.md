@@ -519,3 +519,31 @@ node_network_receive_packets_total{device="eth0"} 4079
 node_network_transmit_errs_total{device="eth0"} 0
 node_network_transmit_packets_total{device="eth0"} 3567
 ```
+
+### 4. Можно ли по выводу dmesg понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?
+Если это специально не скрывают, то да. Например, Vagrant в VirtualBox на Windows:
+```
+$ dmesg | grep -i 'Hypervisor detected'
+[    0.000000] Hypervisor detected: KVM
+```
+
+### 5. Как настроен sysctl fs.nr_open на системе по-умолчанию? Узнайте, что означает этот параметр. Какой другой существующий лимит не позволит достичь такого числа (ulimit --help)?
+
+`man proc` по параметру `/proc/sys/fs/nr_open` отсылает к лимиту `RLIMIT_NOFILE` в `man getrlimit`,
+ он определяет: 
+* максимальное количество файловых дескрипторов, которые может открыть процесс
+* с версии ядра 4.5 ещё что-то связанное с `capabilities`, но я про них знаю только в общих чертах и не понял сути, что-то про ограничения для непривелигированных процессов по работе с unix-сокетами. 
+
+По-умолчанию значение = 1048576
+
+Текущее значение в системе можно посмотреть так: 
+```
+$ sysctl fs.nr_open
+fs.nr_open = 1048576
+```
+Такого числа не позволит достичь `ulimit -n`:
+```
+$ ulimit --help | grep 'file desc'
+      -n        the maximum number of open file descriptors
+```
+
