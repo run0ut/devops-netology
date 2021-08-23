@@ -520,6 +520,39 @@ node_network_transmit_errs_total{device="eth0"} 0
 node_network_transmit_packets_total{device="eth0"} 3567
 ```
 
+### 3. Установите в свою виртуальную машину Netdata
+
+* в конфигурационном файле /etc/netdata/netdata.conf в секции [web] замените значение с localhost на bind to = 0.0.0.0
+
+      $ grep -e bind -e web /etc/netdata/netdata.conf
+      [web]
+          web files owner = root
+          web files group = netdata
+          # bind to = localhost
+          bind to = 0.0.0.0
+* добавьте в Vagrantfile проброс порта Netdata на свой локальный компьютер и сделайте vagrant reload
+
+      >vagrant port
+      The forwarded ports for the machine are listed below. Please note that
+      these values may differ from values configured in the Vagrantfile if the
+      provider supports automatic port collision detection and resolution.
+      
+          22 (guest) => 2222 (host)
+       19999 (guest) => 19999 (host)
+
+* После успешной перезагрузки в браузере на своем ПК (не в виртуальной машине) вы должны суметь зайти на localhost:19999.
+
+      $ sudo tcpdump -nni any port 19999 -c 4
+      tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+      listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 262144 bytes
+      19:09:49.207580 IP 10.0.2.2.1228 > 10.0.2.15.19999: Flags [.], seq 17742191:17743651, ack 2422691631, win 65535, length 1460
+      19:09:49.207610 IP 10.0.2.15.19999 > 10.0.2.2.1228: Flags [.], ack 1460, win 65535, length 0
+      19:09:49.208078 IP 10.0.2.2.1228 > 10.0.2.15.19999: Flags [.], seq 1460:4380, ack 1, win 65535, length 2920
+      19:09:49.208078 IP 10.0.2.2.2094 > 10.0.2.15.19999: Flags [.], seq 51021862:51023322, ack 3464847156, win 65535, length 1460
+      4 packets captured
+      9 packets received by filter
+      0 packets dropped by kernel
+
 ### 4. Можно ли по выводу dmesg понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?
 Если это специально не скрывают, то да. Например, Vagrant в VirtualBox на Windows:
 ```
