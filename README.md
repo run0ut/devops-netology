@@ -589,7 +589,7 @@ vagrant     1681  0.0  0.4   9968  4136 pts/2    Ss   19:26   0:00 /bin/bash
 root        1707  0.0  0.0   8080   592 pts/2    S    19:27   0:00       unshare -f --pid --mount-proc /bin/bash
 root        1708  0.0  0.4   9836  4264 pts/2    S    19:27   0:00         /bin/bash
 ```
-С nshare запущен bash PID = 1708. Если зайти в неймспейс по этому пиду, `ps aux -H` покажет, что PID bash = 1.
+С `unshare` запущен bash PID = 1708. Если зайти в неймспейс по этому пиду, `ps aux -H` покажет, что PID bash = 1.
 ```
 vagrant@vagrant:~$ sudo nsenter --target 1708 --pid --mount
 root@vagrant:/# ps aux -H
