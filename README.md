@@ -431,3 +431,47 @@ $ ps -Ao state --cumulative k stat   | sort | uniq -c | sort -h
      57 S
 ```
 В основном процессы находятся в состоянии ожидания.
+           
+## Домашнее задание к занятию "3.4. Операционные системы, лекция 2"
+
+# Используя знания из лекции по systemd, создайте самостоятельно простой unit-файл для node_exporter
+           
+```
+cd /opt
+sudo wget https://github.com/prometheus/node_exporter/releases/download/v1.2.2/node_exporter-1.2.2.linux-amd64.tar.gz
+sudo tar xzf node_exporter-1.2.2.linux-amd64.tar.gz
+sudo rm -f node_exporter-1.2.2.linux-amd64.tar.gz
+sudo touch node_exporter-1.2.2.linux-amd64/node_exporter.env
+echo "EXTRA_OPTS=\"--log.level=info\"" | sudo tee node_exporter-1.2.2.linux-amd64/node_exporter.env
+sudo mkdir -p /usr/local/lib/systemd/system/node_exporter.service
+sudo touch /usr/local/lib/systemd/system/node_exporter.service
+sudo systemctl daemon-reload
+sudo systemctl enable node_exporter.service
+```
+
+```
+$ ls -l /opt/node_exporter-1.2.2.linux-amd64/
+total 18084
+-rw-r--r-- 1 3434 3434    11357 Aug  6 13:49 LICENSE
+-rw-r--r-- 1 3434 3434      463 Aug  6 13:49 NOTICE
+-rwxr-xr-x 1 3434 3434 18494215 Aug  6 13:45 node_exporter
+-rw-r--r-- 1 root root       30 Aug 23 13:25 node_exporter.env
+```
+           
+```
+[Unit]
+Description="Netology course node_exporer service file"
+
+[Service]
+EnvironmentFile=/opt/node_exporter-1.2.2.linux-amd64/node_exporter.env
+ExecStart=/opt/node_exporter-1.2.2.linux-amd64/node_exporter $EXTRA_OPTS
+StandardOutput=file:/var/log/node_explorer.log
+StandardError=file:/var/log/node_explorer.log
+
+[Install]
+WantedBy=multi-user.target
+```
+           
+```
+EXTRA_OPTS="--log.level=info"
+```
