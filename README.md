@@ -434,8 +434,8 @@ $ ps -Ao state --cumulative k stat   | sort | uniq -c | sort -h
            
 ## Домашнее задание к занятию "3.4. Операционные системы, лекция 2"
 
-# Используя знания из лекции по systemd, создайте самостоятельно простой unit-файл для node_exporter
-           
+### 1. Используя знания из лекции по systemd, создайте самостоятельно простой unit-файл для node_exporter
+Установка 
 ```
 cd /opt
 sudo wget https://github.com/prometheus/node_exporter/releases/download/v1.2.2/node_exporter-1.2.2.linux-amd64.tar.gz
@@ -443,21 +443,12 @@ sudo tar xzf node_exporter-1.2.2.linux-amd64.tar.gz
 sudo rm -f node_exporter-1.2.2.linux-amd64.tar.gz
 sudo touch node_exporter-1.2.2.linux-amd64/node_exporter.env
 echo "EXTRA_OPTS=\"--log.level=info\"" | sudo tee node_exporter-1.2.2.linux-amd64/node_exporter.env
-sudo mkdir -p /usr/local/lib/systemd/system/node_exporter.service
+sudo mkdir -p /usr/local/lib/systemd/system/
 sudo touch /usr/local/lib/systemd/system/node_exporter.service
 sudo systemctl daemon-reload
 sudo systemctl enable node_exporter.service
 ```
-
-```
-$ ls -l /opt/node_exporter-1.2.2.linux-amd64/
-total 18084
--rw-r--r-- 1 3434 3434    11357 Aug  6 13:49 LICENSE
--rw-r--r-- 1 3434 3434      463 Aug  6 13:49 NOTICE
--rwxr-xr-x 1 3434 3434 18494215 Aug  6 13:45 node_exporter
--rw-r--r-- 1 root root       30 Aug 23 13:25 node_exporter.env
-```
-           
+unit-файл:
 ```
 [Unit]
 Description="Netology course node_exporer service file"
@@ -470,8 +461,61 @@ StandardError=file:/var/log/node_explorer.log
 
 [Install]
 WantedBy=multi-user.target
-```
-           
+```           
+#### Предусмотрите возможность добавления опций к запускаемому процессу через внешний файл
+Опции можно добавить через файл `/opt/node_exporter-1.2.2.linux-amd64/node_exporter.env`, в переменной `EXTRA_OPTS`
 ```
 EXTRA_OPTS="--log.level=info"
+```
+#### Удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
+Похоже, стартует. Как показать, что автоматический пока не понимаю.
+```
+$ journalctl -u node_exporter.service
+-- Logs begin at Wed 2021-08-04 16:42:43 UTC, end at Mon 2021-08-23 17:17:01 UTC. --
+Aug 23 16:46:03 vagrant systemd[1]: Started "Netology course node_exporer service file".
+Aug 23 17:02:45 vagrant systemd[1]: Stopping "Netology course node_exporer service file"...
+Aug 23 17:02:45 vagrant systemd[1]: node_exporter.service: Succeeded.
+Aug 23 17:02:45 vagrant systemd[1]: Stopped "Netology course node_exporer service file".
+-- Reboot --
+Aug 23 17:03:22 vagrant systemd[1]: Started "Netology course node_exporer service file".
+```
+### 2. Ознакомьтесь с опциями node_exporter и выводом `/metrics` по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
+
+CPU: system,user покажут время, использованное системой и программами; steal - слишком высокий будет означать, что гипервизор перегружен и процессор занят другими ВМ; iowait - поможет отследить, всё ли в порядке с дисками и RAID.
+```
+node_cpu_seconds_total{cpu="0",mode="iowait"} 19.39
+node_cpu_seconds_total{cpu="0",mode="steal"} 0
+node_cpu_seconds_total{cpu="0",mode="system"} 4.46
+node_cpu_seconds_total{cpu="0",mode="user"} 2.23
+node_cpu_seconds_total{cpu="1",mode="iowait"} 21.99
+node_cpu_seconds_total{cpu="1",mode="steal"} 0
+node_cpu_seconds_total{cpu="1",mode="system"} 7.11
+node_cpu_seconds_total{cpu="1",mode="user"} 0.98
+```
+MEM: MemTotal - количество памяти; MemFree и MemAvailable - сводобная и доступная (включая кеш) память; SwapTotal, SwapFree, SwapCached - своп, если слишком много занято -- памяти не хватает. 
+``` 
+node_memory_MemAvailable_bytes 7.7056e+08
+node_memory_MemFree_bytes 7.11176192e+08
+node_memory_MemTotal_bytes 1.028694016e+09
+node_memory_SwapCached_bytes 0
+node_memory_SwapFree_bytes 1.027600384e+09
+node_memory_SwapTotal_bytes 1.027600384e+09
+```
+DISK: size_bytes и avail_bytes покажут объём и свободное место; readonly=1 может говорить о проблемах ФС, из-за чего она перешла в режим только для чтения; io_now - интенсивность работы с диском в текущий момент.
+```
+node_filesystem_avail_bytes{device="/dev/mapper/vgvagrant-root",fstype="ext4",mountpoint="/"} 6.0591689728e+10
+node_filesystem_readonly{device="/dev/mapper/vgvagrant-root",fstype="ext4",mountpoint="/"} 0
+node_filesystem_size_bytes{device="/dev/mapper/vgvagrant-root",fstype="ext4",mountpoint="/"} 6.5827115008e+10
+node_disk_io_now{device="sda"} 0
+```
+NET: carrier_down, carrier_up - если много, значит что-то с кабелем; info - общая информация по нитерфейсу; mtu_bytes - может быть важно для диагностики потерь или если трафик хостов не проходит через маршрутизатор; receive_errs_total, transmit_errs_total, receive_packets_total, transmit_packets_total - ошибки передачи, в зависимости от объёма если больше процента, вероятно какие-то проблемы сети или с хостом
+```
+node_network_carrier_down_changes_total{device="eth0"} 1
+node_network_carrier_up_changes_total{device="eth0"} 1
+node_network_info{address="08:00:27:73:60:cf",broadcast="ff:ff:ff:ff:ff:ff",device="eth0",duplex="full",ifalias="",operstate="up"} 1
+node_network_mtu_bytes{device="eth0"} 1500
+node_network_receive_errs_total{device="eth0"} 0
+node_network_receive_packets_total{device="eth0"} 4079
+node_network_transmit_errs_total{device="eth0"} 0
+node_network_transmit_packets_total{device="eth0"} 3567
 ```
