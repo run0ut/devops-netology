@@ -580,3 +580,22 @@ $ ulimit --help | grep 'file desc'
       -n        the maximum number of open file descriptors
 ```
 
+### 6. Запустите любой долгоживущий процесс (не ls, который отработает мгновенно, а, например, sleep 1h) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через nsenter. Для простоты работайте в данном задании под root (sudo -i). Под обычным пользователем требуются дополнительные опции (--map-root-user) и т.д.
+
+Запущенные экземпляры bash
+```
+vagrant@vagrant:~$ ps au -H | fgrep '/bin/bash'| grep -v grep
+vagrant     1681  0.0  0.4   9968  4136 pts/2    Ss   19:26   0:00 /bin/bash
+root        1707  0.0  0.0   8080   592 pts/2    S    19:27   0:00       unshare -f --pid --mount-proc /bin/bash
+root        1708  0.0  0.4   9836  4264 pts/2    S    19:27   0:00         /bin/bash
+```
+С nshare запущен bash PID = 1708. Если зайти в неймспейс по этому пиду, `ps aux -H` покажет, что PID bash = 1.
+```
+vagrant@vagrant:~$ sudo nsenter --target 1708 --pid --mount
+root@vagrant:/# ps aux -H
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root          24  0.0  0.3   9836  3976 pts/1    S    19:30   0:00 -bash
+root          33  0.0  0.3  11492  3396 pts/1    R+   19:30   0:00   ps aux -H
+root           1  0.0  0.4   9836  4264 pts/2    S    19:27   0:00 /bin/bash
+root          12  0.0  0.0   8076   592 pts/2    S+   19:28   0:00   sleep 1h
+```
