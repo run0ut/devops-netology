@@ -2,6 +2,8 @@
 
 ## Домашнее задание к занятию «2.1. Системы контроля версий.»
 
+<details>
+
 Изменения для теста по заданию
 
 Вот ещё изменения
@@ -60,7 +62,11 @@ terraform.rc
 ```
 Исключит два файла: `.terraformrc` и `terraform.rc` 
 
+</details>
+
 ## Домашнее задание к занятию «2.2. Основы Git»
+
+<details>
 
 ### Задание №4 – Упрощаем себе жизнь
 
@@ -75,8 +81,11 @@ terraform.rc
 ### Исправления с Гитхаба
 
 Исправления внесены прямо в редакторе Гитхаба.
+</details>
 
 ## Домашнее задание к занятию «2.4. Инструменты Git»
+
+<details>
 
 ### 1. Найдите полный хеш и комментарий коммита, хеш которого начинается на aefea.
 
@@ -186,7 +195,12 @@ synchronized_writers.go:15:func synchronizedWriters(targets ...io.Writer) []io.W
 $ git blame -L 15,15 synchronized_writers.go
 5ac311e2a9 (Martin Atkins 2017-05-03 16:25:41 -0700 15) func synchronizedWriters(targets ...io.Writer) []io.Writer {
 ```
+
+</details>
+
 ## Домашнее задание к занятию "3.1. Работа в терминале, лекция 1"
+
+<details>
 
 ### 8. Ознакомиться с разделами man bash
 * Длина журнала задаётся переменой окружения `HISTSIZE`, она описана со строки `№982` и ниже.
@@ -225,8 +239,11 @@ $ PATH=/tmp/new_path_directory:${PATH}
 
 * `at` выполняется строго по расписанию
 * `batch` выполняется, когда позволит нагрузка на систему (load average упадёт ниже 1.5 или значения, заданного командой atd)
+</details>
 
 ## Домашнее задание к занятию "3.2. Работа в терминале, лекция 2"
+
+<details>
 
 ### 1. Какого типа команда `cd`? 
 
@@ -351,7 +368,11 @@ sse4_2
 
 Источнии: [stackoverflow](https://stackoverflow.com/questions/82256/how-do-i-use-sudo-to-redirect-output-to-a-location-i-dont-have-permission-to-wr), `man tee`, `man echo`.
 
+</details>
+
 ## Домашнее задание к занятию "3.3. Операционные системы, лекция 1"
+
+<details>
 
 ### 1. Какой системный вызов делает команда cd? Вам нужно найти тот единственный, который относится именно к cd.
 
@@ -431,8 +452,12 @@ $ ps -Ao state --cumulative k stat   | sort | uniq -c | sort -h
      57 S
 ```
 В основном процессы находятся в состоянии ожидания.
+
+</details>
            
 ## Домашнее задание к занятию "3.4. Операционные системы, лекция 2"
+
+<details>
 
 ### 1. Используя знания из лекции по systemd, создайте самостоятельно простой unit-файл для node_exporter
 Установка 
@@ -614,6 +639,8 @@ root          12  0.0  0.0   8076   592 pts/2    S+   19:28   0:00   sleep 1h
 [ 1979.099127] cgroup: fork rejected by pids controller in /user.slice/user-1000.slice/session-10.scope
 ```
 Чтобы изменить поведение, в файле `/usr/lib/systemd/system/user-.slice.d/10-defaults.conf` нужно поментья параметр `TasksMax` на больший процент, конкретное число или infinity, чтобы убрать лимит совсем. 
+
+</details>
 
 ## Домашнее задание к занятию "3.5. Файловые системы"
 
