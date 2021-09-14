@@ -50,7 +50,59 @@ network:
 
 ### 4. Какие типы агрегации интерфейсов есть в Linux? Какие опции есть для балансировки нагрузки? Приведите пример конфига.
 
-bond, teams
+В Linux есть две технологии агрегации: bond и team. Изучил только первый.
+
+Посмотреть какие типы агрегации предлает bond можно в информации о модуле ядра:
+```
+# modinfo bonding | grep mode:
+parm:           mode:Mode of operation; 0 for balance-rr, 1 for active-backup, 2 for balance-xor, 3 for broadcast, 4 for 802.3ad, 5 for balance-tlb, 6 for balance-alb (charp)
+```
+Всего их семь. По типам их можно отнести к двум категориям:
+
+Обеспечивают только фейловер, или фейловер и балансировку:
+* `active-backup` и `broadcast` обеспечивают только отказоустойчивость
+* `balance-tlb`, `balance-alb`, `balance-rr`, `balance-xor` и `802.3ad` обеспечат отказоустойчивость и балансировку
+
+Можно настроить только с одной стороны, или потребуют настройки хоста и свича:
+* `active-backup`, `balance-tlb` и `balance-alb` работают "сами по себе", можно настроить только на одном хосте
+* `broadcast`,  `balance-rr`, `balance-xor` и `802.3ad` потребуют настройки ещё и коммутатора.
+
+Рабочие конфиги:
+* `active-backup` на отказоустойчивость:
+
+       network:
+         version: 2
+         renderer: networkd
+         ethernets:
+           ens3:
+             dhcp4: no 
+             optional: true
+           ens5: 
+             dhcp4: no 
+             optional: true
+         bonds:
+           bond0: 
+             dhcp4: yes 
+             interfaces:
+               - ens3
+               - ens5
+             parameters:
+               mode: active-backup
+               primary: ens3
+               mii-monitor-interval: 2
+
+* `balance-alb`, балансировка
+
+         bonds:
+           bond0: 
+             dhcp4: yes 
+             interfaces:
+               - ens3
+               - ens5
+             parameters:
+               mode: balance-alb
+               mii-monitor-interval: 2
+
 
 ### 5. Сколько IP адресов в сети с маской /29 ? Сколько /29 подсетей можно получить из сети с маской /24. Приведите несколько примеров /29 подсетей внутри сети 10.10.10.0/24.
 
