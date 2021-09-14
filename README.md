@@ -1,6 +1,99 @@
 # devops-netology
 
+## Домашнее задание к занятию "3.8. Компьютерные сети, лекция 3"
+
+### 1. Подключитесь к публичному маршрутизатору в интернет. Найдите маршрут к вашему публичному IP
+
+```
+route-views>show ip route 5.189.xx.xx
+Routing entry for 5.189.0.0/17
+  Known via "bgp 6447", distance 20, metric 0
+  Tag 3267, type external
+  Last update from 194.85.40.15 2d02h ago
+  Routing Descriptor Blocks:
+  * 194.85.40.15, from 194.85.40.15, 2d02h ago
+      Route metric is 0, traffic share count is 1
+      AS Hops 2
+      Route tag 3267
+      MPLS label: none
+```
+
+### 2. Создайте dummy0 интерфейс в Ubuntu. Добавьте несколько статических маршрутов. Проверьте таблицу маршрутизации.
+
+1. Модуль 
+
+       echo "dummy" > /etc/modules-load.d/dummy.conf
+       echo "options dummy numdummies=2" > /etc/modprobe.d/dummy.conf
+
+2. Настройка интерфейса через `systemd`
+
+       cat << "EOF" >> /etc/systemd/network/10-dummy0.netdev
+       [NetDev]
+       Name=dummy0
+       Kind=dummy
+       EOF
+       cat << "EOF" >> /etc/systemd/network/20-dummy0.network
+       [Match]
+       Name=dummy0
+       
+       [Network]
+       Address=10.0.2.1/24
+       EOF
+
+3. Рестарт сети
+
+       # systemctl restart systemd-networkd
+
+4. маршруты??? 
+
+[1](https://unix.stackexchange.com/questions/513578/), [2](https://serverfault.com/questions/1029041/)
+
+### 3. Проверьте открытые TCP порты в Ubuntu, какие протоколы и приложения используют эти порты? Приведите несколько примеров.
+
+Порты TCP 
+```
+root@Node1:~# ss -tnlp
+State     Recv-Q    Send-Q       Local Address:Port       Peer Address:Port   Process
+LISTEN    0         4096         127.0.0.53%lo:53              0.0.0.0:*       users:(("systemd-resolve",pid=576,fd=13))
+LISTEN    0         128                0.0.0.0:22              0.0.0.0:*       users:(("sshd",pid=1197,fd=3))
+LISTEN    0         128                   [::]:22                 [::]:*       users:(("sshd",pid=1197,fd=4))
+```
+53 порт - это DNS.
+
+22 порт - это SSH.
+
+### 4. Проверьте используемые UDP сокеты в Ubuntu, какие протоколы и приложения используют эти порты?
+
+Порты UDP
+```
+root@Node1:~# ss -unap
+State    Recv-Q   Send-Q           Local Address:Port      Peer Address:Port   Process
+UNCONN   0        0                127.0.0.53%lo:53             0.0.0.0:*       users:(("systemd-resolve",pid=576,fd=12))
+UNCONN   0        0          192.168.255.10%ens3:68             0.0.0.0:*       users:(("systemd-network",pid=1516,fd=26))
+```
+53 порт - так же DNS.
+
+68 порт использует DHCP для отправки сообщений клиентам.
+
+### 5. Используя diagrams.net, создайте L3 диаграмму вашей домашней сети или любой другой сети, с которой вы работали. 
+
+![Домашняя сеть](media/sysadmin-38-home-network.png)
+
+### 6*. Установите Nginx, настройте в режиме балансировщика TCP или UDP.
+
+
+
+### 7*. Установите bird2, настройте динамический протокол маршрутизации RIP.
+
+
+
+### 8*. Установите Netbox, создайте несколько IP префиксов, используя curl проверьте работу API.
+
+
+
 ## Домашнее задание к занятию "3.7. Компьютерные сети, лекция 2"
+
+<details>
 
 ### 1. Проверьте список доступных сетевых интерфейсов на вашем компьютере. Какие команды есть для этого в Linux и в Windows?
 
@@ -138,6 +231,8 @@ parm:           mode:Mode of operation; 0 for balance-rr, 1 for active-backup, 2
 ### 8. Установите эмулятор EVE-ng.
 
 ![Скриншот Eve-NG с лабораторной](media/sysadmin-37-eve-ng.png)
+
+</details>
 
 ## Домашнее задание к занятию "3.6. Компьютерные сети, лекция 1"
 
