@@ -135,6 +135,9 @@ parm:           mode:Mode of operation; 0 for balance-rr, 1 for active-backup, 2
 * Linux: `ip neigh delete <IP> dev <INTERFACE>`, `arp -d <IP>`
 * Windows: `arp -d <IP>`
 
+### 8. Установите эмулятор EVE-ng.
+
+![Скриншот Eve-NG с лабораторной](media/sysadmin-37-eve-ng.png)
 
 ## Домашнее задание к занятию "3.6. Компьютерные сети, лекция 1"
 
