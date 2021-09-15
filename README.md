@@ -105,48 +105,48 @@ UNCONN   0        0          192.168.255.10%ens3:68             0.0.0.0:*       
 ### 6*. Установите Nginx, настройте в режиме балансировщика TCP или UDP.
 1. Удалить стандартную настройку порта 80 и добавить файл для своей
 
-        rm -f /etc/nginx/sites-enabled/default
-        touch /etc/nginx/conf.d/balancer.conf
+       rm -f /etc/nginx/sites-enabled/default
+       touch /etc/nginx/conf.d/balancer.conf
 
 2. Конфиг `/etc/nginx/conf.d/balancer.conf`:
 
-        upstream backendn_netology_lab {
-            ip_hash;
-            server 10.0.4.2;
-            server 10.0.0.3;
-        }
-
-        server {
-            listen 80;
-
-            location / {
-                proxy_pass http://backendn_netology_lab;
-            }
-        }
+       upstream backendn_netology_lab {
+           ip_hash;
+           server 10.0.4.2;
+           server 10.0.0.3;
+       }
+       
+       server {
+           listen 80;
+       
+           location / {
+               proxy_pass http://backendn_netology_lab;
+           }
+       }
 
 3. Включить днс, предварительно отключить `systemd-resolve`, он занимает 53 порт
 
-        systemctl disable systemd-resolved.service
-        systemctl stop systemd-resolved.service
+       systemctl disable systemd-resolved.service
+       systemctl stop systemd-resolved.service
 
 4. Конфиг DNS proxy: `/etc/nginx/modules-enabled/60-netology-lab.conf`
 
-        stream {
-
-            upstream dns_servers {
-                server 77.88.8.8:53;
-                server 8.8.8.8:53;
-            }
-
-            server {
-                listen 53 udp;
-                listen 53; #tcp 
-                proxy_pass dns_servers;
-                proxy_responses 1;
-                proxy_timeout 1s;
-            }
-
-        }
+       stream {
+   
+           upstream dns_servers {
+               server 77.88.8.8:53;
+               server 8.8.8.8:53;
+           }
+   
+           server {
+               listen 53 udp;
+               listen 53; #tcp 
+               proxy_pass dns_servers;
+               proxy_responses 1;
+               proxy_timeout 1s;
+           }
+   
+       }
 
 [2](http://nginx.org/en/docs/http/load_balancing.html),
 [3](https://gist.github.com/zoilomora/f7d264cefbb589f3f1b1fc2cea2c844c),
@@ -155,7 +155,18 @@ UNCONN   0        0          192.168.255.10%ens3:68             0.0.0.0:*       
 
 ### 7*. Установите bird2, настройте динамический протокол маршрутизации RIP.
 
+Конфиг из презентации. Получилось:
+* Нода 1
 
+      root@Node1:~# ip r | grep bir
+      10.0.2.0/24 dev dummy0 proto bird scope link metric 32 
+      10.0.8.0/24 via 10.0.0.3 dev ens4 proto bird metric 32
+
+* Нода 2
+
+      root@Node2:~# ip r | grep bird
+      10.0.2.0/24 via 10.0.0.2 dev ens4 proto bird metric 32
+      10.0.8.0/24 dev dummy0 proto bird scope link metric 32
 
 ### 8*. Установите Netbox, создайте несколько IP префиксов, используя curl проверьте работу API.
 
