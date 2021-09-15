@@ -170,7 +170,82 @@ UNCONN   0        0          192.168.255.10%ens3:68             0.0.0.0:*       
 
 ### 8*. Установите Netbox, создайте несколько IP префиксов, используя curl проверьте работу API.
 
+1. Docker
 
+       curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+       echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+       sudo apt-get update
+       sudo apt-get install docker-ce docker-ce-cli containerd.io
+       apt install docker-compose
+
+2. Netbox
+
+       git clone -b release https://github.com/netbox-community/netbox-docker.git
+       cd netbox-docker
+       tee docker-compose.override.yml <<EOF
+       version: '3.4'
+       services:
+         netbox:
+           ports:
+             - 8000:8080
+       EOF
+       docker-compose pull
+       docker-compose up
+
+3. Запрос на создание префика с `curl` 
+
+       curl -ss -X POST \
+       -H "Authorization: Token 0123456789abcdef0123456789abcdef01234567" \
+       -H "Content-Type: application/json" \
+       -H "Accept: application/json; indent=4" \
+       http://192.168.255.10:8000/api/ipam/prefixes/ \
+       --data '{
+           "prefix": "10.0.18.0/24"
+       }' | jq .
+
+4. Ответ
+
+        root@Node2:~# curl -ss -X POST \
+        > -H "Authorization: Token 0123456789abcdef0123456789abcdef01234567" \
+        > -H "Content-Type: application/json" \
+        > -H "Accept: application/json; indent=4" \
+        > http://192.168.255.10:8000/api/ipam/prefixes/ \
+        > --data '{
+        >     "prefix": "10.0.18.0/24"
+        > }' | jq .
+        {
+          "id": 2,
+          "url": "http://192.168.255.10:8000/api/ipam/prefixes/2/",
+          "display": "10.0.18.0/24",
+          "family": {
+            "value": 4,
+            "label": "IPv4"
+          },
+          "prefix": "10.0.18.0/24",
+          "site": null,
+          "vrf": null,
+          "tenant": null,
+          "vlan": null,
+          "status": {
+            "value": "active",
+            "label": "Active"
+          },
+          "role": null,
+          "is_pool": false,
+          "mark_utilized": false,
+          "description": "",
+          "tags": [],
+          "custom_fields": {},
+          "created": "2021-09-15",
+          "last_updated": "2021-09-15T21:25:30.652751Z",
+          "children": 0,
+          "_depth": 0
+        }
+
+[1](https://docs.docker.com/engine/install/ubuntu/), 
+[1](https://forums.docker.com/t/command-not-found-when-i-try-to-run-docker-compose/97183/3), 
+[2](https://github.com/netbox-community/netbox-docker),
+[3](https://netbox.readthedocs.io/en/stable/rest-api/overview/#creating-a-new-object)
 
 ## Домашнее задание к занятию "3.7. Компьютерные сети, лекция 2"
 
