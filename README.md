@@ -44,7 +44,7 @@ Routing entry for 5.189.0.0/17
 
        # systemctl restart systemd-networkd
 
-4. Добавлен маршрут
+4. Добавлен маршрут, конфигурация через `netplan`
 
            ens4:
              optional: true
@@ -54,7 +54,7 @@ Routing entry for 5.189.0.0/17
                - to: 10.0.4.0/24
                  via: 10.0.0.2
 
-5. Таблица маршрутизации, в неё один статический маршрут, определить можно по метке `static`:
+5. Таблица маршрутизации, в ней один статический маршрут, определить можно по метке `static`:
 
        root@Node2:~# ip r
        default via 192.168.255.1 dev bond0 proto dhcp src 192.168.255.15 metric 100
