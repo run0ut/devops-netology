@@ -37,14 +37,36 @@ Routing entry for 5.189.0.0/17
        Name=dummy0
        
        [Network]
-       Address=10.0.2.1/24
+       Address=10.0.8.1/24
        EOF
 
 3. Рестарт сети
 
        # systemctl restart systemd-networkd
 
-4. маршруты??? 
+4. Добавлен маршрут
+
+           ens4:
+             optional: true
+             addresses:
+               - 10.0.0.3/24
+             routes:
+               - to: 10.0.4.0/24
+                 via: 10.0.0.2
+
+5. Таблица маршрутизации, в неё один статический маршрут, определить можно по метке `static`:
+
+       root@Node2:~# ip r
+       default via 192.168.255.1 dev bond0 proto dhcp src 192.168.255.15 metric 100
+       10.0.0.0/24 dev ens4 proto kernel scope link src 10.0.0.3
+       10.0.1.0/24 dev vlan1001 proto kernel scope link src 10.0.1.3
+       10.0.4.0/24 via 10.0.0.2 dev ens4 proto static
+       10.0.8.0/24 dev dummy0 proto kernel scope link src 10.0.8.1
+       192.168.255.0/24 dev bond0 proto kernel scope link src 192.168.255.15
+       192.168.255.1 dev bond0 proto dhcp scope link src 192.168.255.15 metric 100
+
+       root@Node2:~# ip r | grep stat
+       10.0.4.0/24 via 10.0.0.2 dev ens4 proto static
 
 [1](https://unix.stackexchange.com/questions/513578/), [2](https://serverfault.com/questions/1029041/)
 
@@ -81,8 +103,55 @@ UNCONN   0        0          192.168.255.10%ens3:68             0.0.0.0:*       
 
 
 ### 6*. Установите Nginx, настройте в режиме балансировщика TCP или UDP.
+1. Удалить стандартную настройку порта 80 и добавить файл для своей
 
+        rm -f /etc/nginx/sites-enabled/default
+        touch /etc/nginx/conf.d/balancer.conf
 
+2. Конфиг `/etc/nginx/conf.d/balancer.conf`:
+
+        upstream backendn_netology_lab {
+            ip_hash;
+            server 10.0.4.2;
+            server 10.0.0.3;
+        }
+
+        server {
+            listen 80;
+
+            location / {
+                proxy_pass http://backendn_netology_lab;
+            }
+        }
+
+3. Включить днс, предварительно отключить `systemd-resolve`, он занимает 53 порт
+
+        systemctl disable systemd-resolved.service
+        systemctl stop systemd-resolved.service
+
+4. Конфиг DNS proxy: `/etc/nginx/modules-enabled/60-netology-lab.conf`
+
+        stream {
+
+            upstream dns_servers {
+                server 77.88.8.8:53;
+                server 8.8.8.8:53;
+            }
+
+            server {
+                listen 53 udp;
+                listen 53; #tcp 
+                proxy_pass dns_servers;
+                proxy_responses 1;
+                proxy_timeout 1s;
+            }
+
+        }
+
+[2](http://nginx.org/en/docs/http/load_balancing.html),
+[3](https://gist.github.com/zoilomora/f7d264cefbb589f3f1b1fc2cea2c844c),
+[4.1](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/),
+[4.2](https://www.nginx.com/blog/load-balancing-dns-traffic-nginx-plus/)
 
 ### 7*. Установите bird2, настройте динамический протокол маршрутизации RIP.
 
