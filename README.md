@@ -1,6 +1,95 @@
 # devops-netology
 
+## Домашнее задание к занятию "3.9. Элементы безопасности информационных систем"
+
+### 1. Установите Bitwarden плагин для браузера. Зарегестрируйтесь и сохраните несколько паролей.
+
+![Скриншот Bitwarden в Chrome](media/sysadmin-39-bitwarden.png)
+
+### 2. Установите Google authenticator на мобильный телефон. Настройте вход в Bitwarden акаунт через Google authenticator OTP.
+
+![Скриншот Bitwarden в Chrome](media/sysadmin-39-bitwarden-g-auth.png)
+
+### 3. Установите apache2, сгенерируйте самоподписанный сертификат, настройте тестовый сайт для работы по HTTPS.
+
+![Скриншот Bitwarden в Chrome](media/sysadmin-39-apache-ssl.png)
+
+Всё по инструкции из презентации:
+
+```
+root@node4:~# cat /etc/apache2/sites-available/example.conf
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+   ServerName example.com
+   DocumentRoot /var/www/example.com
+   SSLEngine on
+   SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
+   SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
+</VirtualHost>
+</IfModule>
+```
+```
+root@node4:~# cat /var/www/example.com/index.html
+<h1>Hello Netology!</h1>
+```
+```
+root@node4:~# openssl x509 -text -noout -in  /etc/ssl/certs/apache-selfsigned.crt | grep Subject:
+        Subject: C = RU, ST = Moscow, L = Yekaterinburg, O = Company Name, OU = Org, CN = www.example.com
+```
+
+### 4. Проверьте на TLS уязвимости произвольный сайт в интернете.
+
+
+
+### 5. Установите на Ubuntu ssh сервер, сгенерируйте новый приватный ключ. Скопируйте свой публичный ключ на другой сервер. Подключитесь к серверу по SSH-ключу.
+ 
+
+
+### 6. Переименуйте файлы ключей из задания 5. Настройте файл конфигурации SSH клиента, так чтобы вход на удаленный сервер осуществлялся по имени сервера.
+
+
+
+### 7. Соберите дамп трафика утилитой tcpdump в формате pcap, 100 пакетов. Откройте файл pcap в Wireshark.
+
+```
+root@node4:~# tcpdump -nnei any -c 100 -w node4-100packets.pcap
+tcpdump: listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 262144 bytes
+100 packets captured
+106 packets received by filter
+0 packets dropped by kernel
+```
+
+![Скриншот Bitwarden в Chrome](media/sysadmin-39-wireshark.png)
+
+### 8*. Просканируйте хост scanme.nmap.org. Какие сервисы запущены?
+
+
+
+### 9*. Установите и настройте фаервол ufw на web-сервер из задания 3. Откройте доступ снаружи только к портам 22,80,443
+
++520 port, RIPv2 из прошлых лабораторных 
+
+```
+root@node4:~# ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), disabled (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW IN    Anywhere
+80,443/tcp (Apache Full)   ALLOW IN    Anywhere
+520                        ALLOW IN    Anywhere
+22/tcp (v6)                ALLOW IN    Anywhere (v6)
+80,443/tcp (Apache Full (v6)) ALLOW IN    Anywhere (v6)
+520 (v6)                   ALLOW IN    Anywhere (v6)
+```
+
+
 ## Домашнее задание к занятию "3.8. Компьютерные сети, лекция 3"
+
+<details>
 
 ### 1. Подключитесь к публичному маршрутизатору в интернет. Найдите маршрут к вашему публичному IP
 
@@ -246,6 +335,8 @@ UNCONN   0        0          192.168.255.10%ens3:68             0.0.0.0:*       
 [1](https://forums.docker.com/t/command-not-found-when-i-try-to-run-docker-compose/97183/3), 
 [2](https://github.com/netbox-community/netbox-docker),
 [3](https://netbox.readthedocs.io/en/stable/rest-api/overview/#creating-a-new-object)
+
+</details>
 
 ## Домашнее задание к занятию "3.7. Компьютерные сети, лекция 2"
 
