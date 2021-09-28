@@ -17,7 +17,11 @@
 Всё по инструкции из презентации:
 
 ```
-root@node4:~# cat /etc/apache2/sites-available/example.conf
+root@node4:~# ll /etc/apache2/sites-enabled/example.conf
+lrwxrwxrwx 1 root root 31 Sep 27 19:07 /etc/apache2/sites-enabled/example.conf -> ../sites-available/example.conf
+```
+```
+root@node4:~# cat /etc/apache2/sites-enabled/example.conf
 <IfModule mod_ssl.c>
 <VirtualHost *:443>
    ServerName example.com
@@ -39,15 +43,80 @@ root@node4:~# openssl x509 -text -noout -in  /etc/ssl/certs/apache-selfsigned.cr
 
 ### 4. Проверьте на TLS уязвимости произвольный сайт в интернете.
 
+Проверил лёгковесную версию Яндекса, есть несколько уязвимостей.
+```
+$ ./testssl.sh -U --sneaky https://ya.ru
+...
 
+ Testing vulnerabilities
+
+ Heartbleed (CVE-2014-0160)                not vulnerable (OK), no heartbeat extension
+ CCS (CVE-2014-0224)                       not vulnerable (OK)
+ Ticketbleed (CVE-2016-9244), experiment.  not vulnerable (OK)
+ ROBOT                                     not vulnerable (OK)
+ Secure Renegotiation (RFC 5746)           supported (OK)
+ Secure Client-Initiated Renegotiation     not vulnerable (OK)
+ CRIME, TLS (CVE-2012-4929)                not vulnerable (OK)
+ BREACH (CVE-2013-3587)                    potentially NOT ok, "gzip" HTTP compression detected. - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+ POODLE, SSL (CVE-2014-3566)               not vulnerable (OK)
+ TLS_FALLBACK_SCSV (RFC 7507)              Check failed, unexpected result , run testssl.sh -Z --debug=1 and look at /tmp/testssl.g0AyUH/*tls_fallback_scsv.txt
+ SWEET32 (CVE-2016-2183, CVE-2016-6329)    VULNERABLE, uses 64 bit block ciphers
+ FREAK (CVE-2015-0204)                     not vulnerable (OK)
+ DROWN (CVE-2016-0800, CVE-2016-0703)      not vulnerable on this host and port (OK)
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=26EB381642B07A05F7CA935101FC6492F91F7F0721995A8E577EDFB6723EBD1F could help you to find out
+ LOGJAM (CVE-2015-4000), experimental      not vulnerable (OK): no DH EXPORT ciphers, no DH key detected with <= TLS 1.2
+ BEAST (CVE-2011-3389)                     TLS1: ECDHE-RSA-AES128-SHA AES128-SHA DES-CBC3-SHA
+                                           VULNERABLE -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+ LUCKY13 (CVE-2013-0169), experimental     potentially VULNERABLE, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+ Winshock (CVE-2014-6321), experimental    not vulnerable (OK)
+ RC4 (CVE-2013-2566, CVE-2015-2808)        no RC4 ciphers detected (OK)
+
+
+ Done 2021-09-28 21:54:16 [  52s] -->> 87.250.250.242:443 (ya.ru) <<--
+
+```
 
 ### 5. Установите на Ubuntu ssh сервер, сгенерируйте новый приватный ключ. Скопируйте свой публичный ключ на другой сервер. Подключитесь к серверу по SSH-ключу.
  
-
+Сделал ключ, скопировал на другой сервер:
+```
+root@Node2:~# ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): /root/.ssh/netology_rsa
+...
+```
+```
+root@Node2:~# ssh-copy-id -i .ssh/netology_rsa root@10.0.8.2
+```
+Проверил, что работает:
+```
+root@Node2:~# ssh -i .ssh/netology_rsa root@10.0.8.2 'ls -l | head -n 2'
+total 28
+-rw-r--r-- 1 tcpdump tcpdump 23085 Sep 27 19:35 node4-100packets.pcap
+```
 
 ### 6. Переименуйте файлы ключей из задания 5. Настройте файл конфигурации SSH клиента, так чтобы вход на удаленный сервер осуществлялся по имени сервера.
 
-
+Переименовал
+```
+root@Node2:~# mv .ssh/netology_rsa .ssh/39-6-netology_rsa
+root@Node2:~# mv .ssh/netology_rsa.pub .ssh/39-6-netology_rsa.pub
+```
+Конфиг
+```
+root@Node2:~# cat .ssh/config
+Host node4
+    Hostname 10.0.8.2
+    IdentityFile /root/.ssh/39-6-netology_rsa
+```
+Проверил
+```
+root@Node2:~# ssh node4 'ls -lh | head -n 2'
+total 28K
+-rw-r--r-- 1 tcpdump tcpdump  23K Sep 27 19:35 node4-100packets.pcap
+```
 
 ### 7. Соберите дамп трафика утилитой tcpdump в формате pcap, 100 пакетов. Откройте файл pcap в Wireshark.
 
@@ -63,7 +132,22 @@ tcpdump: listening on any, link-type LINUX_SLL (Linux cooked v1), capture size 2
 
 ### 8*. Просканируйте хост scanme.nmap.org. Какие сервисы запущены?
 
+Запущены ssh, web-сервер, сервер nping-echo. Открытый порт 31337 - что-то вроде [шутки](https://www.speedguide.net/port.php?port=31337) в среде ИБ, либо троян.
+```
+root@Node2:~# nmap scanme.nmap.org
+Starting Nmap 7.80 ( https://nmap.org ) at 2021-09-28 19:02 UTC
+Nmap scan report for scanme.nmap.org (45.33.32.156)
+Host is up (0.21s latency).
+Other addresses for scanme.nmap.org (not scanned): 2600:3c01::f03c:91ff:fe18:bb2f
+Not shown: 996 closed ports
+PORT      STATE SERVICE
+22/tcp    open  ssh
+80/tcp    open  http
+9929/tcp  open  nping-echo
+31337/tcp open  Elite
 
+Nmap done: 1 IP address (1 host up) scanned in 3.86 seconds
+```
 
 ### 9*. Установите и настройте фаервол ufw на web-сервер из задания 3. Откройте доступ снаружи только к портам 22,80,443
 
