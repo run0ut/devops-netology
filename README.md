@@ -20,27 +20,51 @@
 
 ### 2. Исправить скрипт  
 
-> Мы устроились на работу в компанию, где раньше уже был DevOps Engineer. Он написал скрипт, позволяющий узнать, какие файлы модифицированы в репозитории, относительно локальных изменений. Этим скриптом недовольно начальство, потому что в его выводе есть не все изменённые файлы, а также непонятен полный путь к директории, где они находятся. Как можно доработать скрипт ниже, чтобы он исполнял требования вашего руководителя?
-
 ```python
 #!/usr/bin/env python3
 
 import os
 
-bash_command = ["cd ~/netology/sysadm-homeworks", "git status"]
+path = "~/netology/sysadm-homeworks"
+resolved_path = os.path.normpath(os.path.abspath(os.path.expanduser(os.path.expandvars(path))))
+bash_command = [f"cd {resolved_path}", "git status"]
 result_os = os.popen(' && '.join(bash_command)).read()
-is_change = False
 for result in result_os.split('\n'):
     if result.find('modified') != -1:
         prepare_result = result.replace('\tmodified:   ', '')
-        print(prepare_result)
-        break
-
+        print(os.path.join(resolved_path, prepare_result))
 ```
 
 ### 4. Доработать скрипт  
 
 > Доработать скрипт выше так, чтобы он мог проверять не только локальный репозиторий в текущей директории, а также умел воспринимать путь к репозиторию, который мы передаём как входной параметр. Мы точно знаем, что начальство коварное и будет проверять работу этого скрипта в директориях, которые не являются локальными репозиториями.
+
+```python
+#!/usr/bin/env python3
+
+import os,sys,subprocess
+
+try:
+    path = sys.argv[1]
+except IndexError:
+    path = "~/netology/sysadm-homeworks"
+
+resolved_path = os.path.normpath(os.path.abspath(os.path.expanduser(os.path.expandvars(path))))
+
+result_os = subprocess.Popen(["git", "status"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=resolved_path)
+# print(result_os.communicate()[0])
+# try:
+#     # result_os = subprocess.Popen(' && '.join(bash_command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT).read()
+# except FileNotFoundError:
+#     print(f"Папки {resolved_path} не существует")
+#     exit()
+for result in str(result_os.communicate()[0]).split('\n'):
+    if result.find('modified') != -1:
+        prepare_result = result.replace('\tmodified:   ', '')
+        print(os.path.join(resolved_path, prepare_result))
+
+# os.chdir(wd)
+```
 
 ### 5. Написать скрипт  
 
@@ -52,6 +76,8 @@ for result in result_os.split('\n'):
 
 
 ## Домашнее задание к занятию "4.1. Командная оболочка Bash: Практические навыки"
+
+<details>
 
 ### 1. Есть скрипт. Какие значения переменным c,d,e будут присвоены? Почему?
 
@@ -143,6 +169,8 @@ fi
 
 exit 0
 ```
+
+</details>
 
 ## Домашнее задание к занятию "3.9. Элементы безопасности информационных систем"
 
