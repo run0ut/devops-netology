@@ -35,42 +35,55 @@ for result in result_os.split('\n'):
         print(os.path.join(resolved_path, prepare_result))
 ```
 
-### 4. Доработать скрипт  
-
-> Доработать скрипт выше так, чтобы он мог проверять не только локальный репозиторий в текущей директории, а также умел воспринимать путь к репозиторию, который мы передаём как входной параметр. Мы точно знаем, что начальство коварное и будет проверять работу этого скрипта в директориях, которые не являются локальными репозиториями.
+### 3. Доработать скрипт  
 
 ```python
 #!/usr/bin/env python3
 
-import os,sys,subprocess
+import os
+import sys
+import subprocess
+import re
 
 try:
     path = sys.argv[1]
 except IndexError:
     path = "~/netology/sysadm-homeworks"
 
-resolved_path = os.path.normpath(os.path.abspath(os.path.expanduser(os.path.expandvars(path))))
+resolved_path = os.path.normpath(os.path.abspath(
+    os.path.expanduser(os.path.expandvars(path))))
 
-result_os = subprocess.Popen(["git", "status"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=resolved_path)
-# print(result_os.communicate()[0])
-# try:
-#     # result_os = subprocess.Popen(' && '.join(bash_command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT).read()
-# except FileNotFoundError:
-#     print(f"Папки {resolved_path} не существует")
-#     exit()
-for result in str(result_os.communicate()[0]).split('\n'):
-    if result.find('modified') != -1:
-        prepare_result = result.replace('\tmodified:   ', '')
-        print(os.path.join(resolved_path, prepare_result))
+result_os = subprocess.Popen(["git", "status"], stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT, cwd=resolved_path, text=True).communicate()[0].split('\n')
 
-# os.chdir(wd)
+if result_os[0].find('fatal:') >= 0:
+    print(
+        f'В папке {resolved_path} нет git репозитория. Поищите в другой папке.')
+    exit()
+
+list = ['modified', 'renamed']
+
+for result in result_os:
+    for element in list:
+        if result.find(f'\t{element}') != -1:
+            prepare_result = re.sub(
+                f"\t{element}: *", '', result).split(' -> ')
+            if len(prepare_result) == 2:
+                prepare_result[1] = os.path.join(
+                    resolved_path, prepare_result[1])
+                print(
+                    f'{element}: {os.path.join(resolved_path, prepare_result[1])} <- {prepare_result[0]}')
+            else:
+                print(
+                    f'{element}: {os.path.join(resolved_path, prepare_result[0])}')
+
 ```
 
-### 5. Написать скрипт  
+### 4. Написать скрипт  
 
 > Наша команда разрабатывает несколько веб-сервисов, доступных по http. Мы точно знаем, что на их стенде нет никакой балансировки, кластеризации, за DNS прячется конкретный IP сервера, где установлен сервис. Проблема в том, что отдел, занимающийся нашей инфраструктурой очень часто меняет нам сервера, поэтому IP меняются примерно раз в неделю, при этом сервисы сохраняют за собой DNS имена. Это бы совсем никого не беспокоило, если бы несколько раз сервера не уезжали в такой сегмент сети нашей компании, который недоступен для разработчиков. Мы хотим написать скрипт, который опрашивает веб-сервисы, получает их IP, выводит информацию в стандартный вывод в виде: <URL сервиса> - <его IP>. Также, должна быть реализована возможность проверки текущего IP сервиса c его IP из предыдущей проверки. Если проверка будет провалена - оповестить об этом в стандартный вывод сообщением: [ERROR] <URL сервиса> IP mismatch: <старый IP> <Новый IP>. Будем считать, что наша разработка реализовала сервисы: drive.google.com, mail.google.com, google.com.
 
-### 6. Дополнительное задание:  автоматизировать цепочку действий
+### 5. Дополнительное задание:  автоматизировать цепочку действий
 
 > Так получилось, что мы очень часто вносим правки в конфигурацию своей системы прямо на сервере. Но так как вся наша команда разработки держит файлы конфигурации в github и пользуется gitflow, то нам приходится каждый раз переносить архив с нашими изменениями с сервера на наш локальный компьютер, формировать новую ветку, коммитить в неё изменения, создавать pull request (PR) и только после выполнения Merge мы наконец можем официально подтвердить, что новая конфигурация применена. Мы хотим максимально автоматизировать всю цепочку действий. Для этого нам нужно написать скрипт, который будет в директории с локальным репозиторием обращаться по API к github, создавать PR для вливания текущей выбранной ветки в master с сообщением, которое мы вписываем в первый параметр при обращении к py-файлу (сообщение не может быть пустым). При желании, можно добавить к указанному функционалу создание новой ветки, commit и push в неё изменений конфигурации. С директорией локального репозитория можно делать всё, что угодно. Также, принимаем во внимание, что Merge Conflict у нас отсутствуют и их точно не будет при push, как в свою ветку, так и при слиянии в master. Важно получить конечный результат с созданным PR, в котором применяются наши изменения. 
 
