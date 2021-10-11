@@ -53,29 +53,34 @@ except IndexError:
 resolved_path = os.path.normpath(os.path.abspath(
     os.path.expanduser(os.path.expandvars(path))))
 
-result_os = subprocess.Popen(["git", "status"], stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT, cwd=resolved_path, text=True).communicate()[0].split('\n')
+try:
+    result_os = subprocess.Popen(["git", "status", "--porcelain"], stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, cwd=resolved_path, text=True).communicate()[0].split('\n')
+except FileNotFoundError:
+    print(
+        f'Не могу найти папку {path}'
+    )
+    exit()
 
 if result_os[0].find('fatal:') >= 0:
     print(
         f'В папке {resolved_path} нет git репозитория. Поищите в другой папке.')
     exit()
 
-list = ['modified', 'renamed']
+list = {"M": "modified", "R": "renamed", "\?": "untracked"}
 
 for result in result_os:
-    for element in list:
-        if result.find(f'\t{element}') != -1:
-            prepare_result = re.sub(
-                f"\t{element}: *", '', result).split(' -> ')
-            if len(prepare_result) == 2:
-                prepare_result[1] = os.path.join(
-                    resolved_path, prepare_result[1])
+    for element in list.keys():
+        regexp = re.compile(r"^ *" + element + "{1,2} *")
+        if regexp.search(result):
+            prepare_result = re.sub(regexp, '', result).split(' -> ')
+            if list[element] == 'renamed':
                 print(
-                    f'{element}: {os.path.join(resolved_path, prepare_result[1])} <- {prepare_result[0]}')
+                    f'{list[element]}:\t {os.path.join(resolved_path, prepare_result[1])} <- {prepare_result[0]}')
             else:
                 print(
-                    f'{element}: {os.path.join(resolved_path, prepare_result[0])}')
+                    f'{list[element]}:\t {os.path.join(resolved_path, prepare_result[0])}')
+
 
 ```
 
