@@ -35,8 +35,6 @@
 ```python
 #!/usr/bin/env python3
 
-# 2. В прошлый рабочий день мы создавали скрипт, позволяющий опрашивать веб-сервисы и получать их IP. К уже реализованному функционалу нам нужно добавить возможность записи JSON и YAML файлов, описывающих наши сервисы. Формат записи JSON по одному сервису: { "имя сервиса" : "его IP"}. Формат записи YAML по одному сервису: - имя сервиса: его IP. Если в момент исполнения скрипта меняется IP у сервиса - он должен так же поменяться в yml и json файле.
-
 import socket
 import time
 import json
@@ -51,20 +49,21 @@ while True:
         with open('./services.json', 'r+') as config_json, open('./services.yaml', 'r+') as config_yaml:
             try:
                 hosts_json = json.load(config_json)
-                print(f"Поддрузили ./services.json")
+                print(f"Подгружен ./services.json")
             except json.decoder.JSONDecodeError as e:
                 print(f"Файл ./services.json в неверном формате.")
                 exit()
             try:
                 hosts_yaml = hosts_yaml = yaml.load(
                     config_yaml.read(), Loader=yaml.SafeLoader)
-                print(f"Поддрузили ./services.yaml")
+                print(f"Подгружен ./services.yaml")
             except yaml.scanner.ScannerError as e:
                 print(f"Файл ./services.yaml в неверном формате.")
                 exit()
             if hosts_yaml != hosts_json:
                 print(
-                    f"""\nФайлы json и yaml отличаются:\n\nhosts_yaml:\n\n{hosts_yaml}\n\nhosts_json:\n\n{hosts_json}\n""")
+                    f"""\nСписки хостов в json и yaml отличаются:\n\nyaml: {hosts_yaml}\njson: {hosts_json}\n\nУдалите один или исправьте вручную. Потом запустит скрипт заново.\n""")
+                exit()
             else:
                 try:
                     hosts = hosts_yaml
