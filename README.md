@@ -33,7 +33,9 @@
 ### 2. В прошлый рабочий день мы создавали скрипт, позволяющий опрашивать веб-сервисы и получать их IP. К уже реализованному функционалу нам нужно добавить возможность записи JSON и YAML файлов, описывающих наши сервисы. Формат записи JSON по одному сервису: { "имя сервиса" : "его IP"}. Формат записи YAML по одному сервису: - имя сервиса: его IP. Если в момент исполнения скрипта меняется IP у сервиса - он должен так же поменяться в yml и json файле.
 
 ```python
-# /usr/bin/env python3
+#!/usr/bin/env python3
+
+# 2. В прошлый рабочий день мы создавали скрипт, позволяющий опрашивать веб-сервисы и получать их IP. К уже реализованному функционалу нам нужно добавить возможность записи JSON и YAML файлов, описывающих наши сервисы. Формат записи JSON по одному сервису: { "имя сервиса" : "его IP"}. Формат записи YAML по одному сервису: - имя сервиса: его IP. Если в момент исполнения скрипта меняется IP у сервиса - он должен так же поменяться в yml и json файле.
 
 import socket
 import time
@@ -44,9 +46,7 @@ import time
 hosts = {"drive.google.com": "192.168.0.1",
          "mail.google.com": "172.16.0.1", "google.com": "10.0.0.1"}
 
-# for file in ['./services.json', './services.yaml']:
 while True:
-    time.sleep(1)
     try:
         with open('./services.json', 'r+') as config_json, open('./services.yaml', 'r+') as config_yaml:
             try:
@@ -63,7 +63,6 @@ while True:
                 print(f"Файл ./services.yaml в неверном формате.")
                 exit()
             if hosts_yaml != hosts_json:
-                # Если пересоздан только один из файлов - это зациклит проверку, надо что-то другое придумать
                 print(
                     f"""\nФайлы json и yaml отличаются:\n\nhosts_yaml:\n\n{hosts_yaml}\n\nhosts_json:\n\n{hosts_json}\n""")
             else:
@@ -93,9 +92,27 @@ while True:
         print(f'Нет файла {e.filename}, создаём ')
         config = open(e.filename, 'w+')
         if config.name.endswith('.json'):
-            config.write(json.dumps(hosts, indent=4))
+            try:
+                config_yaml = open('./services.yaml', 'r+').read()
+                hosts_yaml = yaml.load(
+                    config_yaml, Loader=yaml.SafeLoader)
+                config.write(json.dumps(hosts_yaml, indent=4))
+            except FileNotFoundError:
+                config.write(json.dumps(hosts, indent=4))
+            except:
+                print('Упс, всё пошло не так')
+                exit()
         elif config.name.endswith('yaml') or e.filename.endswith('yml'):
-            config.write(yaml.dump(hosts, indent=4))
+            try:
+                config_json = open('./services.json', 'r+')
+                hosts_json = json.load(
+                    config_json)
+                config.write(yaml.dump(hosts_json, indent=4))
+            except FileNotFoundError:
+                config.write(json.dumps(hosts, indent=4))
+            except:
+                print('Упс, всё пошло не так')
+                exit()
         config.read()
 ```
 
