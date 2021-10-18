@@ -1,6 +1,110 @@
 # devops-netology
 
+## Домашнее задание к занятию "4.3. Языки разметки JSON и YAML"
+
+### 1. Мы выгрузили JSON, который получили через API запрос к нашему сервису. Нужно найти и исправить все ошибки, которые допускает наш сервис.
+
+Исправлено три ошибки и одна под вопросом:
+
+| Ошибка | Как должно быть | Почему | 
+| --- | --- | --- | 
+| `"elements" :[` | `"elements" : [` | [Должен быть](https://www.json.org/img/object.png) пробел между двоеточием и скобкой, открывающей массив. | 
+| `"ip :` | `"ip" :` | У строки [должны быть](https://www.json.org/img/string.png) две кавычки - открывающая и закрывающая. |
+| `71.78.22.43` | `"71.78.22.43"` | Это тоже строка, и строки должны быть в кавычках | 
+| `"ip" : 7175` | ? | 7175 из десятичной формы можно перевести в адрес "0.0.28.7", и это валидный способ храниения и работы с IP-дресами, к тому же в описании задачи нет каких-то ограничений на этот счёт. В реальности они скорей всего были бы, и это посчитали бы ошибкой. | 
+
+Исправленный, валидный JSON:
+
+```json
+{ "info" : "Sample JSON output from our service\t",
+    "elements" : [
+        { "name" : "first",
+        "type" : "server",
+        "ip" : 7175 
+        },
+        { "name" : "second",
+        "type" : "proxy",
+        "ip" : "71.78.22.43"
+        }
+    ]
+}
+```
+
+### 2. В прошлый рабочий день мы создавали скрипт, позволяющий опрашивать веб-сервисы и получать их IP. К уже реализованному функционалу нам нужно добавить возможность записи JSON и YAML файлов, описывающих наши сервисы. Формат записи JSON по одному сервису: { "имя сервиса" : "его IP"}. Формат записи YAML по одному сервису: - имя сервиса: его IP. Если в момент исполнения скрипта меняется IP у сервиса - он должен так же поменяться в yml и json файле.
+
+```python
+# /usr/bin/env python3
+
+import socket
+import time
+import json
+from json.decoder import JSONDecodeError
+import yaml
+
+hosts = hosts_yaml = hosts_json = {"drive.google.com": "192.168.0.1",
+                                   "mail.google.com": "172.16.0.1", "google.com": "10.0.0.1"}
+
+try:
+    with open("./services.json", 'r+') as config_json:
+        try:
+            hosts_json = json.load(config_json)
+        # не работает вылет сообщенияпо эксепшену, почему?
+        except JSONDecodeError as e:
+            print(
+                f"""Файл ./services.json в неверном формате.""")
+            exit()
+except FileNotFoundError:
+    with open("./services.json", 'w+') as config_json:
+        config_json.write(json.dumps(hosts_json, indent=4))
+
+try:
+    with open("./services.yaml", 'r+') as config_yaml:
+        try:
+            hosts_yaml = yaml.load(config_yaml.read(), Loader=yaml.SafeLoader)
+        except:
+            raise
+except FileNotFoundError:
+    with open("./services.yaml", 'w+') as config_yaml:
+        config_yaml.write(yaml.dump(hosts_yaml, indent=4))
+
+if hosts_yaml != hosts_json:
+    print(
+        f"""\nФайлы json и yaml отличаются:\n\nhosts_yaml:\n\n{hosts_yaml}\n\nhosts_json:\n\n{hosts_json}\n""")
+    exit()
+else:
+    hosts = hosts_yaml
+
+try:
+    while True:
+        for host in hosts:
+            cur_ip = hosts[host]
+            check_ip = socket.gethostbyname(host)
+            if check_ip != cur_ip:
+                print(f"""[ERROR] {host} IP mismatch: {cur_ip} {check_ip}""")
+                hosts[host] = check_ip
+                with open("./services.json", 'w+') as config_json, open("./services.yaml", 'w+') as config_yaml:
+                    config_json.write(json.dumps(hosts, indent=4))
+                    config_yaml.write(yaml.dump(hosts, indent=4))
+            else:
+                print(f"""{host} - {cur_ip}""")
+        time.sleep(2)
+except KeyboardInterrupt:
+    config_json.close
+    config_json.close
+```
+
+## 3. Так как команды в нашей компании никак не могут прийти к единому мнению о том, какой формат разметки данных использовать: JSON или YAML, нам нужно реализовать парсер из одного формата в другой.
+
+   * Принимать на вход имя файла
+   * Проверять формат исходного файла. Если файл не json или yml - скрипт должен остановить свою работу
+   * Распознавать какой формат данных в файле. Считается, что файлы *.json и *.yml могут быть перепутаны
+   * Перекодировать данные из исходного формата во второй доступный (из JSON в YAML, из YAML в JSON)
+   * При обнаружении ошибки в исходном файле - указать в стандартном выводе строку с ошибкой синтаксиса и её номер
+   * Полученный файл должен иметь имя исходного файла, разница в наименовании обеспечивается разницей расширения файлов
+
 ## Домашнее задание к занятию "4.2. Использование Python для решения типовых DevOps задач"
+
+<details>
 
 ### 1. Есть скрипт...
 
@@ -224,6 +328,7 @@ if len(git_status) > 1 or git_status[0] != '':
         print(f'\n')
 ```
 
+</details>
 
 ## Домашнее задание к занятию "4.1. Командная оболочка Bash: Практические навыки"
 
