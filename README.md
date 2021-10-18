@@ -38,59 +38,65 @@
 import socket
 import time
 import json
-from json.decoder import JSONDecodeError
 import yaml
+import time
 
-hosts = hosts_yaml = hosts_json = {"drive.google.com": "192.168.0.1",
-                                   "mail.google.com": "172.16.0.1", "google.com": "10.0.0.1"}
+hosts = {"drive.google.com": "192.168.0.1",
+         "mail.google.com": "172.16.0.1", "google.com": "10.0.0.1"}
 
-try:
-    with open("./services.json", 'r+') as config_json:
-        try:
-            hosts_json = json.load(config_json)
-        # не работает вылет сообщенияпо эксепшену, почему?
-        except JSONDecodeError as e:
-            print(
-                f"""Файл ./services.json в неверном формате.""")
-            exit()
-except FileNotFoundError:
-    with open("./services.json", 'w+') as config_json:
-        config_json.write(json.dumps(hosts_json, indent=4))
-
-try:
-    with open("./services.yaml", 'r+') as config_yaml:
-        try:
-            hosts_yaml = yaml.load(config_yaml.read(), Loader=yaml.SafeLoader)
-        except:
-            raise
-except FileNotFoundError:
-    with open("./services.yaml", 'w+') as config_yaml:
-        config_yaml.write(yaml.dump(hosts_yaml, indent=4))
-
-if hosts_yaml != hosts_json:
-    print(
-        f"""\nФайлы json и yaml отличаются:\n\nhosts_yaml:\n\n{hosts_yaml}\n\nhosts_json:\n\n{hosts_json}\n""")
-    exit()
-else:
-    hosts = hosts_yaml
-
-try:
-    while True:
-        for host in hosts:
-            cur_ip = hosts[host]
-            check_ip = socket.gethostbyname(host)
-            if check_ip != cur_ip:
-                print(f"""[ERROR] {host} IP mismatch: {cur_ip} {check_ip}""")
-                hosts[host] = check_ip
-                with open("./services.json", 'w+') as config_json, open("./services.yaml", 'w+') as config_yaml:
-                    config_json.write(json.dumps(hosts, indent=4))
-                    config_yaml.write(yaml.dump(hosts, indent=4))
+# for file in ['./services.json', './services.yaml']:
+while True:
+    time.sleep(1)
+    try:
+        with open('./services.json', 'r+') as config_json, open('./services.yaml', 'r+') as config_yaml:
+            try:
+                hosts_json = json.load(config_json)
+                print(f"Поддрузили ./services.json")
+            except json.decoder.JSONDecodeError as e:
+                print(f"Файл ./services.json в неверном формате.")
+                exit()
+            try:
+                hosts_yaml = hosts_yaml = yaml.load(
+                    config_yaml.read(), Loader=yaml.SafeLoader)
+                print(f"Поддрузили ./services.yaml")
+            except yaml.scanner.ScannerError as e:
+                print(f"Файл ./services.yaml в неверном формате.")
+                exit()
+            if hosts_yaml != hosts_json:
+                # Если пересоздан только один из файлов - это зациклит проверку, надо что-то другое придумать
+                print(
+                    f"""\nФайлы json и yaml отличаются:\n\nhosts_yaml:\n\n{hosts_yaml}\n\nhosts_json:\n\n{hosts_json}\n""")
             else:
-                print(f"""{host} - {cur_ip}""")
-        time.sleep(2)
-except KeyboardInterrupt:
-    config_json.close
-    config_json.close
+                try:
+                    hosts = hosts_yaml
+                    while True:
+                        for host in hosts:
+                            cur_ip = hosts[host]
+                            check_ip = socket.gethostbyname(host)
+                            if check_ip != cur_ip:
+                                print(
+                                    f"""[ERROR] {host} IP mismatch: {cur_ip} {check_ip}""")
+                                hosts[host] = check_ip
+                                with open("./services.json", 'w+') as write_json, open("./services.yaml", 'w+') as write_yaml:
+                                    write_json.write(
+                                        json.dumps(hosts, indent=4))
+                                    write_yaml.write(
+                                        yaml.dump(hosts, indent=4))
+                            else:
+                                print(f"""{host} - {cur_ip}""")
+                        time.sleep(2)
+                except KeyboardInterrupt:
+                    config_json.close
+                    config_json.close
+                    break
+    except FileNotFoundError as e:
+        print(f'Нет файла {e.filename}, создаём ')
+        config = open(e.filename, 'w+')
+        if config.name.endswith('.json'):
+            config.write(json.dumps(hosts, indent=4))
+        elif config.name.endswith('yaml') or e.filename.endswith('yml'):
+            config.write(yaml.dump(hosts, indent=4))
+        config.read()
 ```
 
 ## 3. Так как команды в нашей компании никак не могут прийти к единому мнению о том, какой формат разметки данных использовать: JSON или YAML, нам нужно реализовать парсер из одного формата в другой.
