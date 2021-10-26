@@ -11,7 +11,7 @@
 | `"elements" :[` | `"elements" : [` | [Должен быть](https://www.json.org/img/object.png) пробел между двоеточием и скобкой, открывающей массив. | 
 | `"ip :` | `"ip" :` | У строки [должны быть](https://www.json.org/img/string.png) две кавычки - открывающая и закрывающая. |
 | `71.78.22.43` | `"71.78.22.43"` | Это тоже строка, и строки должны быть в кавычках | 
-| `"ip" : 7175` | ? | 7175 из десятичной формы можно перевести в адрес "0.0.28.7", и это валидный способ храниения и работы с IP-дресами, к тому же в описании задачи нет каких-то ограничений на этот счёт. В реальности они скорей всего были бы, и это посчитали бы ошибкой. | 
+| `"ip" : 7175` | ? | 7175 из десятичной формы можно перевести в адрес "0.0.28.7"; в данном случае, это скорей всего ошибка и адрес недописали. | 
 
 Исправленный, валидный JSON:
 
@@ -117,12 +117,134 @@ while True:
 
 ## 3. Так как команды в нашей компании никак не могут прийти к единому мнению о том, какой формат разметки данных использовать: JSON или YAML, нам нужно реализовать парсер из одного формата в другой.
 
-   * Принимать на вход имя файла
-   * Проверять формат исходного файла. Если файл не json или yml - скрипт должен остановить свою работу
-   * Распознавать какой формат данных в файле. Считается, что файлы *.json и *.yml могут быть перепутаны
-   * Перекодировать данные из исходного формата во второй доступный (из JSON в YAML, из YAML в JSON)
-   * При обнаружении ошибки в исходном файле - указать в стандартном выводе строку с ошибкой синтаксиса и её номер
-   * Полученный файл должен иметь имя исходного файла, разница в наименовании обеспечивается разницей расширения файлов
+```python
+#!/usr/bin/env python3.9
+
+import yaml
+import json
+import sys
+
+
+def check_formats(string):
+    f = {}
+    try:
+        j = json.loads(string)
+        f['json'] = "valid"
+        y = yaml.safe_load(string)
+        f['yaml'] = "json"
+    except json.decoder.JSONDecodeError as e:
+        try:
+            y = yaml.safe_load(string)
+            f['yaml'] = "valid"
+            try:
+                json.dumps(y)
+                f['json'] = "yaml"
+            except json.decoder.JSONDecodeError as e3:
+                m3 = e3.args[0]
+                print(m3)
+                f['json'] = "err"
+            except TypeError as e3:
+                m3 = e3.args[0]
+                if m3.endswith('not list'):
+                    json.dumps(y)
+                    f['json'] = "yaml"
+        except (yaml.parser.ParserError, yaml.scanner.ScannerError) as e2:
+            f['yaml'] = "err"
+            f['json'] = "err"
+    return f
+
+
+def yaml_to_file(f_name, d, fmt):
+    # print(f'yaml_to_file, fmt = {fmt}')
+    if fmt == "yaml":
+        stream = yaml.dump(d, indent=2)
+    if fmt == "json":
+        j = json.loads(d)
+        stream = yaml.dump(j, indent=2)
+    # print(f"write to: {f_name}\ndata:\n{stream}")
+    with open(f_name, 'w') as file:
+        file.write(stream)
+    print(f'Файл {f_name} записан')
+
+
+def json_to_file(f_name, d, fmt):
+    # print(f'json_to_file, fmt = {fmt}')
+    if fmt == "json":
+        stream = json.dumps(json.loads(d), indent=4)
+    if fmt == "yaml":
+        y = yaml.safe_load(d)
+        stream = json.dumps(y, indent=2)
+    # print(f"write to: {f_name}\ndata:\n{stream}")
+    with open(f_name, 'w') as file:
+        file.write(stream)
+    print(f'Файл {f_name} записан')
+
+
+def except_pprint(l, c, p, d, ex):
+    d = d.split('\n')
+    print(f"""
+Не получилось разобрать {ex} файл, парсер остановился на строке {l+1}, символ {c+1}.
+
+{d[l]}
+{' ' * c}^
+
+Суть проблемы: {p}
+""")
+
+
+args = sys.argv
+source_file, ext, name, converted_file = '', '', '', ''
+try:
+    source_file = args[1]
+    ext = source_file.split('.')[-1]
+    name = source_file.split(f'.{ext}')[0]
+    print(f'Исходный файл {source_file}')
+    if ext == 'json':
+        converted_file = f'{name}.yaml'
+    elif ext == 'yaml' or ext == 'yml':
+        converted_file = f'{name}.json'
+    else:
+        print(f"""Расширение ".{ext}" не поддерживается.\nПожалуйста, укажите файл JSON или YAML""")
+except IndexError:
+    print('Укажите имя файла в формате JSON или YAML')
+    exit()
+
+with open(source_file, 'r', encoding='utf_8') as file:
+    data = file.read()
+formats = check_formats(data)
+
+if ext == 'json':
+    if formats['json'] == "valid":
+        yaml_to_file(converted_file, data, 'json')
+    elif formats['json'] == "yaml":
+        print(f'Файл {source_file} имеет формат yaml, переписываем')
+        json_to_file(source_file, data, 'yaml')
+        yaml_to_file(converted_file, data, 'yaml')
+    else:
+        try:
+            json.loads(data)
+        except json.decoder.JSONDecodeError as e:
+            except_pprint(e.lineno-1, e.colno-1, e.args[0], data, ext)
+elif ext == 'yaml':
+    if formats['yaml'] == "valid":
+        json_to_file(converted_file, data, 'yaml')
+    elif formats['yaml'] == "json":
+        print(f'Файл {source_file} имеет формат json, переписываем')
+        yaml_to_file(source_file, data, 'json')
+        json_to_file(converted_file, data, 'json')
+    else:
+        try:
+            yaml.safe_load(data)
+        except yaml.parser.ParserError as e:
+            except_pprint(e.problem_mark.line, e.problem_mark.column, e.problem, data, ext)
+        except yaml.scanner.ScannerError as e:
+            try:
+                except_pprint(e.context_mark.line, e.context_mark.column, e.problem, data, ext)
+            except AttributeError:
+                except_pprint(e.problem_mark.line, e.problem_mark.column, e.problem, data, ext)
+
+
+```
 
 ## Домашнее задание к занятию "4.2. Использование Python для решения типовых DevOps задач"
 
