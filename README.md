@@ -5,23 +5,85 @@
 
 ### Задача 1
 
-- Опишите своими словами основные преимущества применения на практике IaaC паттернов.
-- Какой из принципов IaaC является основополагающим?
+> Опишите своими словами основные преимущества применения на практике IaaC паттернов.
+
+- Копии конфигураций серверов всегда доступны в стороннем хранилище, если что-то случиться с сервером - бекап есть 
+- Доступна история изменений, можно откатиться если что-то пошло не так
+- Если нужно что-то уточнить о причинах или принятых решениях в конфигурации - известно к кому обращаться
+- Удобно масштабировать
+- Удобно вносить изменения - централизованно, через гит
+
+> Какой из принципов IaaC является основополагающим?
+
+Идемпотентность: возможность описать желаемое состояние того, что конфигурируется, с определённой гарантией что оно будет достигнуто.
 
 ### Задача 2
 
-- Чем Ansible выгодно отличается от других систем управление конфигурациями?
-- Какой, на ваш взгляд, метод работы систем конфигурации более надёжный push или pull?
+> Чем Ansible выгодно отличается от других систем управление конфигурациями?
+
+- Если не удалось доставить конфигурацию на сервер, он оповестит об этом.
+- Более простой синтаксис, чем, например, у Saltstack
+- Работает без агента на клиентах
+
+> Какой, на ваш взгляд, метод работы систем конфигурации более надёжный push или pull?
+
+Push надёжней, т.к. централизованно управляет конфигурацией и исключает ситуации, когда кто-то что-то исправил напрямую на сервере и не отразил в репозитории - это может потеряться или создавать непредсказуемые ситуации.
 
 ### Задача 3
 
-Установить на личный компьютер:
+> Установить на личный компьютер:
+> 
+> - VirtualBox
+> - Vagrant
+> - Ansible
+> 
+> *Приложить вывод команд установленных версий каждой из программ, оформленный в markdown.*
 
-- VirtualBox
-- Vagrant
-- Ansible
+Я постоянню использую WSL2, но его невозможно использовать вместе с VirtualBox, поэтому воспользовался Hyper-V из состава Windows 11 Pro.
 
-*Приложить вывод команд установленных версий каждой из программ, оформленный в markdown.*
+* Vagrant
+
+      PS C:\Users\sergey> vagrant --version
+      Vagrant 2.2.18
+
+* Varantfile
+
+      # -*- mode: ruby -*-
+      # vi: set ft=ruby :
+      
+      Vagrant.configure("2") do |config|
+          config.vm.box = "bento/ubuntu-20.04"
+          config.vm.provider "hyperv"
+          
+          config.vm.network "public_network", bridge: "Default Switch"
+          config.vm.synced_folder ".", "/vagrant", disabled: true
+      
+          config.vm.provider "hyperv" do |h|
+              h.vm_integration_services = { 
+                guest_service_interface: true
+              }
+          end
+      
+          config.vm.provision "shell", inline: <<-SHELL
+            apt-get update
+            apt-get install -y ansible
+          SHELL
+        end
+               
+* Ubuntu
+
+      vagrant@ubuntu-20:~$ dmesg | grep 'Hypervisor detected'
+      [    0.000000] Hypervisor detected: Microsoft Hyper-V
+
+* Ansible
+
+      vagrant@ubuntu-20:~$ ansible --version
+      ansible 2.9.6
+        config file = /etc/ansible/ansible.cfg
+        configured module search path = ['/home/vagrant/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+        ansible python module location = /usr/lib/python3/dist-packages/ansible
+        executable location = /usr/bin/ansible
+        python version = 3.8.2 (default, Apr 27 2020, 15:53:34) [GCC 9.3.0]
 
 ### Задача 4 (*)
 
@@ -32,7 +94,6 @@
 ```
 docker ps
 ```
-
 
 ## Домашнее задание к занятию "5.1. Введение в виртуализацию. Типы и функции гипервизоров. Обзор рынка вендоров и областей применения."
 
