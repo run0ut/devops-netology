@@ -1,0 +1,42 @@
+ISO = "bento/ubuntu-20.04"
+DOMAIN = ".netology"
+HOST_PREFIX = "server"
+INVENTORY_PATH = "ansible/inventory"
+servers = [
+  {
+    :hostname => HOST_PREFIX + "1" + DOMAIN,
+    :ram => 1024,
+    :core => 1,
+    :bridge => "Hyper-V Internet"
+  }
+]
+
+Vagrant.configure(2) do |config|
+    config.vm.synced_folder ".", "/vagrant", type: "rsync", disabled: false
+    servers.each do |machine|
+        config.vm.define machine[:hostname] do |node|
+            node.vm.box = ISO
+            node.vm.hostname = machine[:hostname]
+            node.vm.network "private_network", bridge: machine[:bridge], ip: machine[:ip]
+            node.vm.provider "hyperv" do |h|
+                h.enable_virtualization_extensions = true
+                h.linked_clone = true
+                h.vm_integration_services = { 
+                    guest_service_interface: true
+                }
+                h.cpus = machine[:core]
+                h.maxmemory = machine[:ram]
+                h.vmname = machine[:hostname]
+            end
+            node.vm.provision "shell", inline: <<-SHELL
+                apt-get update
+                apt-get install -y ansible
+                SHELL
+            node.vm.provision "ansible_local" do |setup|
+                setup.inventory_path = INVENTORY_PATH
+                setup.playbook = "ansible/provision.yml"
+                setup.become = true 
+            end
+        end
+    end
+end

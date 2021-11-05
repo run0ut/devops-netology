@@ -1,0 +1,6 @@
+[nodes:children]
+manager
+
+[manager]
+server1.netology ansible_connection=local
+
