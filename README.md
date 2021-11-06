@@ -59,7 +59,7 @@
 ## Задача 3
 
 <details>
-<summary>Задание</summary>
+<summary>.</summary>
 
 > - Запустите первый контейнер из образа ***centos*** c любым тэгом в фоновом режиме, подключив папку ```/data``` из текущей рабочей директории на хостовой машине в ```/data``` контейнера;
 > - Запустите второй контейнер из образа ***debian*** в фоновом режиме, подключив папку ```/data``` из текущей рабочей директории на хостовой машине в ```/data``` контейнера;
@@ -68,6 +68,39 @@
 > - Подключитесь во второй контейнер и отобразите листинг и содержание файлов в ```/data``` контейнера.
 
 </details>
+
+1. Запуск контейнеров
+
+    ```bash
+    vagrant@server1:~/netologydevops53/3$ docker run -it --rm -d --name centos -v $(pwd)/data:/data centos:latest
+    934ca2651653e4669c5ce83ee1f37c78277d2bd80ba465f9148fb164a160f4d0
+    vagrant@server1:~/netologydevops53/3$ docker run -it --rm -d --name debian -v $(pwd)/data:/data debian:stable
+    c7444ead8f5c2508e8774b05e2867973fc8aac44800352f77c9f6c506aa904e9
+    ```
+
+2. Файл из контейнера с CentOS
+
+    ```bash
+    vagrant@server1:~/netologydevops53/3$ docker exec -it centos bash
+    [root@934ca2651653 /]# echo "Hello Netology from CentOS!" > /data/centos.txt
+    [root@934ca2651653 /]# exit
+    ```
+
+3. Файл с хоста
+
+    ```bash
+    vagrant@server1:~/netologydevops53/3$ echo "Hellow Netology from Host!" > data/host.txt
+    ```
+   
+4. Файлы в директории `/data` в контейнере с Debian
+
+    ```bash
+    vagrant@server1:~/netologydevops53/3$ docker exec -it debian bash
+    root@c7444ead8f5c:/# ls -l /data/
+    total 8
+    -rw-r--r-- 1 root root 28 Nov  6 12:01 centos.txt
+    -rw-rw-r-- 1 1000 1000 27 Nov  6 12:02 host.txt
+    ```
 
 ## Задача 4 (*)
 
