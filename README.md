@@ -1,9 +1,9 @@
-# devops-netology
+devops-netology
+===============
 
+# Домашнее задание к занятию "5.3. Введение. Экосистема. Архитектура. Жизненный цикл Docker контейнера"
 
-## Домашнее задание к занятию "5.3. Введение. Экосистема. Архитектура. Жизненный цикл Docker контейнера"
-
-### Задача 1
+## Задача 1
 
 <details>
 <summary>.</summary>
@@ -31,7 +31,7 @@
 
 Ссылка на Docker образ https://hub.docker.com/r/runout/ntdevops53-task1-nginx
 
-### Задача 2
+## Задача 2
 
 <details>
 <summary>Задание</summary>
@@ -56,7 +56,7 @@
 
 </details>
 
-### Задача 3
+## Задача 3
 
 <details>
 <summary>.</summary>
@@ -102,7 +102,7 @@
     -rw-rw-r-- 1 1000 1000 27 Nov  6 12:02 host.txt
     ```
 
-### Задача 4 (*)
+## Задача 4 (*)
 
 <details>
 <summary>.</summary>
@@ -114,7 +114,7 @@
 Ссылка на Docker Hub https://hub.docker.com/r/runout/ntdevops53-task4-ansible
 
 
-## Прошлые ДЗ
+# Прошлые ДЗ
 
 <details>
 <summary></summary>
