@@ -26,7 +26,7 @@ devops-netology
 > - Скриншот страницы свойств созданной ВМ, как на примере ниже:
 > 
 > <p align="center">
->   <img width="1200" height="600" src="./assets/yc_01.png">
+>   <img width="1200" height="600" src="./media/yc_01.png">
 > </p>
 
 </details>
@@ -41,7 +41,7 @@ devops-netology
 > Для получения зачета, вам необходимо предоставить:
 > - Скриншот работающего веб-интерфейса Grafana с текущими метриками, как на примере ниже
 > <p align="center">
->   <img width="1200" height="600" src="./assets/yc_02.png">
+>   <img width="1200" height="600" src="media/yc_02.png">
 > </p>
 
 </details>
