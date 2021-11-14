@@ -15,6 +15,8 @@ devops-netology
 
 </details>
 
+![Скриншот Yandex облака с образом, созданных через Packer](media/virt-54-1-packer_yandex.png)
+
 ## Задача 2
 
 <details>
@@ -31,6 +33,8 @@ devops-netology
 
 </details>
 
+![Параметры виртуальной машины в Яндекс Облаке](media/virt-54-2-yandex_vm_settings.png)
+
 ## Задача 3
 
 <details>
@@ -45,6 +49,8 @@ devops-netology
 > </p>
 
 </details>
+
+![Скриншот с Grafana, запущенной в Докере на виртуальной машине в Яндекс Облаке](media/virt-54-3-grafana.png)
 
 ## Задача 4 (*)
 
