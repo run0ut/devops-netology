@@ -1,7 +1,7 @@
-resource "yandex_compute_instance" "node01" {
-  name                      = "node01"
+resource "yandex_compute_instance" "node02" {
+  name                      = "node02"
   zone                      = "ru-central1-a"
-  hostname                  = "node01.netology.cloud"
+  hostname                  = "node02.netology.cloud"
   allow_stopping_for_update = true
 
   resources {
@@ -12,9 +12,9 @@ resource "yandex_compute_instance" "node01" {
   boot_disk {
     initialize_params {
       image_id    = "${var.centos-7-base}"
-      name        = "root-node01"
+      name        = "root-node02"
       type        = "network-nvme"
-      size        = "50"
+      size        = "20"
     }
   }
 
