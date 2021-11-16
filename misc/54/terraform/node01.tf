@@ -11,7 +11,7 @@ resource "yandex_compute_instance" "node01" {
 
   boot_disk {
     initialize_params {
-      image_id    = "${var.centos-7-base}"
+      image_id    = "${var.CENTOS_7_BASE}"
       name        = "root-node01"
       type        = "network-nvme"
       size        = "50"
