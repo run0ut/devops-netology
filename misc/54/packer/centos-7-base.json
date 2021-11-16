@@ -1,4 +1,7 @@
 {
+  "sensitive-variables": [
+    "token"
+  ],
   "builders": [
     {
       "disk_type": "network-nvme",
@@ -8,8 +11,8 @@
       "image_name": "centos-7-base",
       "source_image_family": "centos-7",
       "ssh_username": "centos",
-      "subnet_id": "e9bphcpttbpvodrcsuk0",
-      "token": "",
+      "token": "{{user `token`}}",
+      "subnet_id": "{{user `subnet`}}",
       "type": "yandex",
       "use_ipv4_nat": true,
       "zone": "ru-central1-a"
