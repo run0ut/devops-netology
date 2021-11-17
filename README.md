@@ -64,6 +64,17 @@ devops-netology
 
 </details>
 
+Я добавил второй источник данных в Grafana, тоже Prometheus, просто со второй ноды.
+
+![Скриншот с Grafana, в которую поступают данные с обеих нод](media/virt-54-4-grafana-node2.png)
+
+Источники данных.
+![Screen](media/virt-54-4-grafana-node2-data-sources.png)
+Настройки смежного графика с load_average 1 
+![Screen](media/virt-54-4-grafana-node2-graph-settings.png)
+Информация о второй ноде на Яндексе
+![Screen](media/virt-54-4-grafana-node2-yandex.png)
+
 # Прошлые ДЗ
 
 <details>
