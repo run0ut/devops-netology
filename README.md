@@ -64,16 +64,48 @@ devops-netology
 
 </details>
 
-Я добавил второй источник данных в Grafana, тоже Prometheus, просто со второй ноды.
-
 ![Скриншот с Grafana, в которую поступают данные с обеих нод](media/virt-54-4-grafana-node2.png)
 
-Источники данных.
-![Screen](media/virt-54-4-grafana-node2-data-sources.png)
-Настройки смежного графика с load_average 1 
-![Screen](media/virt-54-4-grafana-node2-graph-settings.png)
-Информация о второй ноде на Яндексе
-![Screen](media/virt-54-4-grafana-node2-yandex.png)
+Чтобы добавить в мониторинг вторую ноду, потребовалось:
+
+- Поправить `prometheus.yml` на `node01`, добавить `basic_auth` и второй `target`
+  ```yaml
+  scrape_configs:
+    - job_name: 'nodeexporter'
+      scrape_interval: 5s
+      basic_auth:
+        username: admin
+        password: admin
+      static_configs:
+        - targets: ['nodeexporter:9100']
+        - targets: ['node02:9100']
+  ```
+- Поправить `Caddyfile` на `node02`, добавить прокси порта `node_exporter`
+  ```
+  ...
+  :9100 {
+      basicauth / {$ADMIN_USER} {$ADMIN_PASSWORD}
+      proxy / nodeexporter:9100 {
+              transparent
+          }
+  
+      errors stderr
+      tls off
+  }
+  ...
+  ```
+- Поправить `docker-compose.yaml` на `node02`, добавить проброс порта `9100`
+  ```yaml
+  ...
+    caddy:
+      image: stefanprodan/caddy
+      container_name: caddy
+      ports:
+        ...
+        - "0.0.0.0:9100:9100"
+  ...
+  ```
+- Изменить графики в `Grafana`: выбрать другие типы визуализации, добавить `{{instance}}` в Legend, где-то поправить фильтры, например `sum by(instance)(...)` вместо `sum(...)`
 
 # Прошлые ДЗ
 
