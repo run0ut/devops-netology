@@ -56,8 +56,26 @@
           mode: 0644
         become: true
 
+  - hosts: n1
+    become: yes
+    become_user: root
+    remote_user: centos
+
+    tasks:
       - name: Pull all images in compose
-        command: docker-compose -f /opt/stack/docker-compose.yaml pull
+        command: docker-compose -f /opt/stack/docker-compose01.yaml pull
 
       - name: Up all services in compose
-        command: docker-compose -f /opt/stack/docker-compose.yaml up -d
+        command: docker-compose -f /opt/stack/docker-compose01.yaml up -d
+
+  - hosts: n2
+    become: yes
+    become_user: root
+    remote_user: centos
+
+    tasks:
+      - name: Pull all images in compose
+        command: docker-compose -f /opt/stack/docker-compose02.yaml pull
+
+      - name: Up all services in compose
+        command: docker-compose -f /opt/stack/docker-compose02.yaml up -d

@@ -1,0 +1,19 @@
+all:
+  hosts:
+    node01.netology.cloud: 
+      ansible_host: 51.250.10.240
+    node02.netology.cloud: 
+      ansible_host: 51.250.12.106
+  children:
+    n1:
+      hosts:
+        node01.netology.cloud:
+    n2:
+      hosts:
+        node02.netology.cloud:
+    nodes:
+      children:
+        manager:
+          hosts:
+            node01.netology.cloud:
+            node02.netology.cloud:
