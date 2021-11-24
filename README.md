@@ -50,7 +50,7 @@ L2 VPN сеть для связи демонов Docker между собой. �
 
 </details>
 
-```
+```bash
 [root@node01 ~]# docker node ls
 ID                            HOSTNAME             STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
 q7ybewzhnlt4g8i4q2hgsme16 *   node01.netology.yc   Ready     Active         Leader           20.10.11
@@ -75,7 +75,7 @@ vovxqnougcs1d37cui2vv1bs6     node06.netology.yc   Ready     Active             
 
 </details>
 
-```
+```bash
 [root@node01 ~]# docker service ls
 ID             NAME                                MODE         REPLICAS   IMAGE                                          PORTS
 m5by05q5moyf   swarm_monitoring_alertmanager       replicated   1/1        stefanprodan/swarmprom-alertmanager:v0.14.0    
@@ -101,8 +101,20 @@ lp5ti1ot5ea2   swarm_monitoring_unsee              replicated   1/1        cloud
 
 </details>
 
+```bash
+[root@node03 ~]# docker node ls
+Error response from daemon: Swarm is encrypted and needs to be unlocked before it can be used. Please use "docker swarm unlock" to unlock it.
+[root@node03 ~]# docker swarm unlock
+Please enter unlock key: 
+[root@node03 ~]# docker node ls
+ID                            HOSTNAME             STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+q7ybewzhnlt4g8i4q2hgsme16     node01.netology.yc   Ready     Active         Leader           20.10.11
+...
+```
 
+`--autolock=true` (или `init --autolock` при создании кластера) заставит вводить ключ разблокировки на `manager` ноде, чтобы она могла заново присоединиться к кластеру, если была перезапущена. Ввод ключа позволит расшифровать лог Raft и загрузить все "секреты" в память ноды (логины, пароли, TLS ключи, SSH ключи и [прочие данные](https://docs.docker.com/engine/swarm/secrets/#about-secrets))
 
+Верояно, это нужно чтобы защитить кластер от несанкционированного доступа к файлам ноды. Например, если кто-то получил жесткий диск сервера или образ диска виртуальной машины с нодой, чтобы он не мог получить доступ к кластеру и нодам без пароля (=токена, ключа).
 
 # Прошлые ДЗ
 
