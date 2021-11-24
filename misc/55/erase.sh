@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
 
+exec_cmd(){
+    c="$@"
+    echo $c 
+    eval $c 
+}
+
 # Удалить всё после создания Тераформом
 terraform(){
+    commands=()
     yc compute instances list --format json | jq -r .[].name | while read node; do 
-        yc compute instances delete --name $node
+        exec_cmd "yc compute instances delete --name $node"
     done
-    yc vpc subnet delete --name subnet
-    yc vpc net delete --name net
+    exec_cmd "yc vpc subnet delete --name subnet"
+    exec_cmd "yc vpc net delete --name net"
 }
 
 # Удалить имейдж, созданный Пакером
 packer(){
-    yc compute images delete --name centos-7-base
+    exec_cmd "yc compute images delete --name centos-7-base"
 }
 
 if [[ "$1" == "" ]]; then 
