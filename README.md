@@ -48,6 +48,8 @@ L2 VPN сеть для связи демонов Docker между собой. �
 > docker node ls
 > ```
 
+</details>
+
 ```
 [root@node01 ~]# docker node ls
 ID                            HOSTNAME             STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
@@ -58,8 +60,6 @@ yvksdjnnhdz7m918gjodmime5     node04.netology.yc   Ready     Active             
 1actkrhyg3s1gaboy6ibf1wv6     node05.netology.yc   Ready     Active                          20.10.11
 vovxqnougcs1d37cui2vv1bs6     node06.netology.yc   Ready     Active                          20.10.11
 ```
-
-</details>
 
 ## Задача 3
 
@@ -73,6 +73,8 @@ vovxqnougcs1d37cui2vv1bs6     node06.netology.yc   Ready     Active             
 > docker service ls
 > ```
 
+</details>
+
 ```
 [root@node01 ~]# docker service ls
 ID             NAME                                MODE         REPLICAS   IMAGE                                          PORTS
@@ -85,8 +87,6 @@ zlnmt3l8f7oe   swarm_monitoring_node-exporter      global       6/6        stefa
 fanirldjts6j   swarm_monitoring_prometheus         replicated   1/1        stefanprodan/swarmprom-prometheus:v2.5.0       
 lp5ti1ot5ea2   swarm_monitoring_unsee              replicated   1/1        cloudflare/unsee:v0.8.0 
 ```
-
-</details>
 
 ## Задача 4 (*)
 
