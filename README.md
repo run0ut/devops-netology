@@ -267,6 +267,28 @@ select count(*) from clients;
 
 </details>
 
+### Приведите SQL-запросы для выполнения данных операций.
+
+```
+update clients set заказ = (select id from orders where наименование = 'Книга') where фамилия = 'Иванов Иван Иванович';
+update clients set заказ = (select id from orders where наименование = 'Монитор') where фамилия = 'Петров Петр Петрович';
+update clients set заказ = (select id from orders where наименование = 'Гитара') where фамилия = 'Иоганн Себастьян Бах';
+```
+
+### Приведите SQL-запрос для выдачи всех пользователей, которые совершили заказ, а также вывод данного запроса.
+
+```sql
+select c.* from clients c join orders o on c.заказ = o.id;
+```
+```
+ id |       фамилия        | страна проживания | заказ
+----+----------------------+-------------------+-------
+  1 | Иванов Иван Иванович | USA               |     3
+  2 | Петров Петр Петрович | Canada            |     4
+  3 | Иоганн Себастьян Бах | Japan             |     5
+(3 rows)
+```
+
 ## Задача 5
 
 <details><summary>.</summary>
