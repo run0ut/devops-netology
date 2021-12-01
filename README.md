@@ -70,6 +70,99 @@ export PGPASSWORD=netology && psql -h localhost -U test-admin-user test_db
 
 </details>
 
+### Итоговый список БД после выполнения пунктов выше
+
+```
+test_db=# \l
+                                             List of databases
+   Name    |      Owner      | Encoding |  Collate   |   Ctype    |            Access privileges
+-----------+-----------------+----------+------------+------------+-----------------------------------------
+ postgres  | test-admin-user | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0 | test-admin-user | UTF8     | en_US.utf8 | en_US.utf8 | =c/"test-admin-user"                   +
+           |                 |          |            |            | "test-admin-user"=CTc/"test-admin-user"
+ template1 | test-admin-user | UTF8     | en_US.utf8 | en_US.utf8 | =c/"test-admin-user"                   +
+           |                 |          |            |            | "test-admin-user"=CTc/"test-admin-user"
+ test_db   | test-admin-user | UTF8     | en_US.utf8 | en_US.utf8 | =Tc/"test-admin-user"                  +
+           |                 |          |            |            | "test-admin-user"=CTc/"test-admin-user"
+(4 rows)
+```
+
+### Описание таблиц (describe)
+
+`clients`
+```
+test_db=# \d clients
+                                         Table "public.clients"
+      Column       |          Type          | Collation | Nullable |               Default
+-------------------+------------------------+-----------+----------+-------------------------------------
+ id                | integer                |           | not null | nextval('clients_id_seq'::regclass)
+ фамилия           | character varying(150) |           |          |
+ страна проживания | character varying(150) |           |          |
+ заказ             | integer                |           |          |
+Indexes:
+    "clients_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "clients_заказ_fkey" FOREIGN KEY ("заказ") REFERENCES orders(id)
+```
+`orders`
+```
+test_db=# \d orders
+                                       Table "public.orders"
+    Column    |          Type          | Collation | Nullable |              Default
+--------------+------------------------+-----------+----------+------------------------------------
+ id           | integer                |           | not null | nextval('orders_id_seq'::regclass)
+ наименование | character varying(150) |           |          |
+ цена         | integer                |           |          |
+Indexes:
+    "orders_pkey" PRIMARY KEY, btree (id)
+Referenced by:
+    TABLE "clients" CONSTRAINT "clients_заказ_fkey" FOREIGN KEY ("заказ") REFERENCES orders(id)
+```
+
+### SQL-запрос для выдачи списка пользователей с правами над таблицами test_db
+
+```sql
+SELECT 
+    grantee, table_name, privilege_type 
+FROM 
+    information_schema.table_privileges 
+WHERE 
+    grantee in ('test-admin-user','test-simple-user')
+    and table_name in ('clients','orders')
+order by 
+    1,2,3;
+```
+
+### Список пользователей с правами над таблицами test_db
+
+```
+     grantee      | table_name | privilege_type
+------------------+------------+----------------
+ test-admin-user  | clients    | DELETE
+ test-admin-user  | clients    | INSERT
+ test-admin-user  | clients    | REFERENCES
+ test-admin-user  | clients    | SELECT
+ test-admin-user  | clients    | TRIGGER
+ test-admin-user  | clients    | TRUNCATE
+ test-admin-user  | clients    | UPDATE
+ test-admin-user  | orders     | DELETE
+ test-admin-user  | orders     | INSERT
+ test-admin-user  | orders     | REFERENCES
+ test-admin-user  | orders     | SELECT
+ test-admin-user  | orders     | TRIGGER
+ test-admin-user  | orders     | TRUNCATE
+ test-admin-user  | orders     | UPDATE
+ test-simple-user | clients    | DELETE
+ test-simple-user | clients    | INSERT
+ test-simple-user | clients    | SELECT
+ test-simple-user | clients    | UPDATE
+ test-simple-user | orders     | DELETE
+ test-simple-user | orders     | INSERT
+ test-simple-user | orders     | SELECT
+ test-simple-user | orders     | UPDATE
+(22 rows)
+```
+
 ## Задача 3
 
 <details><summary>.</summary>
@@ -103,6 +196,54 @@ export PGPASSWORD=netology && psql -h localhost -U test-admin-user test_db
 >     - результаты их выполнения.
 
 </details>
+
+### Используя SQL синтаксис - наполните таблицы следующими тестовыми данными
+
+`orders`
+```
+test_db=# select * from orders;
+ id | наименование | цена
+----+--------------+------
+  1 | Шоколад      |   10
+  2 | Принтер      | 3000
+  3 | Книга        |  500
+  4 | Монитор      | 7000
+  5 | Гитара       | 4000
+(5 rows)
+```
+`clients`
+```
+test_db=# select * from clients;
+ id |       фамилия        | страна проживания | заказ
+----+----------------------+-------------------+-------
+  1 | Иванов Иван Иванович | USA               |
+  2 | Петров Петр Петрович | Canada            |
+  3 | Иоганн Себастьян Бах | Japan             |
+  4 | Ронни Джеймс Дио     | Russia            |
+  5 | Ritchie Blackmore    | Russia            |
+(5 rows)
+```
+
+### Вычислите количество записей для каждой таблицы, приведите в ответе: запросы, результаты их выполнения.
+
+```sql
+select count(*) from orders;
+```
+```
+ count
+-------
+     5
+(1 row)
+```
+```sql
+select count(*) from clients;
+```
+```
+ count
+-------
+     5
+(1 row)
+```
 
 ## Задача 4
 
