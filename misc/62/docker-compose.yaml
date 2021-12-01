@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.6'
 
 services:
 
@@ -11,5 +11,7 @@ services:
       - ./data:/var/lib/postgresql/data
       - ./backup:/media/postgresql/backup
     environment:
-      - POSTGRES_PASSWORD=netology
+      POSTGRES_USER: "test-admin-user"
+      POSTGRES_PASSWORD: "netology"
+      POSTGRES_DB: "test_db"
     restart: always 

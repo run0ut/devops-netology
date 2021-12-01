@@ -16,7 +16,7 @@ devops-netology
 
 `docker-compose.yaml`
 ```yaml
-version: '3.9'
+version: '3.6'
 
 services:
 
@@ -29,12 +29,15 @@ services:
       - ./data:/var/lib/postgresql/data
       - ./backup:/media/postgresql/backup
     environment:
-      - POSTGRES_PASSWORD=netology
+      POSTGRES_USER: "test-admin-user"
+      POSTGRES_PASSWORD: "netology"
+      POSTGRES_DB: "test_db"
     restart: always 
 ```
 Старт
 ```bash
 mkdir -p {data,backup} && docker-compose up -d
+export PGPASSWORD=netology && psql -h localhost -U test-admin-user test_db
 ```
 
 ## Задача 2
