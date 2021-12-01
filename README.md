@@ -269,7 +269,7 @@ select count(*) from clients;
 
 ### Приведите SQL-запросы для выполнения данных операций.
 
-```
+```sql
 update clients set заказ = (select id from orders where наименование = 'Книга') where фамилия = 'Иванов Иван Иванович';
 update clients set заказ = (select id from orders where наименование = 'Монитор') where фамилия = 'Петров Петр Петрович';
 update clients set заказ = (select id from orders where наименование = 'Гитара') where фамилия = 'Иоганн Себастьян Бах';
