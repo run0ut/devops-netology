@@ -18,25 +18,29 @@ devops-netology
 ```yaml
 version: '3.6'
 
+volumes:
+  data: {}
+  backup: {}
+
 services:
 
   postgres:
     image: postgres:12
     container_name: psql
-    ports: 
+    ports:
       - "0.0.0.0:5432:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
-      - ./backup:/media/postgresql/backup
+      - data:/var/lib/postgresql/data
+      - backup:/media/postgresql/backup
     environment:
       POSTGRES_USER: "test-admin-user"
       POSTGRES_PASSWORD: "netology"
       POSTGRES_DB: "test_db"
-    restart: always 
+    restart: always
 ```
 Старт
 ```bash
-mkdir -p {data,backup} && docker-compose up -d
+docker-compose up -d
 export PGPASSWORD=netology && psql -h localhost -U test-admin-user test_db
 ```
 
@@ -344,6 +348,42 @@ Postgres делает предположения на основе статис�
 > Приведите список операций, который вы применяли для бэкапа данных и восстановления. 
 
 </details>
+
+### Приведите список операций, который вы применяли для бэкапа данных и восстановления. 
+
+1. Создайте бэкап БД test_db и поместите его в volume, предназначенный для бэкапов (см. Задачу 1).
+
+   ```bash
+   export PGPASSWORD=netology && pg_dumpall -h localhost -U test-admin-user > /media/postgresql/backup/all_$(date --iso-8601=m | sed 's/://g; s/+/z/g').sql
+   ```
+
+2. Остановите контейнер с PostgreSQL (но не удаляйте volumes).
+
+   ```bash 
+   sergey@Netangels-CSVM:~/docker/psql$ docker-compose stop
+   Stopping psql ... done
+   sergey@Netangels-CSVM:~/docker/psql$ docker ps -a
+   CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS                     PORTS     NAMES
+   d21cdc9adf24   postgres:12   "docker-entrypoint.s…"   4 minutes ago   Exited (0) 2 seconds ago             psql
+   ```
+
+3. Поднимите новый пустой контейнер с PostgreSQL.
+
+   ```bash
+   docker run --rm -d -e POSTGRES_USER=test-admin-user -e POSTGRES_PASSWORD=netology -e POSTGRES_DB=test_db -v psql_backup:/media/postgresql/backup --name psql2 postgres:12
+   ```
+   ```bash
+   CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS                     PORTS      NAMES
+   cf2c8f875948   postgres:12   "docker-entrypoint.s…"   4 minutes ago    Up 4 minutes               5432/tcp   psql2
+   213107257ce9   postgres:12   "docker-entrypoint.s…"   14 minutes ago   Exited (0) 5 minutes ago              psql
+   ```
+
+4. Восстановите БД test_db в новом контейнере.
+
+   ```bash
+   docker exec -it psql2  bash
+   export PGPASSWORD=netology && psql -h localhost -U test-admin-user -f $(ls -1trh /media/postgresql/backup/all_*.sql) test_db
+   ```
 
 # Прошлые ДЗ
 
