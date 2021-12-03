@@ -364,7 +364,7 @@ Postgres делает предположения на основе статис�
    Stopping psql ... done
    $ docker ps -a
    CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS                     PORTS     NAMES
-   d21cdc9adf24   postgres:12   "docker-entrypoint.s…"   4 minutes ago   Exited (0) 2 seconds ago             psql
+   213107257ce9   postgres:12   "docker-entrypoint.s…"   4 minutes ago   Exited (0) 2 seconds ago             psql
    ```
 
 3. Поднимите новый пустой контейнер с PostgreSQL.
