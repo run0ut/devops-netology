@@ -360,9 +360,9 @@ Postgres делает предположения на основе статис�
 2. Остановите контейнер с PostgreSQL (но не удаляйте volumes).
 
    ```bash 
-   sergey@Netangels-CSVM:~/docker/psql$ docker-compose stop
+   $ docker-compose stop
    Stopping psql ... done
-   sergey@Netangels-CSVM:~/docker/psql$ docker ps -a
+   $ docker ps -a
    CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS                     PORTS     NAMES
    d21cdc9adf24   postgres:12   "docker-entrypoint.s…"   4 minutes ago   Exited (0) 2 seconds ago             psql
    ```
