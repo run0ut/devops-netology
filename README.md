@@ -6,3 +6,7 @@ devops-netology
 6.2. [SQL](./06-db-02-sql.md)
 
 6.3. [MySQL](./06-db-03-mysql.md)
+
+6.4. [PostgreSQL](./06-db-04-postgresql.md)
+
+6.5. [Elasticsearch](./06-db-05-elasticsearch.md)
