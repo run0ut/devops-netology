@@ -123,6 +123,47 @@ mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user = 'test';
 
 </details>
 
+### Исследуйте, какой `engine` используется в таблице БД `test_db`
+
+Используется `InnoDB`
+
+```sql
+mysql> SELECT table_schema,table_name,engine FROM information_schema.tables WHERE table_schema = DATABASE();
++--------------+------------+--------+
+| TABLE_SCHEMA | TABLE_NAME | ENGINE |
++--------------+------------+--------+
+| test_db      | orders     | InnoDB |
++--------------+------------+--------+
+1 row in set (0.00 sec)
+```
+
+### Измените `engine` и **приведите время выполнения и запрос на изменения из профайлера в ответе**
+
+Изменил сначала на `MyISAM`, потом вернул `InnoDB`:
+```sql
+set profiling = 1;
+alter table orders engine = 'MyISAM';
+alter table orders engine = 'InnoDB';
+show profiles;
+```
+Вывод профайлера:
+```
+mysql> show profiles;
++----------+------------+--------------------------------------+
+| Query_ID | Duration   | Query                                |
++----------+------------+--------------------------------------+
+|        1 | 0.02436675 | alter table orders engine = 'MyISAM' |
+|        2 | 0.02349825 | alter table orders engine = 'InnoDB' |
+|        3 | 0.01897750 | alter table orders engine = 'MyISAM' |
+|        4 | 0.02332425 | alter table orders engine = 'InnoDB' |
+|        5 | 0.01927200 | alter table orders engine = 'MyISAM' |
+|        6 | 0.02297425 | alter table orders engine = 'InnoDB' |
+|        7 | 0.01822650 | alter table orders engine = 'MyISAM' |
+|        8 | 0.02154475 | alter table orders engine = 'InnoDB' |
++----------+------------+--------------------------------------+
+```
+Первый раз результат примерно одинаковый, потом конвертация в `MyISAM` стала проходить быстрей.
+
 ## Задача 4 
 
 <details><summary>.</summary>
