@@ -26,6 +26,39 @@ devops-netology
 
 </details>
 
+### Используя docker поднимите инстанс MySQL (версию 8). Данные БД сохраните в volume.
+
+```bash
+docker run --rm --name my \
+    -e MYSQL_DATABASE=test_db \
+    -e MYSQL_ROOT_PASSWORD=netology \
+    -v $PWD/backup:/media/mysql/backup \
+    -v my_data:/var/lib/mysql \
+    -p 13306:3306 \
+    -d mysql:8
+```
+
+### Найдите команду для выдачи статуса БД и **приведите в ответе** из ее вывода версию сервера БД
+
+```sql
+mysql> \s
+...
+Server version:         8.0.27 MySQL Community Server - GPL
+...
+```
+
+### **Приведите в ответе** количество записей с `price` > 300.
+
+```sql
+mysql> select count(*) from orders where price > 300;
++----------+
+| count(*) |
++----------+
+|        1 |
++----------+
+1 row in set (0.00 sec)
+```
+
 ## Задача 2
 
 <details><summary>.</summary>
@@ -45,6 +78,35 @@ devops-netology
 > **приведите в ответе к задаче**.
 
 </details>
+
+### Создайте пользователя test в БД c паролем test-pass
+
+```sql 
+CREATE USER 'test'@'localhost' 
+    IDENTIFIED WITH mysql_native_password BY 'test-pass'
+    WITH MAX_CONNECTIONS_PER_HOUR 100
+    PASSWORD EXPIRE INTERVAL 180 DAY
+    FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2
+    ATTRIBUTE '{"first_name":"James", "last_name":"Pretty"}';
+```
+
+### Предоставьте привелегии пользователю `test` на операции SELECT базы `test_db`
+
+```sql
+grant select on test_db.* to test;
+```
+
+### Используя таблицу INFORMATION_SCHEMA.USER_ATTRIBUTES получите данные по пользователю `test`
+
+```sql
+mysql> select * from INFORMATION_SCHEMA.USER_ATTRIBUTES where user = 'test';
++------+-----------+------------------------------------------------+
+| USER | HOST      | ATTRIBUTE                                      |
++------+-----------+------------------------------------------------+
+| test | localhost | {"last_name": "Pretty", "first_name": "James"} |
++------+-----------+------------------------------------------------+
+1 row in set (0.00 sec)
+```
 
 ## Задача 3
 
