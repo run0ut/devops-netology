@@ -1,0 +1,17 @@
+version: "3.6"
+
+volumes:
+  data: {}
+
+services:
+  my:
+    image: mysql:8
+    container_name: my
+    environment:
+      MYSQL_DATABASE: "test_db"
+      MYSQL_ROOT_PASSWORD: "netology"
+    volumes:
+      - data:/var/lib/mysql
+      - ./config/my.cnf:/etc/mysql/my.cnf
+    ports:
+      - "0.0.0.0:13306:3306"
