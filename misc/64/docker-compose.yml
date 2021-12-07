@@ -1,0 +1,16 @@
+version: "3.6"
+
+volumes:
+  data: {}
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: psql
+    environment:
+     POSTGRES_PASSWORD: netology
+    volumes:
+      - data:/var/lib/postgresql/data
+      - ./backup:/media/backup
+    ports:
+    - "0.0.0.0:5432:5432"

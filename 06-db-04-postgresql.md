@@ -19,6 +19,39 @@
 
 </details>
 
+**Найдите и приведите** управляющие команды для:
+
+### вывода списка БД
+
+```sql
+  \l[+]   [PATTERN]      list databases
+```
+
+### подключения к БД
+
+```sql
+  \c[onnect] {[DBNAME|- USER|- HOST|- PORT|-] | conninfo}
+                         connect to new database (currently "postgres")
+```
+
+### вывода списка таблиц
+
+```sql
+  \dt[S+] [PATTERN]      list tables
+```
+
+### вывода описания содержимого таблиц
+
+```
+  \d[S+]  NAME           describe table, view, sequence, or index
+```
+
+### выхода из psql
+
+```
+  \q                     quit psql
+```
+
 ## Задача 2
 
 <details><summary>.</summary>
@@ -38,6 +71,15 @@
 > **Приведите в ответе** команду, которую вы использовали для вычисления и полученный результат.
 
 </details>
+
+### Используя таблицу pg_stats, найдите столбец таблицы orders с наибольшим средним значением размера элементов в байтах. **Приведите в ответе** команду, которую вы использовали для вычисления и полученный результат.
+
+```sql
+test_database=# SELECT attname, avg_width FROM pg_stats WHERE tablename = 'orders' order by avg_width desc limit 1;
+-[ RECORD 1 ]----
+attname   | title
+avg_width | 16
+```
 
 ## Задача 3
 
@@ -60,3 +102,18 @@
 > Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
 
 </details>
+
+### Используя утилиту `pg_dump` создайте бекап БД `test_database`.
+
+```bash
+export PGPASSWORD=netology && pg_dumpall -h localhost -U postgres > /media/backup/test_database_all_$(date --iso-8601=m | sed 's/://g; s/+/z/g').sql
+```
+
+### Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
+
+Я бы добавил свойство `UNIQUE`
+```sql
+--
+    title character varying(80) NOT NULL UNIQUE,
+--
+```
