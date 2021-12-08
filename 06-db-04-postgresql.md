@@ -201,7 +201,7 @@ do instead insert into public.orders_2 values(NEW.*);
 ### Используя утилиту `pg_dump` создайте бекап БД `test_database`.
 
 ```bash
-export PGPASSWORD=netology && pg_dumpa -h localhost -U postgres test_database > /media/backup/test_database_all_$(date --iso-8601=m | sed 's/://g; s/+/z/g').sql
+export PGPASSWORD=netology && pg_dump -h localhost -U postgres test_database > /media/backup/test_database_$(date --iso-8601=m | sed 's/://g; s/+/z/g').sql
 ```
 
 ### Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
