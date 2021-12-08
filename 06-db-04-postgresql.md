@@ -106,7 +106,7 @@ avg_width | 16
 ### Используя утилиту `pg_dump` создайте бекап БД `test_database`.
 
 ```bash
-export PGPASSWORD=netology && pg_dumpall -h localhost -U postgres > /media/backup/test_database_all_$(date --iso-8601=m | sed 's/://g; s/+/z/g').sql
+export PGPASSWORD=netology && pg_dumpa -h localhost -U postgres test_database > /media/backup/test_database_all_$(date --iso-8601=m | sed 's/://g; s/+/z/g').sql
 ```
 
 ### Как бы вы доработали бэкап-файл, чтобы добавить уникальность значения столбца `title` для таблиц `test_database`?
