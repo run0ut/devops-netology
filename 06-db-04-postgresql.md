@@ -93,6 +93,101 @@ avg_width | 16
 
 </details>
 
+### Вам предложили провести разбиение таблицы на 2 (шардировать на orders_1 - price>499 и orders_2 - price<=499). Предложите SQL-транзакцию для проведения данной операции.
+
+```sql
+--
+-- (шардировать на orders_1 - price>499 и orders_2 - price<=499).
+--
+
+begin;
+
+  -- переименование "старой"  orders
+  alter table public.orders rename to orders_old;
+
+  -- создание новой orders с партиционированием
+  create table public.orders (
+      like public.orders_old
+      including defaults
+      including constraints
+      including indexes
+  );
+
+  create table public.orders_1 (
+      check (price>499)
+  ) inherits (public.orders);
+
+  create table public.orders_2 (
+      check (price<=499)
+  ) inherits (public.orders);
+
+  ALTER TABLE public.orders_1 OWNER TO postgres;
+  ALTER TABLE public.orders_2 OWNER TO postgres;
+
+  create rule orders_insert_over_499 as on insert to public.orders
+  where (price>499)
+  do instead insert into public.orders_1 values(NEW.*);
+
+  create rule orders_insert_499_or_less as on insert to public.orders
+  where (price<=499)
+  do instead insert into public.orders_2 values(NEW.*);
+
+  -- копирование данных из старой в новую
+  insert into public.orders (id,title,price) select id,title,price from public.orders_old;
+
+  -- перепривязывание SEQUENCE
+  alter table public.orders_old alter id drop default;
+  ALTER SEQUENCE public.orders_id_seq OWNED BY public.orders.id;
+
+  -- удаление старой orders
+  drop table public.orders_old;
+
+end;
+```
+
+### Можно ли было изначально исключить "ручное" разбиение при проектировании таблицы orders?
+
+Да, это можно сделать при создании таблицы:
+
+```sql
+--
+-- Name: orders; Type: TABLE; Schema: public; Owner: postgres
+--
+
+drop table public.orders cascade;
+
+CREATE TABLE public.orders (
+    id integer NOT NULL,
+    title character varying(80) NOT NULL,
+    price integer DEFAULT 0
+);
+ALTER TABLE public.orders OWNER TO postgres;
+
+-- (шардировать на orders_1 - price>499 и orders_2 - price<=499).
+
+create table public.orders_1 (
+    check (price>499)
+) inherits (public.orders);
+
+create table public.orders_2 (
+    check (price<=499)
+) inherits (public.orders);
+
+ALTER TABLE public.orders_1 OWNER TO postgres;
+ALTER TABLE public.orders_2 OWNER TO postgres;
+
+create rule orders_insert_over_499 as on insert to public.orders
+where (price>499)
+do instead insert into public.orders_1 values(NEW.*);
+
+create rule orders_insert_499_or_less as on insert to public.orders
+where (price<=499)
+do instead insert into public.orders_2 values(NEW.*);
+```
+Есть нюанс: данные из демо бекапап не попадут в партиции, т.к. загружаются с помощью `COPY`, в таком случае `RULES` не вызываются, это описано в [документации Postgres](https://www.postgresql.org/docs/13/sql-copy.html):
+
+> COPY FROM will invoke any triggers and check constraints on the destination table. However, it will not invoke rules.
+
 ## Задача 4
 
 <details><summary>.</summary>
