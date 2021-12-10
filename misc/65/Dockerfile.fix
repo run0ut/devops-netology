@@ -1,0 +1,10 @@
+FROM elastic-netology
+
+USER 0 
+RUN chown elasticsearch:elasticsearch -R /elasticsearch
+
+USER 1000
+ENV ES_JAVA_OPTS="-Xms512m -Xmx1g" \
+    ES_HOME="/elasticsearch"
+WORKDIR ${ES_HOME}
+CMD ["sh", "-c", "${ES_HOME}/bin/elasticsearch"]
