@@ -40,6 +40,9 @@ node:
 #
 #path.logs: /path/to/logs
 #
+path:
+  data: /var/lib/elasticsearch/data
+  logs: /var/lib/elasticsearch/logs
 # ----------------------------------- Memory -----------------------------------
 #
 # Lock the memory on startup:
@@ -74,12 +77,17 @@ network:
 # Pass an initial list of hosts to perform discovery when this node is started:
 # The default list of hosts is 
 #
-discovery.seed_hosts: ["127.0.0.1"]
+discovery:
+  seed_hosts:
+    - "127.0.0.1"
 # discovery.seed_hosts: ["127.0.0.1", "[::1]"]
 #
 # Bootstrap the cluster using an initial set of master-eligible nodes:
 #
 #cluster.initial_master_nodes: ["node-1", "node-2"]
+cluster:
+  initial_master_nodes: 
+    - "netology_test"
 #
 # For more information, consult the discovery and cluster formation module documentation.
 #

@@ -35,6 +35,71 @@
 
 </details>
 
+### Текст Dockerfile манифеста
+
+```Dockerfile
+FROM centos:7
+
+EXPOSE 9200 9300
+
+USER 0
+
+RUN export ES_HOME="/var/lib/elasticsearch" && \
+    yum -y install wget && \
+    wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.0-linux-x86_64.tar.gz && \
+    wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.0-linux-x86_64.tar.gz.sha512 && \
+    sha512sum -c elasticsearch-7.16.0-linux-x86_64.tar.gz.sha512 && \
+    tar -xzf elasticsearch-7.16.0-linux-x86_64.tar.gz && \
+    rm -f elasticsearch-7.16.0-linux-x86_64.tar.gz* && \
+    mv elasticsearch-7.16.0 ${ES_HOME} && \
+    useradd -m -u 1000 elasticsearch && \
+    chown elasticsearch:elasticsearch -R ${ES_HOME} && \
+    yum -y remove wget && \
+    yum clean all
+COPY --chown=elasticsearch:elasticsearch config/* /var/lib/elasticsearch/config/
+
+USER 1000
+
+ENV ES_HOME="/var/lib/elasticsearch" \
+    ES_PATH_CONF="/var/lib/elasticsearch/config"
+WORKDIR ${ES_HOME}
+
+CMD ["sh", "-c", "${ES_HOME}/bin/elasticsearch"]
+```
+
+### Ссылку на образ в репозитории dockerhub
+
+https://hub.docker.com/r/runout/elastic_netology 
+
+Чтобы запустить, нужно обязательно изменить параметр ядра `vm.max_map_count`, иначе упадёт с ошибкой:
+```bash
+sudo sysctl -w vm.max_map_count=262144
+docker run --rm -d --name elastic -p 9200:9200 -p 9300:9300 runout/elastic_netology
+```
+
+### Ответ `elasticsearch` на запрос пути `/` в json виде
+
+```json
+$ curl http://172.17.0.2:9200/
+{
+  "name" : "netology_test",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "mHHYRKPZT1SfPj-umyXIEA",
+  "version" : {
+    "number" : "7.16.0",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "6fc81662312141fe7691d7c1c91b8658ac17aa0d",
+    "build_date" : "2021-12-02T15:46:35.697268109Z",
+    "build_snapshot" : false,
+    "lucene_version" : "8.10.1",
+    "minimum_wire_compatibility_version" : "6.8.0",
+    "minimum_index_compatibility_version" : "6.0.0-beta1"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+
 ## Задача 2
 
 <details><summary>.</summary>
