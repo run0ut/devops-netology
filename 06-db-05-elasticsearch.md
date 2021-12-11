@@ -131,10 +131,11 @@ docker run --rm -d --name elastic -p 9200:9200 -p 9300:9300 runout/elastic_netol
 > При проектировании кластера elasticsearch нужно корректно рассчитывать количество реплик и шард,
 > иначе возможна потеря данных индексов, вплоть до полной, при деградации системы.
 
+</details>
+
 ### Получите список индексов и их статусов, используя API и **приведите в ответе** на задание.
 
 ```bash
-# $ curl -ss http://172.17.0.2:9200/_cat/indices
 green  open .geoip_databases mbpyFJ9sQHOV-nlI-oNIBg 1 0 42 0 41.1mb 41.1mb
 green  open ind-1            szJLNX6DQKW6QO8oM7Wfew 1 0  0 0   226b   226b
 yellow open ind-3            eZTDcDgVQ3KMD6HPt_rS_g 4 2  0 0   904b   904b
@@ -144,7 +145,6 @@ yellow open ind-2            uBSSUAzvTJCR-g5CK1oIsQ 2 1  0 0   452b   452b
 ### Получите состояние кластера `elasticsearch`, используя API.
 
 ```json
-// $ curl -ss http://172.17.0.2:9200/_cluster/health?pretty
 {
   "cluster_name" : "elasticsearch",
   "status" : "yellow",
@@ -167,8 +167,6 @@ yellow open ind-2            uBSSUAzvTJCR-g5CK1oIsQ 2 1  0 0   452b   452b
 ### Как вы думаете, почему часть индексов и кластер находится в состоянии yellow?
 
 
-
-</details>
 
 ## Задача 3
 
