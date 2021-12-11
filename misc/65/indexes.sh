@@ -20,7 +20,7 @@ EnfOfList
 }
 
 status(){
-    exec_cmd "curl http://172.17.0.2:9200/_cat/indices"
+    exec_cmd "curl http://172.17.0.2:9200/_cat/indices?v=true"
     exec_cmd "curl -ss http://172.17.0.2:9200/_cluster/health?pretty"
 }
 
