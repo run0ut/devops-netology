@@ -80,7 +80,7 @@ docker run --rm -d --name elastic -p 9200:9200 -p 9300:9300 runout/elastic_netol
 ### Ответ `elasticsearch` на запрос пути `/` в json виде
 
 ```json
-$ curl http://172.17.0.2:9200/
+// $ curl http://172.17.0.2:9200/
 {
   "name" : "netology_test",
   "cluster_name" : "elasticsearch",
@@ -130,6 +130,43 @@ $ curl http://172.17.0.2:9200/
 > 
 > При проектировании кластера elasticsearch нужно корректно рассчитывать количество реплик и шард,
 > иначе возможна потеря данных индексов, вплоть до полной, при деградации системы.
+
+### Получите список индексов и их статусов, используя API и **приведите в ответе** на задание.
+
+```bash
+# $ curl -ss http://172.17.0.2:9200/_cat/indices
+green  open .geoip_databases mbpyFJ9sQHOV-nlI-oNIBg 1 0 42 0 41.1mb 41.1mb
+green  open ind-1            szJLNX6DQKW6QO8oM7Wfew 1 0  0 0   226b   226b
+yellow open ind-3            eZTDcDgVQ3KMD6HPt_rS_g 4 2  0 0   904b   904b
+yellow open ind-2            uBSSUAzvTJCR-g5CK1oIsQ 2 1  0 0   452b   452b
+```
+
+### Получите состояние кластера `elasticsearch`, используя API.
+
+```json
+// $ curl -ss http://172.17.0.2:9200/_cluster/health?pretty
+{
+  "cluster_name" : "elasticsearch",
+  "status" : "yellow",
+  "timed_out" : false,
+  "number_of_nodes" : 1,
+  "number_of_data_nodes" : 1,
+  "active_primary_shards" : 10,
+  "active_shards" : 10,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 10,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 50.0
+}
+```
+
+### Как вы думаете, почему часть индексов и кластер находится в состоянии yellow?
+
+
 
 </details>
 
