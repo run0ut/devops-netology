@@ -136,10 +136,11 @@ docker run --rm -d --name elastic -p 9200:9200 -p 9300:9300 runout/elastic_netol
 ### Получите список индексов и их статусов, используя API и **приведите в ответе** на задание.
 
 ```bash
-green  open .geoip_databases mbpyFJ9sQHOV-nlI-oNIBg 1 0 42 0 41.1mb 41.1mb
-green  open ind-1            szJLNX6DQKW6QO8oM7Wfew 1 0  0 0   226b   226b
-yellow open ind-3            eZTDcDgVQ3KMD6HPt_rS_g 4 2  0 0   904b   904b
-yellow open ind-2            uBSSUAzvTJCR-g5CK1oIsQ 2 1  0 0   452b   452b
+health status index            uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   .geoip_databases mbpyFJ9sQHOV-nlI-oNIBg   1   0         42            0     41.1mb         41.1mb
+green  open   ind-1            FSnFzgT6RVmExljZQeT-tA   1   0          0            0       226b           226b
+yellow open   ind-3            4bJOszxTSayO-2BnfhaJ9A   4   2          0            0       226b           226b
+yellow open   ind-2            5gq69worTjeYcZp_dZiLnA   2   1          0            0       226b           226b
 ```
 
 ### Получите состояние кластера `elasticsearch`, используя API.
@@ -166,7 +167,8 @@ yellow open ind-2            uBSSUAzvTJCR-g5CK1oIsQ 2 1  0 0   452b   452b
 
 ### Как вы думаете, почему часть индексов и кластер находится в состоянии yellow?
 
-
+У них должны быть реплики, но в кластере всего одна нода, поэтому размещать их негде. 
+В таком случае кластер помечает их желтыми (из [доки по кластерам](https://www.elastic.co/guide/en/elasticsearch/reference/7.16/cluster-health.html#cluster-health-api-desc)).
 
 ## Задача 3
 
