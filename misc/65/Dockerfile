@@ -7,23 +7,24 @@ EXPOSE 9300
 
 RUN useradd -m -u 1000 elasticsearch
 
+ENV ES_HOME="/var/lib/elasticsearch"
+
 RUN yum -y install wget 
 RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.0-linux-x86_64.tar.gz && \
     wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.16.0-linux-x86_64.tar.gz.sha512 && \
     sha512sum -c elasticsearch-7.16.0-linux-x86_64.tar.gz.sha512 && \
     tar -xzf elasticsearch-7.16.0-linux-x86_64.tar.gz && \
     rm -f elasticsearch-7.16.0-linux-x86_64.tar.gz* && \
-    mv elasticsearch-7.16.0 /elasticsearch
-RUN chown elasticsearch:elasticsearch -R /elasticsearch
+    mv elasticsearch-7.16.0 ${ES_HOME}
+COPY config/* ${ES_HOME}/config/
+RUN chown elasticsearch:elasticsearch -R ${ES_HOME}
 RUN yum -y remove wget && \
     yum -y autoremove && \
     yum clean all
 
 USER 1000
 
-ENV ES_JAVA_OPTS="-Xms256m -Xmx512m" \
-    ES_HOME="/elasticsearch"
-
+ENV ES_HOME="/var/lib/elasticsearch"
 WORKDIR ${ES_HOME}
 
 CMD ["sh", "-c", "${ES_HOME}/bin/elasticsearch"]
