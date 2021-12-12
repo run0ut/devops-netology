@@ -1,0 +1,2 @@
+FROM elastic_netology:latest
+COPY --chown=elasticsearch:elasticsearch config/elasticsearch.task3.yml /var/lib/elasticsearch/config/elasticsearch.yml
