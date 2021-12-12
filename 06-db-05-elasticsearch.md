@@ -80,7 +80,6 @@ docker run --rm -d --name elastic -p 9200:9200 -p 9300:9300 runout/elastic_netol
 ### Ответ `elasticsearch` на запрос пути `/` в json виде
 
 ```json
-// $ curl http://172.17.0.2:9200/
 {
   "name" : "netology_test",
   "cluster_name" : "elasticsearch",
