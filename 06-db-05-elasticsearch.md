@@ -252,7 +252,7 @@ green  open   test-2           2NVi48R_QqW73lxawMykRA   1   0          0        
 
 ### **Приведите в ответе** запрос к API восстановления и итоговый список индексов.
 
-`запрос к API восстановления` + запросы из [документации](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshots-restore-snapshot.html) на выключение/включение фич и удалени индексов копировал 1 в 1
+`запрос к API восстановления`, ещё потребовалось сделать запросы из [документации](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshots-restore-snapshot.html) на выключение/включение фич и удалени индексов, их копировал 1 в 1
 ```bash
 curl -X POST "localhost:9200/_snapshot/netology_backup/my_snapshot_2021.12.12/_restore?pretty" -H 'Content-Type: application/json' -d'
 {
