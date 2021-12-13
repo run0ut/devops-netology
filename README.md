@@ -13,4 +13,6 @@ devops-netology
 
 6.6. [Troubleshooting](./06-db-06-troobleshooting.md)
 
-7.1. [Инфраструктура как код](./07-terraform-01-intro)
+---
+
+7.1. [Инфраструктура как код](./07-terraform-01-intro.md)
