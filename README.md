@@ -12,3 +12,5 @@ devops-netology
 6.5. [Elasticsearch](./06-db-05-elasticsearch.md)
 
 6.6. [Troubleshooting](./06-db-06-troobleshooting.md)
+
+7.1. [Инфраструктура как код](./07-terraform-01-intro)
