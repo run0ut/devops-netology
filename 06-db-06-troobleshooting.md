@@ -24,7 +24,7 @@ devops-netology
    db.currentOp({ "active" : true, "secs_running" : { "$gt" : 180 }})
    ```
    Он должен вернуть что-то вроде этого:
-   ```json
+   ```js
    {
        "inprog" : [
            {
