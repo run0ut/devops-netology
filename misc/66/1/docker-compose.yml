@@ -1,4 +1,10 @@
+# https://www.bmc.com/blogs/mongodb-docker-container/
 version: "3.6"
+
+volumes:
+  data: {}
+  backup: {}
+
 services:
   mongodb:
     image: mongo
@@ -7,7 +13,9 @@ services:
       - PUID=1000
       - PGID=1000
     volumes:
-      - /home/barry/mongodb/database:/data/db
+      - data:/data/db
+      - backup:/media/backup/mongodb
+      - ./:/opt/netology
     ports:
       - 27017:27017
     restart: unless-stopped

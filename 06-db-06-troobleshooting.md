@@ -19,7 +19,32 @@ devops-netology
 
 ### напишите список операций, которые вы будете производить для остановки запроса пользователя
 
+1. Найду запрос
+   ```js
+   db.currentOp({ "active" : true, "secs_running" : { "$gt" : 180 }})
+   ```
+   Он должен вернуть что-то вроде этого:
+   ```json
+   {
+       "inprog" : [
+           {
+               //...
+               "opid" : 29833,
+               "secs_running" : NumberLong(436)
+               //...
+           }
+       ]
+   }
+   ```
+1. [Завершу](https://docs.mongodb.com/manual/tutorial/terminate-running-operations/#killop) принудительно
+   ```
+   db.killOp(29833)
+   ```
+
 ### предложите вариант решения проблемы с долгими (зависающими) запросами в MongoDB
+
+- Использовать метод [`maxTimeMS()`](https://docs.mongodb.com/manual/tutorial/terminate-running-operations/#maxtimems)
+- Включить [профайлер](https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/) чтобы отловить медленные запросы, изучить их с помощью [explain](https://docs.mongodb.com/manual/reference/explain-results/#executionstats) и попробовать оптимизировать: денормализовать данные, добавить/удалить индексы, настроить шардинг и т.д.
 
 ## Задача 2
 
