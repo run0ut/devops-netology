@@ -141,6 +141,18 @@ devops-netology
 
 </details>
 
+В dmesg вы видите, что:
+> 
+> `postmaster invoked oom-killer`
+
 ### Как вы думаете, что происходит?
 
+Посгтгресу не хватает памяти.
+
 ### Как бы вы решили данную проблему?
+
+Percona [предлагают](https://www.percona.com/blog/2019/08/02/out-of-memory-killer-or-savior/) настроить "перевыделение" памяти в `sysctl.conf`:
+* `vm.overcommit_memory = 2`
+* по `vm.overcommit_ratio` нет рекомендации, по-умолчанию 60%; если вся БД помещается в ОЗУ, на Хабре [советуют](https://habr.com/ru/company/southbridge/blog/464245/) поставить = 1
+
+Та же можно настроить swap: указать в параметре `vm.swappiness` значение побольше (по-умолчанию = 60), тобы ядро начало использовать своп раньше.
