@@ -105,7 +105,7 @@ devops-netology
 Чтобы найти такие запросы, можно попробовать включить [slow_query_log](https://dev.mysql.com/_doc_/refman/8.0/en/server-system-variables.html#sysvar_slow_query_log).
 
 В документации MySQL ошибке посвящена [эта](https://dev.mysql.com/doc/refman/8.0/en/error-lost-connection.html) статья, в ней перечислены три возможные причины:
-* Слишком объёмные запросы на миллионы строк, 
+* Слишком объёмные запросы на миллионы строк, и рекомендуют увеличить параметр `net_read_timeout`
 * Небольшое значение параметра `connect_timeout`, клиент не успевает установить соединение
 * Размер сообщения/запроса превышает размер буфера, заданного в переменной ` max_allowed_packet` [на сервере](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_max_allowed_packet) или опцией `--max_allowed_packet` [клиента](https://dev.mysql.com/doc/refman/8.0/en/packet-too-large.html) 
 
