@@ -94,9 +94,34 @@ devops-netology
 
 </details>
 
+Ошибка
+
+> InterfaceError: (InterfaceError) 2013: Lost connection to MySQL server during query u'SELECT..... '
+
 ### Как вы думаете, почему это начало происходить и как локализовать проблему?
 
+Описание задачи намекает на причину: таблица разрослась, в таком случае запросы могут выполняться долго. В сообщении упоминается `SELECT`, возможно в таблице просто не хватает индексов. 
+
+Чтобы найти такие запросы, можно попробовать включить [slow_query_log](https://dev.mysql.com/_doc_/refman/8.0/en/server-system-variables.html#sysvar_slow_query_log).
+
+В документации MySQL ошибке посвящена [эта](https://dev.mysql.com/doc/refman/8.0/en/error-lost-connection.html) статья, в ней перечислены три возможные причины:
+* Слишком объёмные запросы на миллионы строк, 
+* Небольшое значение параметра `connect_timeout`, клиент не успевает установить соединение
+* Размер сообщения/запроса превышает размер буфера, заданного в переменной ` max_allowed_packet` [на сервере](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_max_allowed_packet) или опцией `--max_allowed_packet` [клиента](https://dev.mysql.com/doc/refman/8.0/en/packet-too-large.html) 
+
+Ещё можно предположить, что проблема в неактивности клиента. Это строга из лога SQLAlchemy, на [StackOverflow](https://stackoverflow.com/questions/29755228/sqlalchemy-mysql-lost-connection-to-mysql-server-during-query) предложили уменьшить параметр `pool_recycle` в SQLAlchemy и увеличить `wait_timeout` в [настройках](https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_wait_timeout) сервера MySQL.
+
 ### Какие пути решения данной проблемы вы можете предложить?
+
+Поправить все перечисленные параметры:
+* Увеличить на сервере MySQL `wait_timeout`, `max_allowed_packet`, `net_write_timeout` и `net_read_timeout`
+* В SQLAlchemy уменьшить `pool_recycle`, сделать меньше `wait_timeout`
+
+Если ошибка пропадёт, возвращать по одному в исходное состояние, так должно получиться локализовать проблему.
+
+Возможно достаточно будет оптимизировать запросы. Их можно найти включив `slow_query_log` и [настроив](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_long_query_time) параметр `long_query_time` на значение близкое к `net_write_timeout` и `net_read_timeout`. 
+
+Если проблема происходит только на селектах, вероятно изменения таймаутов и оптимизации запросов будет достаточно. Если ещё на инсертах - возможно, наоборот, нужно удалить часть индексов. 
 
 ## Задача 4
 
