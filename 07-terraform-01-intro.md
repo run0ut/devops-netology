@@ -82,6 +82,13 @@ Packer, Terraform, Docker, Kubernetes, Ansible.
 
 </details>
 
+```bash
+22:12:29 ~ sergey@Intel8086:~
+$ terraform --version
+Terraform v1.1.3
+on linux_amd64
+```
+
 ## Задача 3. Поддержка легаси кода. 
 
 <details><summary>.</summary>
@@ -95,3 +102,32 @@ Packer, Terraform, Docker, Kubernetes, Ansible.
 > или виртуальной машине.
 
 </details>
+
+Если разные версии нужны часно, лучше установить несколько бинарников, или использовать docker, что конечно будет более канонично в парадигме devops.
+
+Но если старая версия нужна 5-10% времени работы с Тераформом, мне кажется оптимальный способ [Terraform Switcher](https://github.com/warrensbox/terraform-switcher)
+
+`старая версия`
+```bash
+01:04:32 ~ sergey@Intel8086:~
+$ terraform -v
+Terraform v1.1.2
+on linux_amd64
+
+Your version of Terraform is out of date! The latest version
+is 1.1.3. You can update by downloading from https://www.terraform.io/downloads.html
+```
+`переключение`
+```bash
+01:04:35 ~ sergey@Intel8086:~
+$ tfswitch 1.1.3
+Installing terraform at /home/sergey/bin
+Switched terraform to version "1.1.3"
+```
+`последняя версия`
+```bash
+01:04:52 ~ sergey@Intel8086:~
+$ terraform -v
+Terraform v1.1.3
+on linux_amd64
+```
