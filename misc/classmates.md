@@ -15,3 +15,15 @@ https://github.com/kocmoc1/devops-netology
 https://github.com/Dmitriy-Guskov/devops-netology
 
 https://github.com/AleksandrGuschin/devops-netology
+
+https://github.com/lozhkinav/devops-netology/tree/main/virt-homeworks
+
+https://github.com/a118n/netology-devops 
+
+https://github.com/vinnirus/devops-netology
+
+https://github.com/GrigoriyAzatyan/devops-netology
+
+https://github.com/lenazve1996/devops-netology
+
+https://github.com/DennySim/devops-netology
