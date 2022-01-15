@@ -22,3 +22,5 @@ devops-netology
 7.1. [Инфраструктура как код](./07-terraform-01-intro.md)
 
 7.2. [Облачные провайдеры и синтаксис Terraform](./07-terraform-02-syntax.md)
+
+7.2. [Основы Terraform](./07-terraform-03-basic.md)
