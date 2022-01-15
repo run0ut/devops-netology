@@ -39,6 +39,17 @@ devops-netology
 
 </details>
 
+### В виде результата задания приложите вывод команды aws configure list.
+```log
+$ aws configure list
+      Name                    Value             Type    Location
+      ----                    -----             ----    --------
+   profile                <not set>             None    None
+access_key     ****************IA6V shared-credentials-file
+secret_key     ****************37LS shared-credentials-file
+    region               eu-north-1      config-file    ~/.aws/config
+```
+
 ## Задача 1 (Вариант с Yandex.Cloud). Регистрация в aws и знакомство с основами (необязательно, но крайне желательно).
 
 <details><summary>.</summary>
