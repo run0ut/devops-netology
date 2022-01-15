@@ -50,6 +50,14 @@ devops-netology
 
 </details>
 
+```bash
+$ yc config list
+token: суперсекретныйтокен
+cloud-id: b1g19qmh5o80gm94ufu8
+folder-id: b1g01oeuesd31te4bm64
+compute-default-zone: ru-central1-a
+```
+
 ## Задача 2. Созданием aws ec2 или yandex_compute_instance через терраформ. 
 
 <details><summary>.</summary>
@@ -80,3 +88,40 @@ devops-netology
 > 1. Ссылку на репозиторий с исходной конфигурацией терраформа. 
 
 </details> 
+
+### Если вы выполнили первый пункт, то добейтесь того, что бы команда `terraform plan` выполнялась без ошибок. 
+
+Аналога `aws_caller_identity` у провайдера Yandex нет, поэтому только адрес, ID подсети и зона.
+```log
+...
+Plan: 3 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + IP_compute_instance = (known after apply)
+  + Yandex_vpc_subnet   = (known after apply)
+  + Yandex_zone         = (known after apply)
+yandex_vpc_network.net: Creating...
+yandex_vpc_network.net: Creation complete after 1s [id=enp1eus8gd123vocs73d]
+yandex_vpc_subnet.subnet: Creating...
+yandex_vpc_subnet.subnet: Creation complete after 0s [id=e9bu96olg7sp6f659v70]
+yandex_compute_instance.vm: Creating...
+yandex_compute_instance.vm: Still creating... [10s elapsed]
+yandex_compute_instance.vm: Still creating... [20s elapsed]
+yandex_compute_instance.vm: Creation complete after 21s [id=fhmf7gbadds114fv7usi]
+
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+IP_compute_instance = "10.2.0.16"
+Yandex_vpc_subnet = "e9bu96olg7sp6f659v70"
+Yandex_zone = "ru-central1-a"
+```
+
+### При помощи какого инструмента (из разобранных на прошлом занятии) можно создать свой образ ami?
+
+Packer
+
+### Ссылку на репозиторий с исходной конфигурацией терраформа. 
+
+https://github.com/run0ut/devops-netology/tree/main/misc/72
