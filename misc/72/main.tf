@@ -1,8 +1,8 @@
 provider "yandex" {
   service_account_key_file = "key.json"
-  cloud_id  = "b1g19qmh5o80gm94ufu8"
-  folder_id = "b1g01oeuesd31te4bm64"
-  zone      = "ru-central1-a"
+  cloud_id                 = "b1g19qmh5o80gm94ufu8"
+  folder_id                = "b1g01oeuesd31te4bm64"
+  zone                     = "ru-central1-a"
 }
 
 data "yandex_compute_image" "ubuntu" {
@@ -14,20 +14,20 @@ resource "yandex_vpc_network" "net" {
 }
 
 resource "yandex_vpc_subnet" "subnet" {
-  name            = "subnet"
-  network_id      = resource.yandex_vpc_network.net.id
-  v4_cidr_blocks  = ["10.2.0.0/16"]
-  zone            = "ru-central1-a"
+  name           = "subnet"
+  network_id     = resource.yandex_vpc_network.net.id
+  v4_cidr_blocks = ["10.2.0.0/16"]
+  zone           = "ru-central1-a"
 }
 
 resource "yandex_compute_instance" "vm" {
-  name = "netology-virt-11-72"
-  hostname = "netology_virt_11_72.local"
+  name        = "netology-virt-11-72"
+  hostname    = "netology_virt_11_72.local"
   platform_id = "standard-v1"
 
   resources {
-    cores  = 2
-    memory = 2
+    cores         = 2
+    memory        = 2
     core_fraction = 100
   }
 
