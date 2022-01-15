@@ -39,6 +39,17 @@ devops-netology
 
 </details>
 
+### В виде результата задания приложите вывод команды aws configure list.
+```log
+$ aws configure list
+      Name                    Value             Type    Location
+      ----                    -----             ----    --------
+   profile                <not set>             None    None
+access_key     ****************IA6V shared-credentials-file
+secret_key     ****************37LS shared-credentials-file
+    region               eu-north-1      config-file    ~/.aws/config
+```
+
 ## Задача 1 (Вариант с Yandex.Cloud). Регистрация в aws и знакомство с основами (необязательно, но крайне желательно).
 
 <details><summary>.</summary>
@@ -94,28 +105,41 @@ compute-default-zone: ru-central1-a
 Аналога `aws_caller_identity` у провайдера Yandex нет, поэтому только адрес, ID подсети и зона.
 ```log
 ...
-Plan: 3 to add, 0 to change, 0 to destroy.
+Plan: 4 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
-  + IP_compute_instance = (known after apply)
-  + Yandex_vpc_subnet   = (known after apply)
-  + Yandex_zone         = (known after apply)
+  + aws_account_id     = "564619220947"
+  + aws_net_private_ip = (known after apply)
+  + aws_net_subnet_id  = (known after apply)
+  + aws_region         = "ec2.eu-north-1.amazonaws.com"
+  + aws_user_id        = "AIDAYG5PNS7J3ZPE5O5RB"
+  + yandex_ip_private  = (known after apply)
+  + yandex_vpc_subnet  = (known after apply)
+  + yandex_zone        = (known after apply)
 yandex_vpc_network.net: Creating...
-yandex_vpc_network.net: Creation complete after 1s [id=enp1eus8gd123vocs73d]
+yandex_vpc_network.net: Creation complete after 1s [id=enpbr2kl6m4eg5go2qo9]
 yandex_vpc_subnet.subnet: Creating...
-yandex_vpc_subnet.subnet: Creation complete after 0s [id=e9bu96olg7sp6f659v70]
+yandex_vpc_subnet.subnet: Creation complete after 1s [id=e9bdcpt63h57babuggv4]
 yandex_compute_instance.vm: Creating...
+aws_instance.ubuntu: Creating...
 yandex_compute_instance.vm: Still creating... [10s elapsed]
+aws_instance.ubuntu: Still creating... [10s elapsed]
+aws_instance.ubuntu: Creation complete after 14s [id=i-006e5e5fee7b08ddb]
 yandex_compute_instance.vm: Still creating... [20s elapsed]
-yandex_compute_instance.vm: Creation complete after 21s [id=fhmf7gbadds114fv7usi]
+yandex_compute_instance.vm: Creation complete after 23s [id=fhml8f3trfjv4iubadgf]
 
-Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-IP_compute_instance = "10.2.0.16"
-Yandex_vpc_subnet = "e9bu96olg7sp6f659v70"
-Yandex_zone = "ru-central1-a"
+aws_account_id = "564619220947"
+aws_net_private_ip = "172.31.12.126"
+aws_net_subnet_id = "subnet-06f7d1def39a73fd4"
+aws_region = "ec2.eu-north-1.amazonaws.com"
+aws_user_id = "AIDAYG5PNS7J3ZPE5O5RB"
+yandex_ip_private = "10.2.0.11"
+yandex_vpc_subnet = "e9bdcpt63h57babuggv4"
+yandex_zone = "ru-central1-a"
 ```
 
 ### При помощи какого инструмента (из разобранных на прошлом занятии) можно создать свой образ ami?
