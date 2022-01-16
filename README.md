@@ -23,4 +23,4 @@ devops-netology
 
 7.2. [Облачные провайдеры и синтаксис Terraform](./07-terraform-02-syntax.md)
 
-7.2. [Основы Terraform](./07-terraform-03-basic.md)
+7.3. [Основы Terraform](./07-terraform-03-basic.md)
