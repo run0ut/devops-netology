@@ -11,6 +11,23 @@
 
 </details>
 
+`Конфиг Terraform`
+```bash
+$ cat s3.tf
+terraform {
+  backend "s3" {
+    bucket = "netology-73"
+    key    = "devops-netology/virt-11/73/terraform.tfstate"
+    region = "eu-north-1"
+  }
+}
+```
+`Вывод aws cli для s3 после terraform apply`
+```bash
+$ aws s3 ls netology-73 --recursive
+2022-01-16 23:12:25       8787 devops-netology/virt-11/73/terraform.tfstate
+```
+
 ## Задача 2. Инициализируем проект и создаем воркспейсы. 
 
 <details><summary>.</summary>

@@ -3,6 +3,7 @@ data "aws_caller_identity" "current" {}
 provider "aws" {
   region  = "eu-north-1"
   profile = "default"
+  shared_credentials_file = "~/.aws/credentials"
 }
 
 data "aws_ami" "ubuntu" {
