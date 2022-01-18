@@ -33,11 +33,11 @@ data "aws_ami" "ubuntu" {
 
 data "aws_region" "current" {}
 
-resource "aws_instance" "ubuntu" {
-  ami                         = data.aws_ami.ubuntu.id
-  instance_type               = "t3.micro"
-  cpu_core_count              = 1
-  cpu_threads_per_core        = 2
-  monitoring                  = false
-  associate_public_ip_address = true
-}
+# resource "aws_instance" "ubuntu" {
+#   ami                         = data.aws_ami.ubuntu.id
+#   instance_type               = "t3.micro"
+#   cpu_core_count              = 1
+#   cpu_threads_per_core        = 2
+#   monitoring                  = false
+#   associate_public_ip_address = true
+# }
