@@ -24,3 +24,5 @@ devops-netology
 7.3. [Основы Terraform](./07-terraform-03-basic.md)
 
 7.4. [Средства командной работы](./07-terraform-04-teamwork.md)
+
+7.5. [Введение в Golang](./07-terraform-05-golang.md)
