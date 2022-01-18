@@ -1,8 +1,6 @@
 devops-netology
 ===============
 
----
-
 2.1 - 6.1 [Прошлые ДЗ: с 02-git-01-vcs до 06-db-01-basics.md](./02-git-01-vcs_to_06-db-01-basics.md)
 
 ---
@@ -24,3 +22,5 @@ devops-netology
 7.2. [Облачные провайдеры и синтаксис Terraform](./07-terraform-02-syntax.md)
 
 7.3. [Основы Terraform](./07-terraform-03-basic.md)
+
+7.4. [Средства командной работы](./07-terraform-04-teamwork.md)
