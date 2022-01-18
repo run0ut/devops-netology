@@ -26,3 +26,7 @@ devops-netology
 7.4. [Средства командной работы](./07-terraform-04-teamwork.md)
 
 7.5. [Введение в Golang](./07-terraform-05-golang.md)
+
+7.6. [Написание собственных провайдеров для Terraform](./07-terraform-06-providers)
+
+---
