@@ -2,7 +2,7 @@ terraform {
   backend "remote" {
     organization = "DevopsNetologyLearning"
     workspaces {
-      name = "devops-netology-terraform-task"
+      prefix = "netology-74-"
     }
   }
 }
