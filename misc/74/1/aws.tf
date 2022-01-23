@@ -37,14 +37,20 @@ locals {
   web_instance_type_map = {
     netology-74-stage = "t3.micro"
     netology-74-prod  = "t3.micro" # Free Tier в регионе eu-north-1 только для t3.micro
+    stage             = "t3.micro"
+    prod              = "t3.micro" # Free Tier в регионе eu-north-1 только для t3.micro
   }
   web_instance_count_map = {
     netology-74-stage = 1
     netology-74-prod  = 2
+    stage             = 1
+    prod              = 2
   }
   web_instance_for_each_map = {
     netology-74-stage = toset(["s1"])
     netology-74-prod  = toset(["p1", "p2"])
+    stage             = toset(["s1"])
+    prod              = toset(["p1", "p2"])
   }
 }
 
