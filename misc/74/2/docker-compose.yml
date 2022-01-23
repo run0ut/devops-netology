@@ -1,0 +1,18 @@
+version: '3.6'
+
+services:
+  atlantis:
+    entrypoint: docker-entrypoint.sh
+    image: runatlantis/atlantis:latest
+    command: server --gh-user="" --gh-token=""  --repo-allowlist="github.com/run0ut/terraform-cloud-test" --gh-webhook-secret="2637330285" --atlantis-url="https://atlantis.run0ut.ru"
+    container_name: atlantis
+    ports:
+      - "0.0.0.0:4141:4141"
+    volumes:
+      - ~/.aws:/home/atlantis/.aws
+      - ~/.terraform.d/credentials.tfrc.json:/home/atlantis/.terraform.d/credentials.tfrc.json
+      - ~/git/devops-netology/misc/74/1/:/media/terraform
+    # Можно использовать, если нет конфига aws cli
+    # environment:
+    #   - AWS_ACCESS_KEY_ID: "secret-here"
+    #   - AWS_SECRET_ACCESS_KEY: "secret-here"
