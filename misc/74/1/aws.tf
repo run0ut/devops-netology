@@ -1,8 +1,12 @@
 data "aws_caller_identity" "current" {}
 
 provider "aws" {
+  region                  = "eu-north-1"
+  profile                 = "default"
   shared_credentials_file = "~/.aws/credentials"
 }
+
+data "aws_region" "current" {}
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -30,35 +34,27 @@ data "aws_ami" "ubuntu" {
 
 }
 
-data "aws_region" "current" {}
-
 locals {
   web_instance_type_map = {
-    netology-74-stage = "t3.micro"
-    netology-74-prod  = "t3.micro" # Free Tier в регионе eu-north-1 только для t3.micro
-    stage             = "t3.micro"
-    prod              = "t3.micro" # Free Tier в регионе eu-north-1 только для t3.micro
+    stage = "t3.micro"
+    prod  = "t3.micro" # Free Tier в регионе eu-north-1 только для t3.micro
   }
   web_instance_count_map = {
-    netology-74-stage = 1
-    netology-74-prod  = 2
-    stage             = 1
-    prod              = 2
+    stage = 1
+    prod  = 2
   }
   web_instance_for_each_map = {
-    netology-74-stage = toset(["s1"])
-    netology-74-prod  = toset(["p1", "p2"])
-    stage             = toset(["s1"])
-    prod              = toset(["p1", "p2"])
+    stage = toset(["s1"])
+    prod  = toset(["p1", "p2"])
   }
 }
 
 # resource "null_resource" "example" {}
 
 resource "aws_instance" "ubuntu_count" {
-  instance_type = local.web_instance_type_map["${terraform.workspace}"]
-  count         = local.web_instance_count_map["${terraform.workspace}"]
   ami           = data.aws_ami.ubuntu.id
+  instance_type = local.web_instance_type_map[terraform.workspace]
+  count         = local.web_instance_count_map[terraform.workspace]
 
   cpu_core_count              = 1
   cpu_threads_per_core        = 2
@@ -85,6 +81,6 @@ resource "aws_instance" "ubuntu_for_each" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "Netology 73, ${each.key}"
+    Name = "Netology 74, ${each.key}"
   }
 }
