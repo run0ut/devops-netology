@@ -63,7 +63,8 @@ https://registry.terraform.io/modules/terraform-aws-modules/ec2-instance/aws/lat
 
 ### Изучите как устроен модуль. Задумайтесь, будете ли в своем проекте использовать этот модуль или непосредственно ресурс `aws_instance` без помощи модуля?
 
-[Код|https://github.com/terraform-aws-modules/terraform-aws-ec2-instance/blob/master/examples/complete/main.tf] мне не понятен, нет хватает опытаа работы с Terraform.
+[Код](https://github.com/terraform-aws-modules/terraform-aws-ec2-instance/blob/master/examples/complete/main.tf) мне не понятен, нет хватает опыта работы с Terraform.
+
 В простых кейсах, которые делал в ДЗ лучше использовать `aws_instance` - разницы в конфигурации нет, не нужно тянуть лишнюю зависимость, которую могут перестать поддерживать и тд.
 
 ### В качестве результата задания приложите ссылку на созданный блок конфигураций.
