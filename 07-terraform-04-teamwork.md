@@ -18,6 +18,8 @@
 
 ### В качестве результата задания приложите снимок экрана с успешным применением конфигурации.
 
+![media](media/virt-74-terraform-cloud-screenshot.png)
+
 ## Задача 2. Написать серверный конфиг для атлантиса. 
 
 <details><summary>.</summary>
@@ -37,6 +39,10 @@
 
 </details>
 
+[server.yaml](./misc/74/server/server.yaml)
+
+[atlantis.tf](./misc/74/atlantis.yaml)
+
 ### В качестве результата приложите ссылку на файлы `server.yaml` и `atlantis.yaml`.
 
 ## Задача 3. Знакомство с каталогом модулей. 
@@ -51,4 +57,16 @@
 
 </details> 
 
+### В [каталоге модулей](https://registry.terraform.io/browse/modules) найдите официальный модуль от aws для создания `ec2` инстансов. 
+
+https://registry.terraform.io/modules/terraform-aws-modules/ec2-instance/aws/latest 
+
+### Изучите как устроен модуль. Задумайтесь, будете ли в своем проекте использовать этот модуль или непосредственно ресурс `aws_instance` без помощи модуля?
+
+[Код](https://github.com/terraform-aws-modules/terraform-aws-ec2-instance/blob/master/examples/complete/main.tf) мне не понятен, нет хватает опыта работы с Terraform.
+
+В простых кейсах, которые делал в ДЗ лучше использовать `aws_instance` - разницы в конфигурации нет, не нужно тянуть лишнюю зависимость, которую могут перестать поддерживать и тд.
+
 ### В качестве результата задания приложите ссылку на созданный блок конфигураций.
+
+[aws.tf](./misc/74/netology/aws.tf)
