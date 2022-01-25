@@ -39,9 +39,9 @@
 
 </details>
 
-https://github.com/run0ut/devops-netology/blob/74/misc/74/server/server.yaml
+[server.yaml](./misc/74/server/server.yaml)
 
-https://github.com/run0ut/devops-netology/blob/74/misc/74/atlantis.yaml
+[atlantis.tf](./misc/74/atlantis.yaml)
 
 ### В качестве результата приложите ссылку на файлы `server.yaml` и `atlantis.yaml`.
 
