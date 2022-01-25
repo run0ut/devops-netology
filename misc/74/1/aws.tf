@@ -49,7 +49,7 @@ locals {
   }
 }
 
-# resource "null_resource" "example" {}
+resource "null_resource" "example" {}
 
 resource "aws_instance" "ubuntu_count" {
   ami           = data.aws_ami.ubuntu.id
