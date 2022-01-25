@@ -15,6 +15,7 @@ USERNAME=""
 REPO_ALLOWLIST="github.com/run0ut/terraform-aws-74"
 # путь к конфигу Atlantis https://www.runatlantis.io/docs/server-side-repo-config.html
 REPO_CONFIG="/home/sergey/git/devops-netology/misc/74/server/server.yaml"
+# Запуск сервера
 ./atlantis server \
     --atlantis-url="$URL" \
     --gh-user="$USERNAME" \
@@ -22,4 +23,4 @@ REPO_CONFIG="/home/sergey/git/devops-netology/misc/74/server/server.yaml"
     --gh-webhook-secret="$SECRET" \
     --repo-allowlist="$REPO_ALLOWLIST" \
     --repo-config="$REPO_CONFIG" \
-    --disable-repo-locking
+    --disable-repo-locking # <- чтобы не вешать локи Атлантиса
