@@ -16,6 +16,12 @@
 
 </details>
 
+```bash
+23:11:01 ~ sergey@Netangels-CSVM:~
+$ go version
+go version go1.17.6 linux/amd64
+```
+
 ## Задача 2. Знакомство с gotour.
 
 <details><summary>.</summary>
