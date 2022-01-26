@@ -2,6 +2,11 @@ package main
 
 import "fmt"
 
+func mToF(m float64)(f float64) {
+    f = m * 3.281
+    return
+}
+
 func main() {
     // Напишите программу для перевода метров в футы (1 фут = 0.3048 метр).
     // Можно запросить исходные данные у пользователя, а можно статически задать в коде.
@@ -9,7 +14,7 @@ func main() {
     var input float64
     fmt.Scanf("%f", &input)
 
-    output := input * 3.281
+    output := mToF(input)
 
     fmt.Printf("В метрах %v, а в футах это %v\n", input, output)
 }
