@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func mToF(m float64)(f float64) {
+func MtoF(m float64)(f float64) {
     f = m * 3.281
     return
 }
@@ -14,7 +14,7 @@ func main() {
     var input float64
     fmt.Scanf("%f", &input)
 
-    output := mToF(input)
+    output := MtoF(input)
 
     fmt.Printf("В метрах %v, а в футах это %v\n", input, output)
 }
