@@ -255,7 +255,6 @@ https://github.com/run0ut/netology-81/tree/main/main
 
 ## Необязательная часть
 
-https://github.com/run0ut/netology-81/tree/main/optional
 
 <details><summary>.</summary>
 
@@ -270,3 +269,5 @@ https://github.com/run0ut/netology-81/tree/main/optional
 
 ### Все изменения должны быть зафиксированы и отправлены в вашей личный репозиторий.
 
+
+https://github.com/run0ut/netology-81/tree/main/optional
