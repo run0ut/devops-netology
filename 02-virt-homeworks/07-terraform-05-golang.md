@@ -1,3 +1,6 @@
+devops-netology
+===============
+
 # Домашнее задание к занятию "7.5. Основы golang"
 
 <details><summary>.</summary>
