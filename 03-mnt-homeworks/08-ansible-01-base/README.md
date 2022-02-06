@@ -15,12 +15,12 @@ devops-netology
 
 </details>  
 
+### Установите ansible версии 2.10 или выше.
+
 ```bash
 $ ansible --version
-[DEPRECATION WARNING]: Ansible will require Python 3.8 or newer on the controller starting with Ansible 2.12. Current version: 3.7.3 (default, Jan 22 2021, 20:04:44) [GCC 8.3.0]. This feature will be removed
-from ansible-core in version 2.12. Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
 ansible [core 2.11.8]
-  config file = None
+  config file = /home/sergey/git/devops-netology/03-mnt-homeworks/08-ansible-01-base/playbook/ansible.cfg
   configured module search path = ['/home/sergey/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
   ansible python module location = /home/sergey/.local/lib/python3.7/site-packages/ansible
   ansible collection location = /home/sergey/.ansible/collections:/usr/share/ansible/collections
@@ -32,7 +32,7 @@ ansible [core 2.11.8]
 
 ## Основная часть
 
-<!-- <details><summary>.</summary> -->
+<details><summary>.</summary>
 
 1. Попробуйте запустить playbook на окружении из `test.yml`, зафиксируйте какое значение имеет факт `some_fact` для указанного хоста при выполнении playbook'a.
    ```bash
@@ -247,7 +247,11 @@ ansible [core 2.11.8]
     ```
 12. Заполните `README.md` ответами на вопросы. Сделайте `git push` в ветку `master`. В ответе отправьте ссылку на ваш открытый репозиторий с изменённым `playbook` и заполненным `README.md`.
 
-<!-- </details>   -->
+</details>  
+
+###  Заполните `README.md` ответами на вопросы. Сделайте `git push` в ветку `master`. В ответе отправьте ссылку на ваш открытый репозиторий с изменённым `playbook` и заполненным `README.md`.
+
+https://github.com/run0ut/netology-81/tree/main
 
 ## Необязательная часть
 
@@ -259,4 +263,8 @@ ansible [core 2.11.8]
 4. Добавьте новую группу хостов `fedora`, самостоятельно придумайте для неё переменную. В качестве образа можно использовать [этот](https://hub.docker.com/r/pycontribs/fedora).
 5. Напишите скрипт на bash: автоматизируйте поднятие необходимых контейнеров, запуск ansible-playbook и остановку контейнеров.
 6. Все изменения должны быть зафиксированы и отправлены в вашей личный репозиторий.
+
+</details>
+
+### Все изменения должны быть зафиксированы и отправлены в вашей личный репозиторий.
 
