@@ -251,9 +251,11 @@ ansible [core 2.11.8]
 
 ###  Заполните `README.md` ответами на вопросы. Сделайте `git push` в ветку `master`. В ответе отправьте ссылку на ваш открытый репозиторий с изменённым `playbook` и заполненным `README.md`.
 
-https://github.com/run0ut/netology-81/tree/main
+https://github.com/run0ut/netology-81/tree/main/main
 
 ## Необязательная часть
+
+https://github.com/run0ut/netology-81/tree/main/optional
 
 <details><summary>.</summary>
 
