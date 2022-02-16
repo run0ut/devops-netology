@@ -1,0 +1,17 @@
+version: "3.6"
+
+volumes:
+  data: {}
+  backup: {}
+
+services:
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    ports:
+      - 6379:6379
+    volumes:
+      - data:/data
+      - backup:/media/backup/redis
+      - ./:/opt/netology
+    restart: unless-stopped
