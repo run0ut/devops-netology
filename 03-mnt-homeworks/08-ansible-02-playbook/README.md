@@ -54,6 +54,7 @@ total 171264
     ```
     `site.yml`
     ```bash
+    ...
     - name: Install Kibana
       hosts: elasticsearch
       tasks:
@@ -210,22 +211,22 @@ total 171264
 7. Запустите playbook на `prod.yml` окружении с флагом `--diff`. Убедитесь, что изменения на системе произведены.
     ```bash
     PLAY [Install Java] **********************************************************************************
-    
+
     TASK [Gathering Facts] *******************************************************************************
     ok: [centos_elk_server]
-    
+
     TASK [Set facts for Java 11 vars] ********************************************************************
     ok: [centos_elk_server]
-    
+
     TASK [Upload .tar.gz file containing binaries from local storage] ************************************
     ok: [centos_elk_server]
-    
+
     TASK [Ensure installation dir exists] ****************************************************************
     ok: [centos_elk_server]
-    
+
     TASK [Extract java in the installation directory] ****************************************************
     skipping: [centos_elk_server]
-    
+
     TASK [Export environment variables] ******************************************************************
     --- before
     +++ after
@@ -235,23 +236,23 @@ total 171264
     +    "mode": "0755",
          "path": "/etc/profile.d/jdk.sh"
      }
-    
+
     changed: [centos_elk_server]
-    
+
     PLAY [Install Elasticsearch] *************************************************************************
-    
+
     TASK [Gathering Facts] *******************************************************************************
     ok: [centos_elk_server]
-    
+
     TASK [Upload tar.gz Elasticsearch from remote URL] ***************************************************
     changed: [centos_elk_server]
-    
+
     TASK [Create directrory for Elasticsearch] ***********************************************************
     ok: [centos_elk_server]
-    
+
     TASK [Extract Elasticsearch in the installation directory] *******************************************
     skipping: [centos_elk_server]
-    
+
     TASK [Set environment Elastic] ***********************************************************************
     --- before
     +++ after: /home/sergey/.ansible/tmp/ansible-local-77854lvye89t_/tmpta0g0cka/elastic.sh.j2
@@ -262,23 +263,23 @@ total 171264
     +export ES_HOME=/opt/elastic/7.10.1
     +export PATH=$PATH:$ES_HOME/bin
     \ No newline at end of file
-    
+
     changed: [centos_elk_server]
-    
+
     PLAY [Install Kibana] ********************************************************************************
-    
+
     TASK [Gathering Facts] *******************************************************************************
     ok: [centos_elk_server]
-    
+
     TASK [Get Kibana] ************************************************************************************
     ok: [centos_elk_server]
-    
+
     TASK [Create directrory for Kibana] ******************************************************************
     ok: [centos_elk_server]
-    
+
     TASK [Extract Kibana in the installation directory] **************************************************
     skipping: [centos_elk_server]
-    
+
     TASK [Set environment Kibana] ************************************************************************
     --- before
     +++ after
@@ -288,9 +289,9 @@ total 171264
     +    "mode": "0755",
          "path": "/etc/profile.d/kibana.sh"
      }
-    
+
     changed: [centos_elk_server]
-    
+
     PLAY RECAP *******************************************************************************************
     centos_elk_server          : ok=13   changed=4    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
     ```
