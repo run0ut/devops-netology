@@ -47,9 +47,9 @@ devops-netology
 
 8.1. [Введение в Ansible](./03-mnt-homeworks/08-ansible-01-base/README.md)
 
-<details><summary></summary>
-
 8.2. [Работа с Playbook](./03-mnt-homeworks/08-ansible-02-playbook/README.md)
+
+<details><summary></summary>
 
 8.3. [Использование Yandex Cloud](./03-mnt-homeworks/08-ansible-03-yandex/README.md)
 
