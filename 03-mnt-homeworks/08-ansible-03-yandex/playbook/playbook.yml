@@ -1,12 +1,15 @@
 ---
 - name: Install Elasticsearch
   hosts: elasticsearch
+  environment:
+    ES_JAVA_OPTS: "-Xms256m -Xmx256m"
   handlers:
     - name: restart Elasticsearch
       become: true
       service:
         name: elasticsearch
         state: restarted
+      tags: elastic
   tasks:
     - name: "Download Elasticsearch's rpm"
       get_url:
@@ -14,14 +17,47 @@
         dest: "/tmp/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
       register: download_elastic
       until: download_elastic is succeeded
+      tags: elastic
     - name: Install Elasticsearch
       become: true
       yum:
         name: "/tmp/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
         state: present
+      tags: elastic
     - name: Configure Elasticsearch
       become: true
       template:
         src: elasticsearch.yml.j2
         dest: /etc/elasticsearch/elasticsearch.yml
       notify: restart Elasticsearch
+      tags: elastic
+- name: Install Kibana
+  hosts: elasticsearch
+  handlers:
+    - name: restart Kibana
+      become: true
+      service:
+        name: kibana
+        state: restarted
+      tags: kibana
+  tasks:
+    - name: "Download Kibana's rpm"
+      get_url:
+        url: "https://artifacts.elastic.co/downloads/kibana/kibana-{{ elk_stack_version }}-x86_64.rpm"
+        dest: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
+      register: download_kibana
+      until: download_kibana is succeeded
+      tags: kibana
+    - name: Install Kibana
+      become: true
+      yum:
+        name: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
+        state: present
+      tags: kibana
+    - name: Configure Kibana
+      become: true
+      template:
+        src: kibana.yml.j2
+        dest: /etc/kibana/kibana.yml
+      notify: restart Kibana
+      tags: kibana
