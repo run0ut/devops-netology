@@ -36,7 +36,7 @@
       notify: restart Elasticsearch
       tags: elastic
 - name: Install Kibana
-  hosts: elasticsearch
+  hosts: kibana
   handlers:
     - name: restart Kibana
       become: true
