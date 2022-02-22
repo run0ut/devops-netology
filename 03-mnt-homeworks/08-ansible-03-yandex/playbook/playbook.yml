@@ -1,8 +1,6 @@
 ---
 - name: Install Elasticsearch
   hosts: elasticsearch
-  environment:
-    ES_JAVA_OPTS: "-Xms256m -Xmx256m"
   handlers:
     - name: restart Elasticsearch
       become: true
