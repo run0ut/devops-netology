@@ -20,47 +20,48 @@ devops-netology
 1. Допишите playbook: нужно сделать ещё один play, который устанавливает и настраивает kibana.
 2. При создании tasks рекомендую использовать модули: `get_url`, `template`, `yum`, `apt`.
 3. Tasks должны: скачать нужной версии дистрибутив, выполнить распаковку в выбранную директорию, сгенерировать конфигурацию с параметрами.
-    `playbook.yml`
-    ```yml
-    ---
-    ...
-    - name: Install Kibana
-      hosts: kibana
-      handlers:
-        - name: restart Kibana
-          become: true
-          service:
-            name: kibana
-            state: restarted
-          tags: kibana
-      tasks:
-        - name: "Download Kibana's rpm"
-          get_url:
-            url: "https://artifacts.elastic.co/downloads/kibana/kibana-{{ elk_stack_version }}-x86_64.rpm"
-            dest: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
-          register: download_kibana
-          until: download_kibana is succeeded
-          tags: kibana
+    
+    - `playbook.yml`
+        ```yml
+        ---
+        ...
         - name: Install Kibana
-          become: true
-          yum:
-            name: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
-            state: present
-          tags: kibana
-        - name: Configure Kibana
-          become: true
-          template:
-            src: kibana.yml.j2
-            dest: /etc/kibana/kibana.yml
-          notify: restart Kibana
-          tags: kibana
-    ```
-    `templates/kibana.yml.j2`
-    ```yml
-    server.host: 0.0.0.0
-    elasticsearch.hosts: ["http://{{ hostvars['el-instance']['ansible_facts']['default_ipv4']['address'] }}:9200/"]
-    kibana.index: ".kibana"
-    ```
+        hosts: kibana
+        handlers:
+            - name: restart Kibana
+            become: true
+            service:
+                name: kibana
+                state: restarted
+            tags: kibana
+        tasks:
+            - name: "Download Kibana's rpm"
+            get_url:
+                url: "https://artifacts.elastic.co/downloads/kibana/kibana-{{ elk_stack_version }}-x86_64.rpm"
+                dest: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
+            register: download_kibana
+            until: download_kibana is succeeded
+            tags: kibana
+            - name: Install Kibana
+            become: true
+            yum:
+                name: "/tmp/kibana-{{ elk_stack_version }}-x86_64.rpm"
+                state: present
+            tags: kibana
+            - name: Configure Kibana
+            become: true
+            template:
+                src: kibana.yml.j2
+                dest: /etc/kibana/kibana.yml
+            notify: restart Kibana
+            tags: kibana
+        ```
+    - `templates/kibana.yml.j2`
+        ```yml
+        server.host: 0.0.0.0
+        elasticsearch.hosts: ["http://{{ hostvars['el-instance']['ansible_facts']['default_ipv4']['address'] }}:9200/"]
+        kibana.index: ".kibana"
+        ```
 4. Приготовьте свой собственный inventory файл `prod.yml`.
     `inventory/prod/hosts.yml`
     ```yml
