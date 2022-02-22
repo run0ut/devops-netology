@@ -5,10 +5,14 @@ provider "yandex" {
   zone                     = "ru-central1-a"
 }
 
+################################################################
+# Ищем образ операционки 
 data "yandex_compute_image" "ubuntu" {
   family = "centos-7"
 }
 
+################################################################
+# Сеть и подсеть, они обязтельны
 resource "yandex_vpc_network" "net" {
   name = "net"
 }
@@ -20,9 +24,18 @@ resource "yandex_vpc_subnet" "subnet" {
   zone           = "ru-central1-a"
 }
 
-resource "yandex_compute_instance" "elk" {
-  name        = "netology-83-elk"
-  hostname    = "netology_83_elk.local"
+################################################################
+# Инстансы
+resource "yandex_compute_instance" "vm" {
+  for_each = {
+    el_instance = "netology-83-elk"
+    k_instance = "netology-83-k"
+    fb_instance = "netology-83-fb"
+  }
+
+  name        = each.value
+  hostname    = "${each.value}.local"
+
   platform_id = "standard-v1"
 
   resources {
@@ -49,35 +62,3 @@ resource "yandex_compute_instance" "elk" {
     ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
   }
 }
-
-resource "yandex_compute_instance" "fbeat" {
-  name        = "netology-83-fbeat"
-  hostname    = "netology_83_fbeat.local"
-  platform_id = "standard-v1"
-
-  resources {
-    cores         = 2
-    memory        = 4
-    core_fraction = 100
-  }
-
-  boot_disk {
-    initialize_params {
-      image_id = data.yandex_compute_image.ubuntu.id
-      type     = "network-hdd"
-      size     = "20"
-    }
-  }
-
-  network_interface {
-    subnet_id = yandex_vpc_subnet.subnet.id
-    nat       = true
-    ipv6      = false
-  }
-
-  metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
-  }
-}
-
-

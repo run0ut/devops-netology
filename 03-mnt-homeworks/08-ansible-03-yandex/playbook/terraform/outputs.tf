@@ -1,8 +1,6 @@
-output "elk_ip" {
-  value       = yandex_compute_instance.elk.network_interface.0.nat_ip_address
-  description = "Приватный IP на Яндексе, elk"
-}
-output "fbeat_ip" {
-  value       = yandex_compute_instance.fbeat.network_interface.0.nat_ip_address
-  description = "Приватный IP на Яндексе, filebeat"
+output "public_ip" {
+  value = toset([
+    for instance in yandex_compute_instance.vm : instance.network_interface.0.nat_ip_address
+  ])
+  description = "Публичный IP инстансов в Y.Cloud"
 }
