@@ -27,6 +27,12 @@
       template:
         src: elasticsearch.yml.j2
         dest: /etc/elasticsearch/elasticsearch.yml
+      tags: elastic
+    - name: Configure Elastic JVM
+      become: true
+      template:
+        src: elasticsearch_sysconfig.j2
+        dest: /etc/sysconfig/elasticsearch
       notify: restart Elasticsearch
       tags: elastic
 - name: Install Kibana
