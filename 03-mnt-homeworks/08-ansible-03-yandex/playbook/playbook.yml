@@ -27,12 +27,14 @@
       template:
         src: elasticsearch.yml.j2
         dest: /etc/elasticsearch/elasticsearch.yml
+        mode: 0644
       tags: elastic
     - name: Configure Elastic JVM
       become: true
       template:
         src: elasticsearch_sysconfig.j2
         dest: /etc/sysconfig/elasticsearch
+        mode: 0644
       notify: restart Elasticsearch
       tags: elastic
 - name: Install Kibana
@@ -63,6 +65,7 @@
       template:
         src: kibana.yml.j2
         dest: /etc/kibana/kibana.yml
+        mode: 0644
       notify: restart Kibana
       tags: kibana
 - name: Install Filebeat
@@ -93,6 +96,7 @@
       template:
         src: filebeat.yml.j2
         dest: /etc/filebeat/filebeat.yml
+        mode: 0644
       notify: restart Filebeat
       tags: filebeat
     - name: Enable and configure the system module
@@ -110,7 +114,7 @@
         chdir: /usr/share/filebeat/bin
       register: filebeat_setup
       notify: restart Filebeat
-      changed_when: false 
+      changed_when: false
       until: filebeat_setup is succeeded
       delay: 40
       tags: filebeat
