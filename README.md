@@ -51,9 +51,9 @@ devops-netology
 
 8.3. [Использование Yandex Cloud](./03-mnt-homeworks/08-ansible-03-yandex/README.md)
 
-<details><summary></summary>
-
 8.4. [Работа с Roles](./03-mnt-homeworks/08-ansible-04-role/README.md)
+
+<details><summary></summary>
 
 8.5. [Тестирование Roles](./03-mnt-homeworks/08-ansible-05-testing/README.md)
 
