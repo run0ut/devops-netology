@@ -1,0 +1,4 @@
+---
+logstash_version: "7.14.0"
+logstash_elasticsearch_url: "http://localhost:9200"
+logstash_java_opts: "-Xms256m -Xmx256m"

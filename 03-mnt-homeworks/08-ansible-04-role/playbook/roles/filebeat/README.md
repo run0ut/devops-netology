@@ -19,6 +19,14 @@ Available variables are listed below, along with default values (see defaults/ma
   ```yml
   filebeat_version: "7.14.0"
   ```
+* Which output destination to use. Filebeat supports just one.
+  ```yml
+  filebeat_output_destination: "elastic"
+  ```
+  Supported options:
+    - `elastic`, the default one
+    - `logstash`
+
 * The URL (including port) over which Filebeat will send data to Elasticsearch.
   ```yml
   filebeat_elasticsearch_url: "http://localhost:9200"
@@ -26,6 +34,16 @@ Available variables are listed below, along with default values (see defaults/ma
 * The URL (including port) over which Filebeat will load dashboards to Kibana.
   ```yml
   filebeat_kibana_url:  "http://localhost:5601"
+  ```
+* Flag defines whether playbook should setup default Kibana dashboards.
+
+  It's only available when output destination is `elastic`!
+  ```yml
+  filebeat_setup_kibana: true
+  ```
+* Logstash output
+  ```yml
+  filebeat_logstash_url: "localhost:5044"
   ```
 
 Dependencies
@@ -47,9 +65,11 @@ Below is more complete example with variables.
 - name: Install Filebeat
   hosts: filebeat
   vars:
+    - filebeat_output_destination: "elastic"
+    - filebeat_setup_kibana: true
     - filebeat_elasticsearch_url: ["http://{{ hostvars['el-instance']['ansible_facts']['default_ipv4']['address'] }}:9200/"]
     - filebeat_kibana_url:  "http://{{ hostvars['k-instance']['ansible_facts']['default_ipv4']['address'] }}:5601"
-    - kibana_version: "7.14.0"
+    - filebeat_version: "7.14.0"
   roles:
     - filebeat-role
   tags: filebeat

@@ -12,12 +12,20 @@ filebeat.config.modules:
   reload.enabled: false
 setup.template.settings:
   index.number_of_shards: 1
+{% if filebeat_output_destination == "elastic" %}
+{% if filebeat_setup_kibana is true %}
 setup.kibana:
   host: {{ filebeat_kibana_url }}
+{% endif %}
 output.elasticsearch:
   hosts: {{ filebeat_elasticsearch_url }}
   username: "admin"
   password: "elasticadmin"
+{% elif filebeat_output_destination == "logstash" %}
+output.logstash:
+  hosts: {{ filebeat_logstash_url }}
+{% endif %}
+
 processors:
   - add_host_metadata:
       when.not.contains.tags: forwarded

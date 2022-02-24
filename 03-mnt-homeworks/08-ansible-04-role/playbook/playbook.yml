@@ -1,7 +1,7 @@
 ---
 - name: Get IPs
   hosts: all
-  pre_tasks:
+  tasks:
     - name: Collect hosts' IP-adresses 
       ansible.builtin.setup:
         filter:
@@ -25,3 +25,9 @@
   roles:
     - filebeat
   tags: filebeat
+
+- name: Install Logstash
+  hosts: elasticsearch
+  roles:
+    - logstash
+  tags: logstash
