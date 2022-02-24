@@ -7,10 +7,23 @@
   until: download_filebeat is succeeded
 
 - name: Install Filebeat
-  become: true
-  yum:
-    name: "/tmp/filebeat-{{ filebeat_version }}-x86_64.rpm"
-    state: present
+  block:
+    - name: Install latest Logstash
+      become: true
+      yum:
+        name: "/tmp/filebeat-{{ filebeat_version }}-x86_64.rpm"
+        state: latest
+  rescue:
+    - name: Uninstall Filebeat
+      become: true
+      yum:
+        name: "logstash"
+        state: removed
+    - name: Reinstall Filebeat
+      become: true
+      yum:
+        name: "/tmp/filebeat-{{ filebeat_version }}-x86_64.rpm"
+        state: present
 
 - name: Configure Filebeat
   become: true

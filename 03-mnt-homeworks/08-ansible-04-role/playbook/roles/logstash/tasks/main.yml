@@ -13,10 +13,23 @@
     state: present
 
 - name: Install Logstash
-  become: true
-  yum:
-    name: "/tmp/logstash-{{ logstash_version }}-x86_64.rpm"
-    state: present
+  block:
+    - name: Install latest Logstash
+      become: true
+      yum:
+        name: "/tmp/logstash-{{ logstash_version }}-x86_64.rpm"
+        state: latest
+  rescue:
+    - name: Uninstall Logstash
+      become: true
+      yum:
+        name: "logstash"
+        state: removed
+    - name: Reinstall Logstash
+      become: true
+      yum:
+        name: "/tmp/logstash-{{ logstash_version }}-x86_64.rpm"
+        state: present
 
 - name: Configure startup options
   become: true

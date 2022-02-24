@@ -7,10 +7,23 @@
   until: download_kibana is succeeded
 
 - name: Install Kibana
-  become: true
-  yum:
-    name: "/tmp/kibana-{{ kibana_version }}-x86_64.rpm"
-    state: present
+  block:
+    - name: Install latest Logstash
+      become: true
+      yum:
+        name: "/tmp/kibana-{{ kibana_version }}-x86_64.rpm"
+        state: latest
+  rescue:
+    - name: Uninstall Kibana
+      become: true
+      yum:
+        name: "logstash"
+        state: removed
+    - name: Reinstall Kibana
+      become: true
+      yum:
+        name: "/tmp/kibana-{{ kibana_version }}-x86_64.rpm"
+        state: present
 
 - name: Configure Kibana
   become: true
