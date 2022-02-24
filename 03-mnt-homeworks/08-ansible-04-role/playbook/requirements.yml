@@ -13,5 +13,5 @@
     name: filebeat
   - src: git@github.com:run0ut/logstash-role.git
     scm: git
-    version: "1.0.0"
+    version: "1.0.2"
     name: logstash

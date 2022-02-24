@@ -25,7 +25,8 @@ Available variables are listed below, along with default values (see defaults/ma
   ```
 * JVM memory limits. Usefull to avoid oom killer.
   ```yml
-  logstash_java_opts: "-Xms256m -Xmx256m"
+  logstash_jvm_initial: "256m"
+  logstash_jvm_maximum: "256m"
   ```
 
 Dependencies

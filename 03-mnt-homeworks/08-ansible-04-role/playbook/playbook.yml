@@ -1,7 +1,7 @@
 ---
 - name: Get IPs
   hosts: all
-  tasks:
+  pre_tasks:
     - name: Collect hosts' IP-adresses 
       ansible.builtin.setup:
         filter:

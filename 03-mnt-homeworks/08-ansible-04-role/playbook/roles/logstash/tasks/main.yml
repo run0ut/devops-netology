@@ -24,11 +24,21 @@
     src: "startup.options.j2"
     dest: "/etc/logstash/startup.options"
     mode: 0644
+  notify: restart Logstash
+
+- name: Configure JVM options
+  become: true
+  template:
+    src: "jvm.options.j2"
+    dest: "/etc/logstash/jvm.options"
+    mode: 0644
+  notify: restart Logstash
 
 - name: Create startup scripts
   become: true
   command:
     cmd: /usr/share/logstash/bin/system-install /etc/logstash/startup.options systemd
+  notify: restart Logstash
 
 - name: Create Logstash configuration files.
   become: true

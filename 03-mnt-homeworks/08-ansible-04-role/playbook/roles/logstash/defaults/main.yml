@@ -1,4 +1,6 @@
 ---
 logstash_version: "7.14.0"
 logstash_elasticsearch_url: "http://localhost:9200"
-logstash_java_opts: "-Xms256m -Xmx256m"
+logstash_jvm_initial: "256m"
+logstash_jvm_maximum: "256m"
+logstash_java_opts: "-Xms{{ logstash_jvm_initial }} -Xmx{{ logstash_jvm_maximum }}"
