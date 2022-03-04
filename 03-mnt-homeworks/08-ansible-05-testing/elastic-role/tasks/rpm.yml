@@ -1,0 +1,34 @@
+---
+- name: "Download Elasticsearch's rpm"
+  get_url:
+    url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}-x86_64.rpm"
+    dest: "/tmp/elasticsearch-{{ elasticsearch_version }}-x86_64.rpm"
+  register: download_elasticsearch
+  until: download_elasticsearch is succeeded
+
+- name: Install Elasticsearch RPM
+  block:
+    - name: Install latest Elasticsearch
+      become: true
+      yum:
+        name: "/tmp/elasticsearch-{{ elasticsearch_version }}-x86_64.rpm"
+        state: latest
+  rescue:
+    - name: Uninstall Elasticsearch
+      become: true
+      yum:
+        name: "elasticsearch"
+        state: removed
+    - name: Reinstall Elasticsearch
+      become: true
+      yum:
+        name: "/tmp/elasticsearch-{{ elasticsearch_version }}-x86_64.rpm"
+        state: present
+
+- name: Configure Elasticsearch
+  become: true
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    mode: 0644
+  notify: restart Elasticsearch systemd

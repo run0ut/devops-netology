@@ -1,0 +1,9 @@
+---
+- name: "Download Elasticsearch's rpm"
+  when: ansible_connection != "community.docker.docker"
+  include: rpm.yml
+
+- name: Install Elasticsearch tar.gz (on Docker)
+  when: ansible_connection == "community.docker.docker"
+  include: targz.yml
+
