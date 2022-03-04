@@ -1,4 +1,5 @@
-FROM registry.redhat.io/rhel8/podman:latest
+# FROM registry.redhat.io/rhel8/podman:latest
+FROM netology85-podman:latest
 ENV MOLECULE_NO_LOG false
 
 RUN yum reinstall glibc-common -y
