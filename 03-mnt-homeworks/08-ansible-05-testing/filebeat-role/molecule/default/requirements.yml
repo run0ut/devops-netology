@@ -6,7 +6,7 @@
   - src: git@github.com:run0ut/elastic-role.git
     scm: git
     version: "1.1.0"
-    name: filebeat
+    name: elastic
   - src: git@github.com:run0ut/logstash-role.git
     scm: git
     version: "1.1.0"
