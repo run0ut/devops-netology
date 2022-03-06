@@ -13,6 +13,8 @@ verifier:
   name: ansible
 scenario:
   test_sequence:
+    - dependency
+    # - prepare # не работает в контейнере, ограничение докера
     - destroy
     - create
     - converge

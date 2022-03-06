@@ -15,17 +15,22 @@
 
 - name: Install Kibana on Docker
   block:
+
     - name: Get Kibana tar.gz
-      get_url: 
+      get_url:
         url: https://artifacts.elastic.co/downloads/kibana/kibana-{{ kibana_version }}-linux-x86_64.tar.gz
-        dest: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
+        dest: "files/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
         mode: 0755
-        timeout: 60
-        force: true
         validate_certs: false
       changed_when: false
-      register: get_kibana
-      until: get_kibana is succeeded
+      delegate_to: localhost
+      register: get_elasticsearch
+      until: get_elasticsearch is succeeded
+    - name: Copy Elasticsearch to manage host
+      copy:
+        src: "files/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
+        mode: 0755
+        dest: "/tmp/kibana-{{ kibana_version }}-linux-x86_64.tar.gz"
 
     - name: Create directrory for Kibana
       become: true
@@ -56,11 +61,18 @@
         src: templates/kibana.sh.j2
         dest: /etc/profile.d/kibana.sh
         mode: 0755
-      # notify: restart Kibana binary
 
-    - name: restart Kibana binary
-      shell:
-        cmd: docker exec -d -it {{ ansible_nodename }} bash /etc/profile.d/kibana.sh
-      changed_when: false
-      delegate_to: 127.0.0.1
+    - name: start Kibana binary
+      block:
+      - name: try start Kibana binary in Docker
+        shell:
+          cmd: docker exec -d -it {{ ansible_nodename }} bash /etc/profile.d/kibana.sh
+        changed_when: false
+        delegate_to: 127.0.0.1
+      rescue:
+      - name: try start Kibana binary in Podman
+        shell:
+          cmd: podman exec -d -it {{ ansible_nodename }} bash /etc/profile.d/kibana.sh
+        changed_when: false
+        delegate_to: 127.0.0.1
 

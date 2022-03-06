@@ -16,18 +16,23 @@
 
 - name: Install Elasticsearch on Docker
   block:
+
     - name: Get Elasticsearch tar.gz
-      get_url: 
+      get_url:
         url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}-linux-x86_64.tar.gz
-        dest: "/tmp/elasticsearch-{{ elasticsearch_version }}-linux-x86_64.tar.gz"
+        dest: "files/elasticsearch-{{ elasticsearch_version }}-linux-x86_64.tar.gz"
         mode: 0755
-        timeout: 60
-        force: true
         validate_certs: false
         checksum: md5:b00c00932e4d75f72f8a9dc007faae26
-      changed_when: false
+      # changed_when: false
+      delegate_to: localhost
       register: get_elasticsearch
       until: get_elasticsearch is succeeded
+    - name: Copy Elasticsearch to manage host
+      copy:
+        src: "files/elasticsearch-{{ elasticsearch_version }}-linux-x86_64.tar.gz"
+        mode: 0755
+        dest: "/tmp/elasticsearch-{{ elasticsearch_version }}-linux-x86_64.tar.gz"
 
     - name: Create directrory for Elasticsearch
       become: true
@@ -35,7 +40,6 @@
         state: directory
         path: "{{ elasticsearch_home }}"
         mode: 0755
-
     - name: Extract Elasticsearch in the installation directory
       become: true
       unarchive:
@@ -55,7 +59,6 @@
         - { src: "elasticsearch.yml.j2" , dest: "{{ elasticsearch_home }}/config/elasticsearch.yml" }
         - { src: "jvm.options.j2" , dest: "{{ elasticsearch_home }}/config/jvm.options" }
 
-
     - name: Set environment Elasticsearch
       become: true
       template:
@@ -65,6 +68,7 @@
 
 - name: Prepare users, folders, etc
   block:
+
     - name: Create group
       group:
         name: elasticsearch
@@ -74,6 +78,7 @@
         name: elasticsearch
         group: elasticsearch
         state: present
+
     - name: Create directories
       file:
         state: directory
@@ -94,7 +99,15 @@
         - "{{ elasticsearch_home }}"
 
 - name: restart Elasticsearch binary
-  shell:
-    cmd: docker exec -u elasticsearch -d -it {{ ansible_nodename }} bash /etc/profile.d/elasticsearch.sh
-  changed_when: false
-  delegate_to: 127.0.0.1
+  block:
+    - name: restart Elasticsearch binary on docker
+      shell:
+        cmd: docker exec -u elasticsearch -d -it {{ ansible_nodename }} bash /etc/profile.d/elasticsearch.sh
+      changed_when: false
+      delegate_to: 127.0.0.1
+  rescue:
+    - name: restart Elasticsearch binary on podman
+      shell:
+        cmd: podman exec -u elasticsearch -d -it {{ ansible_nodename }} bash /etc/profile.d/elasticsearch.sh
+      changed_when: false
+      delegate_to: 127.0.0.1

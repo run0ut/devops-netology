@@ -18,15 +18,11 @@
 #   debug: msg="{{ debug_facts.ansible_facts.ansible_env.container }}"
 
 - name: "Download Elasticsearch's rpm"
-  when:
-    - ansible_connection != "community.docker.docker"
-    - ansible_facts.virtualization_type != "docker",
-    - ansible_facts.env.container != "podman"
+  when: ansible_facts.virtualization_type != "docker"
   include: rpm.yml
 
 - name: Install Elasticsearch tar.gz (on Docker)
-  when:
-    - ansible_connection == "community.docker.docker"
-    - ansible_facts.virtualization_type == "docker",
-    - ansible_facts.env.container == "podman"
+  when: ( ansible_connection == "community.docker.docker" )
+        or ( ansible_facts.env.container == "podman" )
+        or ( ansible_facts.virtualization_type == "docker" )
   include: targz.yml

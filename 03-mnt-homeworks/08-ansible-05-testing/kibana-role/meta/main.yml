@@ -2,6 +2,9 @@ galaxy_info:
   author: Sergey Shadurskiy 
   description: Role installs Kibana on CentOS (tested on Centos 7.9.2009 (Core))
   company: Netology DevOps course
+  role_name: kibana_role
+  galaxy_name: kibana
+  namespace: stopfailing
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
