@@ -1129,9 +1129,11 @@ devops-netology
 
 6. Добавьте новый тег на коммит с рабочим сценарием в соответствии с семантическим версионированием.
 
-https://github.com/run0ut/filebeat-role/releases/tag/1.2.0
-https://github.com/run0ut/elastic-role/releases/tag/1.1.2
-https://github.com/run0ut/kibana-role/releases/tag/1.2.0
+    https://github.com/run0ut/filebeat-role/releases/tag/1.2.0
+
+    https://github.com/run0ut/kibana-role/releases/tag/1.2.0
+
+    https://github.com/run0ut/elastic-role/releases/tag/1.1.2
 
 ### Tox
 
@@ -1143,6 +1145,10 @@ https://github.com/run0ut/kibana-role/releases/tag/1.2.0
 6. Запустите `docker` контейнер так, чтобы внутри оказались обе ваши роли.
 7. Зайдти поочерёдно в каждую из них и запустите команду `tox`. Убедитесь, что всё отработало успешно.
 8. Добавьте новый тег на коммит с рабочим сценарием в соответствии с семантическим версионированием.
+
+    https://github.com/run0ut/kibana-role/releases/tag/1.3.0
+
+    https://github.com/run0ut/elastic-role/releases/tag/1.2.0
 
 После выполнения у вас должно получится два сценария molecule и один tox.ini файл в каждом репозитории. Ссылки на репозитории являются ответами на домашнее задание. Не забудьте указать в ответе теги решений Tox и Molecule заданий.
 
