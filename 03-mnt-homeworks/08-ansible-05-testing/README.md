@@ -1156,6 +1156,24 @@ devops-netology
 
 </details>  
 
+8. Добавьте новый тег на коммит с рабочим сценарием в соответствии с семантическим версионированием.
+
+### Тестирование с Ansible 
+
+    https://github.com/run0ut/filebeat-role/releases/tag/1.2.0
+
+    https://github.com/run0ut/kibana-role/releases/tag/1.2.0
+
+    https://github.com/run0ut/elastic-role/releases/tag/1.1.2
+
+### Тестирование с Tox
+
+    https://github.com/run0ut/kibana-role/releases/tag/1.3.0
+
+    https://github.com/run0ut/filebeat-role/releases/tag/1.3.0
+
+    https://github.com/run0ut/elastic-role/releases/tag/1.2.0
+
 ## Необязательная часть
 
 
