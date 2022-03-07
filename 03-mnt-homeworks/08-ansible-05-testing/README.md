@@ -1148,6 +1148,8 @@ devops-netology
 
     https://github.com/run0ut/kibana-role/releases/tag/1.3.0
 
+    https://github.com/run0ut/filebeat-role/releases/tag/1.3.0
+
     https://github.com/run0ut/elastic-role/releases/tag/1.2.0
 
 После выполнения у вас должно получится два сценария molecule и один tox.ini файл в каждом репозитории. Ссылки на репозитории являются ответами на домашнее задание. Не забудьте указать в ответе теги решений Tox и Molecule заданий.

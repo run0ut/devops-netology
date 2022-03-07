@@ -16,18 +16,22 @@
 
 - name: Install Filebeat on Docker
   block:
+
     - name: Get Filebeat tar.gz
       get_url:
         url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-linux-x86_64.tar.gz
-        dest: "/tmp/filebeat-{{ filebeat_version }}-linux-x86_64.tar.gz"
+        dest: "files/filebeat-{{ filebeat_version }}-linux-x86_64.tar.gz"
         mode: 0755
-        timeout: 60
-        force: true
         validate_certs: false
-        checksum: md5:160e17ad3f6fd2b1059f72213928a262
       changed_when: false
+      delegate_to: localhost
       register: get_filebeat
       until: get_filebeat is succeeded
+    - name: Copy Filebeat to manage host
+      copy:
+        src: "files/filebeat-{{ filebeat_version }}-linux-x86_64.tar.gz"
+        mode: 0755
+        dest: "/tmp/filebeat-{{ filebeat_version }}-linux-x86_64.tar.gz"
 
     - name: Create directrory for Filebeat
       become: true
@@ -78,10 +82,18 @@
       changed_when: filebeat_modules.stdout != 'Module elasticsearch is already enabled'
 
 - name: restart Filebeat binary
-  shell:
-    cmd: docker exec -d -it {{ ansible_nodename }} bash /etc/profile.d/filebeat.sh
-  changed_when: false
-  delegate_to: 127.0.0.1
+  block:
+  - name: restart Filebeat binary on Docker
+    shell:
+      cmd: docker exec -d -it {{ ansible_nodename }} bash /etc/profile.d/filebeat.sh
+    changed_when: false
+    delegate_to: 127.0.0.1
+  rescue:
+  - name: restart Filebeat binaryon Podman
+    shell:
+      cmd: podman exec -d -it {{ ansible_nodename }} bash /etc/profile.d/filebeat.sh
+    changed_when: false
+    delegate_to: 127.0.0.1
 
 - name: Load Kibana dashboards
   when:
