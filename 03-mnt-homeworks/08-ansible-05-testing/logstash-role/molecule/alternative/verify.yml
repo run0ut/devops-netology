@@ -112,7 +112,7 @@
       rescue: 
       - name: make shure there are no any running logstashes on Podman
         shell:
-          cmd: podman exec {{ ansible_nodename }} bash -c 'kill -9 $(pgrep /opt/logstash/7.14.0/jdk/bin/java -f)'
+          cmd: podman exec {{ ansible_nodename }} bash -c 'kill -9 $(pgrep {{ logstash_home }}/jdk/bin/java -f)'
         changed_when: false
         failed_when: false
         delegate_to: 127.0.0.1

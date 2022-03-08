@@ -1477,7 +1477,7 @@ devops-netology
 
     </details>
 
-    Тестирование с `tox` https://github.com/run0ut/logstash-role/releases/tag/1.3.0
+    Тестирование с `tox` https://github.com/run0ut/logstash-role/releases/tag/1.3.1
 
     <details><summary>лог тестирования с tox</summary>
 
@@ -2422,7 +2422,7 @@ devops-netology
 
 3. В ролях добавьте тестирование в раздел `verify.yml`. Данный раздел должен проверять, что logstash через команду `logstash -e 'input { stdin { } } output { stdout {} }'`  отвечате адекватно.
 
-    https://github.com/run0ut/logstash-role/blob/82e6cd57b8a88fdf037a88841d72fadd5be573a9/molecule/alternative/verify.yml#L91-L128
+    https://github.com/run0ut/logstash-role/blob/main/molecule/alternative/verify.yml#L91-L128
 
 4. Создайте сценарий внутри любой из своих ролей, который умеет поднимать весь стек при помощи всех ролей.
 
