@@ -88,3 +88,9 @@
           cmd: docker exec -d -it {{ ansible_nodename }} bash /etc/profile.d/logstash.sh
         changed_when: false
         delegate_to: 127.0.0.1
+      rescue:
+      - name: try start Logstash binary in Podman
+        shell:
+          cmd: podman exec -d -it {{ ansible_nodename }} bash /etc/profile.d/logstash.sh
+        changed_when: false
+        delegate_to: 127.0.0.1
