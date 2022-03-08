@@ -6,7 +6,7 @@ input {
 
 output {
   elasticsearch {
-    hosts => [{{ logstash_elasticsearch_url }}]
+    hosts => ["{{ logstash_elasticsearch_url }}"]
     index => "%{[@metadata][beat]}-%{[@metadata][version]}" 
   }
 }

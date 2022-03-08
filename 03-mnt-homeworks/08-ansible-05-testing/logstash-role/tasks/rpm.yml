@@ -1,0 +1,61 @@
+---
+
+- name: "Download Logstash's rpm"
+  get_url:
+    url: "https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version }}-x86_64.rpm"
+    dest: "files/logstash-{{ logstash_version }}-x86_64.rpm"
+    mode: 0755
+    validate_certs: false
+  changed_when: false
+  delegate_to: localhost
+  register: get_elasticsearch
+  until: get_elasticsearch is succeeded
+- name: Copy Logstash to manage host
+  copy:
+    src: "files/logstash-{{ logstash_version }}-x86_64.rpm"
+    mode: 0755
+    dest: "/tmp/logstash-{{ logstash_version }}-x86_64.rpm"
+
+- name: Ensure Java is installed.
+  become: true
+  yum:
+    name: "java-1.8.0-openjdk"
+    state: present
+
+- name: Install Logstash
+  become: true
+  yum:
+    name: "/tmp/logstash-{{ logstash_version }}-x86_64.rpm"
+    state: present
+
+- name: Configure startup options
+  become: true
+  template:
+    src: "startup.options.j2"
+    dest: "/etc/logstash/startup.options"
+    mode: 0644
+  notify: restart Logstash
+
+- name: Configure JVM options
+  become: true
+  template:
+    src: "jvm.options.j2"
+    dest: "/etc/logstash/jvm.options"
+    mode: 0644
+  notify: restart Logstash
+
+- name: Create startup scripts
+  become: true
+  command:
+    cmd: /usr/share/logstash/bin/system-install /etc/logstash/startup.options systemd
+  notify: restart Logstash
+
+- name: Create Logstash configuration files.
+  become: true
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/logstash/conf.d/{{ item }}"
+    mode: 0644
+  with_items:
+    - simple_config.conf
+  notify: restart Logstash

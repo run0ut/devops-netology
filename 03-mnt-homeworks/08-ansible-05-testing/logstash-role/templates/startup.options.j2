@@ -9,13 +9,15 @@
 ################################################################################
 
 # Override Java location
-JAVACMD=/usr/bin/java
+# JAVACMD=/usr/bin/java
+JAVACMD={{ logstash_home }}/jdk/bin/java
 
 # Set a home directory
-LS_HOME=/usr/share/logstash
+# LS_HOME=/usr/share/logstash
+LS_HOME={{ logstash_home }}
 
 # logstash settings directory, the path which contains logstash.yml
-LS_SETTINGS_DIR=/etc/logstash
+LS_SETTINGS_DIR={{ logstash_home }}/config
 
 # Arguments to pass to logstash
 LS_OPTS="--path.settings ${LS_SETTINGS_DIR}"
