@@ -28,6 +28,8 @@ devops-netology
 6. On test <-> On fix, Done
 7. Done <-> Closed, Open
 
+![Bug workflow diagram](./files/Bug_workflow_diagram.png "Bug workflow diagram")
+
 Остальные задачи должны проходить по упрощённому workflow:
 1. Open -> On develop
 2. On develop <-> Open, Done develop
@@ -35,8 +37,26 @@ devops-netology
 4. On test <-> On develop, Done
 5. Done <-> Closed, Open
 
+![Default workflow diagram](./files/Default_workflow_diagram.png "Default workflow diagram")
+
 Создать задачу с типом bug, попытаться провести его по всему workflow до Done. Создать задачу с типом epic, к ней привязать несколько задач с типом task, провести их по всему workflow до Done. При проведении обеих задач по статусам использовать kanban. Вернуть задачи в статус Open.
+
+![Kanban column settings](./files/Kanban_board_column_settings.png "Bug workflow diagram")
+
+
 Перейти в scrum, запланировать новый спринт, состоящий из задач эпика и одного бага, стартовать спринт, провести задачи до состояния Closed. Закрыть спринт.
 
+![Scrum column settings](./files/Scrum_board_column_settings.png "Scrum workflow diagram")
+
 Если всё отработало в рамках ожидания - выгрузить схемы workflow для импорта в XML. Файлы с workflow приложить к решению задания.
+
+</details>  
+
+### Если всё отработало в рамках ожидания - выгрузить схемы workflow для импорта в XML. Файлы с workflow приложить к решению задания.
+
+
+- [Bug workflow XML](./files/bug_netology91.xml "Bug workflow XML")
+- [Default workflow XML](./files/default_netology91.xml "Default workflow XML")
+
+
 
