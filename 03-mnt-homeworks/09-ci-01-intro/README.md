@@ -17,8 +17,6 @@ devops-netology
 
 ## Основная часть
 
-<details><summary>.</summary>
-
 В рамках основной части необходимо создать собственные workflow для двух типов задач: bug и остальные типы задач. Задачи типа bug должны проходить следующий жизненный цикл:
 1. Open -> On reproduce
 2. On reproduce <-> Open, Done reproduce
@@ -49,8 +47,6 @@ devops-netology
 ![Scrum column settings](./files/Scrum_board_column_settings.png "Scrum workflow diagram")
 
 Если всё отработало в рамках ожидания - выгрузить схемы workflow для импорта в XML. Файлы с workflow приложить к решению задания.
-
-</details>  
 
 ### Если всё отработало в рамках ожидания - выгрузить схемы workflow для импорта в XML. Файлы с workflow приложить к решению задания.
 
