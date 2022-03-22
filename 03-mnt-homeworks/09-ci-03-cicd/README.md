@@ -174,9 +174,9 @@ devops-netology
 
 ## Знакомство с Nexus
 
-<details><summary>.</summary>
-
 ### Основная часть
+
+<details><summary>.</summary>
 
 1. В репозиторий `maven-public` загружаем артефакт с GAV параметрами:
    1. groupId: netology
@@ -184,9 +184,17 @@ devops-netology
    3. version: 8_282
    4. classifier: distrib
    5. type: tar.gz
+   ![Nexus, ](media/nexus_8_102.png)
 2. В него же загружаем такой же артефакт, но с version: 8_102
+   ![Nexus, ](media/nexus_8_282.png)
 3. Проверяем, что все файлы загрузились успешно
-4. В ответе присылаем файл `maven-metadata.xml` для этого артефекта
+   ![Nexus, ](media/nexus_check_uploads.png)
+
+</details>
+
+#### 4. В ответе присылаем файл `maven-metadata.xml` для этого артефекта
+
+[maven-metadata.xml](media/maven-metadata.xml)
 
 ### Знакомство с Maven
 
