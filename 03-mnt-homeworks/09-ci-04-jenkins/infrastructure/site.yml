@@ -13,6 +13,22 @@
         name: "{{ user_name }}"
         generate_ssh_key: true
       register: ssh_key_info
+    - name: Upload SSH key
+      become: true
+      copy:
+        src: ~/.ssh/id_rsa
+        dest: "/home/{{ user_name }}/.ssh/id_rsa"
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: 0600
+    - name: Upload SSH Pub key
+      become: true
+      copy:
+        src: ~/.ssh/id_rsa.pub
+        dest: "/home/{{ user_name }}/.ssh/id_rsa.pub"
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: 0644
     - name: Install JDK
       become: true
       package:
@@ -72,7 +88,7 @@
       authorized_key:
         user: "{{ jenkins_user_name }}"
         state: present
-        key: "{{ hostvars['jenkins-master-01']['ssh_key_info']['ssh_public_key'] }}"
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     - name: Create agent_dir
       become_user: root
       file:
