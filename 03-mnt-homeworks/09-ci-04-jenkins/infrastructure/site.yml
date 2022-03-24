@@ -162,4 +162,9 @@
       until: install_agent is succeeded
       retries: 10
       timeout: 10
-
+    - name: Fix Elasticsearch bootstrap checks
+      become_user: root
+      ansible.posix.sysctl:
+        name: vm.max_map_count
+        value: '262144'
+        state: present
