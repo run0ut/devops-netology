@@ -18,7 +18,7 @@ devops-netology
 
 ## Основная часть
 
-<!-- <details><summary>.</summary> -->
+<details><summary>.</summary>
 
 1. Сделать Freestyle Job, который будет запускать `molecule test` из любого вашего репозитория с ролью.
 
@@ -1974,10 +1974,637 @@ devops-netology
 
 5. Создать Scripted Pipeline, наполнить его скриптом из [pipeline](./pipeline).
 6. Внести необходимые изменения, чтобы Pipeline запускал `ansible-playbook` без флагов `--check --diff`, если не установлен параметр при запуске джобы (prod_run = True), по умолчанию параметр имеет значение False и запускает прогон с флагами `--check --diff`.
+    ```groovy
+    node('docker'){
+        stage('Checkout') {
+            git branch: 'main', credentialsId: '0b54df1a-ee4b-40da-b8bb-a70fcf46e73f', url: 'git@github.com:run0ut/ansible-elk.git'
+        }
+        stage('Install molecule') {
+            sh 'pip3 install -r requirements.txt'
+            sh 'ansible-galaxy install --roles-path ./roles/ -r requirements.yml'
+        }
+        stage('Run Playbook'){
+            if ( "${prod_run}" == "true" ){
+                sh 'ansible-playbook -i inventory.yml playbook.yml'
+            }
+            else{
+                sh 'ansible-playbook -i inventory.yml playbook.yml --check --diff'
+            }
+            // Clean workspace after testing
+            cleanWs()
+        }
+    }
+
+    ```
 7. Проверить работоспособность, исправить ошибки, исправленный Pipeline вложить в репозиторий в файл `ScriptedJenkinsfile`. Цель: получить собранный стек ELK в Ya.Cloud.
+
+    - `prod_run=false`
+
+        <details><summary>Лог</summary>
+
+        ```log
+        Started by user admin
+        [Pipeline] Start of Pipeline
+        [Pipeline] node
+        Still waiting to schedule task
+        ‘elastic-role’ is offline
+        Running on elastic-role in /opt/jenkins_agent/workspace/logstash-role scripted pipeline
+        [Pipeline] {
+        [Pipeline] stage
+        [Pipeline] { (Checkout)
+        [Pipeline] git
+        The recommended git tool is: NONE
+        using credential 0b54df1a-ee4b-40da-b8bb-a70fcf46e73f
+        Fetching changes from the remote Git repository
+        > git rev-parse --resolve-git-dir /opt/jenkins_agent/workspace/logstash-role scripted pipeline/.git # timeout=10
+        > git config remote.origin.url git@github.com:run0ut/ansible-elk.git # timeout=10
+        Fetching upstream changes from git@github.com:run0ut/ansible-elk.git
+        > git --version # timeout=10
+        > git --version # 'git version 1.8.3.1'
+        using GIT_SSH to set credentials 
+        [INFO] Currently running in a labeled security context
+        [INFO] Currently SELinux is 'enforcing' on the host
+        > /usr/bin/chcon --type=ssh_home_t /opt/jenkins_agent/workspace/logstash-role scripted pipeline@tmp/jenkins-gitclient-ssh3841046745600551637.key
+        > git fetch --tags --progress git@github.com:run0ut/ansible-elk.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+        Checking out Revision 9312df14d496ca1f31cd0814beaef2dc5664b840 (refs/remotes/origin/main)
+        > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+        > git config core.sparsecheckout # timeout=10
+        > git checkout -f 9312df14d496ca1f31cd0814beaef2dc5664b840 # timeout=10
+        > git branch -a -v --no-abbrev # timeout=10
+        > git branch -D main # timeout=10
+        > git checkout -b main 9312df14d496ca1f31cd0814beaef2dc5664b840 # timeout=10
+        Commit message: "необходимые модули python"
+        First time build. Skipping changelog.
+        [Pipeline] }
+        [Pipeline] // stage
+        [Pipeline] stage
+        [Pipeline] { (Install molecule)
+        [Pipeline] sh
+        + pip3 install -r requirements.txt
+        Defaulting to user installation because normal site-packages is not writeable
+        Requirement already satisfied: ansible in /usr/local/lib/python3.6/site-packages (from -r requirements.txt (line 1)) (4.10.0)
+        Requirement already satisfied: docker in /home/jenkins/.local/lib/python3.6/site-packages (from -r requirements.txt (line 2)) (5.0.3)
+        Requirement already satisfied: ansible-core~=2.11.7 in /usr/local/lib/python3.6/site-packages (from ansible->-r requirements.txt (line 1)) (2.11.9)
+        Requirement already satisfied: websocket-client>=0.32.0 in /home/jenkins/.local/lib/python3.6/site-packages (from docker->-r requirements.txt (line 2)) (1.3.1)
+        Requirement already satisfied: requests!=2.18.0,>=2.14.2 in /home/jenkins/.local/lib/python3.6/site-packages (from docker->-r requirements.txt (line 2)) (2.27.1)
+        Requirement already satisfied: jinja2 in /usr/local/lib/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (3.0.3)
+        Requirement already satisfied: PyYAML in /usr/local/lib64/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (6.0)
+        Requirement already satisfied: cryptography in /usr/local/lib64/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (36.0.2)
+        Requirement already satisfied: packaging in /usr/local/lib/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (21.3)
+        Requirement already satisfied: resolvelib<0.6.0,>=0.5.3 in /usr/local/lib/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (0.5.4)
+        Requirement already satisfied: charset-normalizer~=2.0.0 in /home/jenkins/.local/lib/python3.6/site-packages (from requests!=2.18.0,>=2.14.2->docker->-r requirements.txt (line 2)) (2.0.12)
+        Requirement already satisfied: urllib3<1.27,>=1.21.1 in /home/jenkins/.local/lib/python3.6/site-packages (from requests!=2.18.0,>=2.14.2->docker->-r requirements.txt (line 2)) (1.26.9)
+        Requirement already satisfied: certifi>=2017.4.17 in /home/jenkins/.local/lib/python3.6/site-packages (from requests!=2.18.0,>=2.14.2->docker->-r requirements.txt (line 2)) (2021.10.8)
+        Requirement already satisfied: idna<4,>=2.5 in /home/jenkins/.local/lib/python3.6/site-packages (from requests!=2.18.0,>=2.14.2->docker->-r requirements.txt (line 2)) (3.3)
+        Requirement already satisfied: cffi>=1.12 in /usr/local/lib64/python3.6/site-packages (from cryptography->ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (1.15.0)
+        Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib64/python3.6/site-packages (from jinja2->ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (2.0.1)
+        Requirement already satisfied: pyparsing!=3.0.5,>=2.0.2 in /usr/local/lib/python3.6/site-packages (from packaging->ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (3.0.7)
+        Requirement already satisfied: pycparser in /usr/local/lib/python3.6/site-packages (from cffi>=1.12->cryptography->ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (2.21)
+        [Pipeline] sh
+        + ansible-galaxy install --roles-path ./roles/ -r requirements.yml
+        [DEPRECATION WARNING]: Ansible will require Python 3.8 or newer on the 
+        controller starting with Ansible 2.12. Current version: 3.6.8 (default, Nov 16 
+        2020, 16:55:22) [GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]. This feature will be 
+        removed from ansible-core in version 2.12. Deprecation warnings can be disabled
+        by setting deprecation_warnings=False in ansible.cfg.
+        Starting galaxy role install process
+        - extracting kibana-role to /opt/jenkins_agent/workspace/logstash-role scripted pipeline/roles/kibana-role
+        - kibana-role (main) was installed successfully
+        - extracting elastic-role to /opt/jenkins_agent/workspace/logstash-role scripted pipeline/roles/elastic-role
+        - elastic-role (main) was installed successfully
+        - extracting filebeat-role to /opt/jenkins_agent/workspace/logstash-role scripted pipeline/roles/filebeat-role
+        - filebeat-role (main) was installed successfully
+        - extracting logstash-role to /opt/jenkins_agent/workspace/logstash-role scripted pipeline/roles/logstash-role
+        - logstash-role (main) was installed successfully
+        [Pipeline] }
+        [Pipeline] // stage
+        [Pipeline] stage
+        [Pipeline] { (Run Playbook)
+        [Pipeline] sh
+        + ansible-playbook -i inventory.yml playbook.yml --check --diff
+        [DEPRECATION WARNING]: Ansible will require Python 3.8 or newer on the 
+        controller starting with Ansible 2.12. Current version: 3.6.8 (default, Nov 16 
+        2020, 16:55:22) [GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]. This feature will be 
+        removed from ansible-core in version 2.12. Deprecation warnings can be disabled
+        by setting deprecation_warnings=False in ansible.cfg.
+        [WARNING]: Invalid characters were found in group names but not replaced, use
+        -vvvv to see details
+
+        PLAY [start docker with centos7] ***********************************************
+
+        TASK [Gathering Facts] *********************************************************
+        ok: [node]
+
+        TASK [download roles] **********************************************************
+        skipping: [node]
+
+        TASK [Start a container] *******************************************************
+        --- before
+        +++ after
+        @@ -1,3 +1,3 @@
+        {
+        -    "exists": false
+        +    "exists": true
+        }
+
+        [DEPRECATION WARNING]: The container_default_behavior option will change its 
+        default value from "compatibility" to "no_defaults" in community.docker 2.0.0. 
+        To remove this warning, please specify an explicit value for it now. This 
+        feature will be removed from community.docker in version 2.0.0. Deprecation 
+        warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+        changed: [node]
+
+        PLAY [Converge] ****************************************************************
+
+        TASK [Gathering Facts] *********************************************************
+        fatal: [centos7]: UNREACHABLE! => {"changed": false, "msg": "Failed to create temporary directory.In some cases, you may have been able to authenticate and did not have permissions on the target directory. Consider changing the remote tmp path in ansible.cfg to a path rooted in \"/tmp\", for more error information use -vvv. Failed command was: ( umask 77 && mkdir -p \"` echo ~/.ansible/tmp `\"&& mkdir \"` echo ~/.ansible/tmp/ansible-tmp-1648192712.2458348-2178-29743203054613 `\" && echo ansible-tmp-1648192712.2458348-2178-29743203054613=\"` echo ~/.ansible/tmp/ansible-tmp-1648192712.2458348-2178-29743203054613 `\" ), exited with result 1", "unreachable": true}
+
+        PLAY RECAP *********************************************************************
+        centos7                    : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+        node                       : ok=2    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+
+        [Pipeline] }
+        [Pipeline] // stage
+        [Pipeline] }
+        [Pipeline] // node
+        [Pipeline] End of Pipeline
+        ERROR: script returned exit code 4
+        Finished: FAILURE
+        ```
+
+        </details>
+
+    - `prod_run=true`
+
+        <details><summary>Лог</summary>
+
+        ```log
+        Started by user admin
+        [Pipeline] Start of Pipeline
+        [Pipeline] node
+        Running on elastic-role in /opt/jenkins_agent/workspace/logstash-role scripted pipeline
+        [Pipeline] {
+        [Pipeline] stage
+        [Pipeline] { (Checkout)
+        [Pipeline] git
+        The recommended git tool is: NONE
+        using credential 0b54df1a-ee4b-40da-b8bb-a70fcf46e73f
+        Fetching changes from the remote Git repository
+        > git rev-parse --resolve-git-dir /opt/jenkins_agent/workspace/logstash-role scripted pipeline/.git # timeout=10
+        > git config remote.origin.url git@github.com:run0ut/ansible-elk.git # timeout=10
+        Fetching upstream changes from git@github.com:run0ut/ansible-elk.git
+        > git --version # timeout=10
+        > git --version # 'git version 1.8.3.1'
+        using GIT_SSH to set credentials 
+        [INFO] Currently running in a labeled security context
+        [INFO] Currently SELinux is 'enforcing' on the host
+        > /usr/bin/chcon --type=ssh_home_t /opt/jenkins_agent/workspace/logstash-role scripted pipeline@tmp/jenkins-gitclient-ssh14093179129265915080.key
+        > git fetch --tags --progress git@github.com:run0ut/ansible-elk.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+        Checking out Revision 9312df14d496ca1f31cd0814beaef2dc5664b840 (refs/remotes/origin/main)
+        Commit message: "необходимые модули python"
+        > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+        > git config core.sparsecheckout # timeout=10
+        > git checkout -f 9312df14d496ca1f31cd0814beaef2dc5664b840 # timeout=10
+        > git branch -a -v --no-abbrev # timeout=10
+        > git branch -D main # timeout=10
+        > git checkout -b main 9312df14d496ca1f31cd0814beaef2dc5664b840 # timeout=10
+        > git rev-list --no-walk 9312df14d496ca1f31cd0814beaef2dc5664b840 # timeout=10
+        [Pipeline] }
+        [Pipeline] // stage
+        [Pipeline] stage
+        [Pipeline] { (Install molecule)
+        [Pipeline] sh
+        + pip3 install -r requirements.txt
+        Defaulting to user installation because normal site-packages is not writeable
+        Requirement already satisfied: ansible in /usr/local/lib/python3.6/site-packages (from -r requirements.txt (line 1)) (4.10.0)
+        Requirement already satisfied: docker in /home/jenkins/.local/lib/python3.6/site-packages (from -r requirements.txt (line 2)) (5.0.3)
+        Requirement already satisfied: ansible-core~=2.11.7 in /usr/local/lib/python3.6/site-packages (from ansible->-r requirements.txt (line 1)) (2.11.9)
+        Requirement already satisfied: requests!=2.18.0,>=2.14.2 in /home/jenkins/.local/lib/python3.6/site-packages (from docker->-r requirements.txt (line 2)) (2.27.1)
+        Requirement already satisfied: websocket-client>=0.32.0 in /home/jenkins/.local/lib/python3.6/site-packages (from docker->-r requirements.txt (line 2)) (1.3.1)
+        Requirement already satisfied: jinja2 in /usr/local/lib/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (3.0.3)
+        Requirement already satisfied: PyYAML in /usr/local/lib64/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (6.0)
+        Requirement already satisfied: cryptography in /usr/local/lib64/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (36.0.2)
+        Requirement already satisfied: packaging in /usr/local/lib/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (21.3)
+        Requirement already satisfied: resolvelib<0.6.0,>=0.5.3 in /usr/local/lib/python3.6/site-packages (from ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (0.5.4)
+        Requirement already satisfied: idna<4,>=2.5 in /home/jenkins/.local/lib/python3.6/site-packages (from requests!=2.18.0,>=2.14.2->docker->-r requirements.txt (line 2)) (3.3)
+        Requirement already satisfied: certifi>=2017.4.17 in /home/jenkins/.local/lib/python3.6/site-packages (from requests!=2.18.0,>=2.14.2->docker->-r requirements.txt (line 2)) (2021.10.8)
+        Requirement already satisfied: urllib3<1.27,>=1.21.1 in /home/jenkins/.local/lib/python3.6/site-packages (from requests!=2.18.0,>=2.14.2->docker->-r requirements.txt (line 2)) (1.26.9)
+        Requirement already satisfied: charset-normalizer~=2.0.0 in /home/jenkins/.local/lib/python3.6/site-packages (from requests!=2.18.0,>=2.14.2->docker->-r requirements.txt (line 2)) (2.0.12)
+        Requirement already satisfied: cffi>=1.12 in /usr/local/lib64/python3.6/site-packages (from cryptography->ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (1.15.0)
+        Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib64/python3.6/site-packages (from jinja2->ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (2.0.1)
+        Requirement already satisfied: pyparsing!=3.0.5,>=2.0.2 in /usr/local/lib/python3.6/site-packages (from packaging->ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (3.0.7)
+        Requirement already satisfied: pycparser in /usr/local/lib/python3.6/site-packages (from cffi>=1.12->cryptography->ansible-core~=2.11.7->ansible->-r requirements.txt (line 1)) (2.21)
+        [Pipeline] sh
+        + ansible-galaxy install --roles-path ./roles/ -r requirements.yml
+        [DEPRECATION WARNING]: Ansible will require Python 3.8 or newer on the 
+        controller starting with Ansible 2.12. Current version: 3.6.8 (default, Nov 16 
+        2020, 16:55:22) [GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]. This feature will be 
+        removed from ansible-core in version 2.12. Deprecation warnings can be disabled
+        by setting deprecation_warnings=False in ansible.cfg.
+        Starting galaxy role install process
+        - kibana-role (main) is already installed, skipping.
+        - elastic-role (main) is already installed, skipping.
+        - filebeat-role (main) is already installed, skipping.
+        - logstash-role (main) is already installed, skipping.
+        [Pipeline] }
+        [Pipeline] // stage
+        [Pipeline] stage
+        [Pipeline] { (Run Playbook)
+        [Pipeline] sh
+        + ansible-playbook -i inventory.yml playbook.yml
+        [DEPRECATION WARNING]: Ansible will require Python 3.8 or newer on the 
+        controller starting with Ansible 2.12. Current version: 3.6.8 (default, Nov 16 
+        2020, 16:55:22) [GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]. This feature will be 
+        removed from ansible-core in version 2.12. Deprecation warnings can be disabled
+        by setting deprecation_warnings=False in ansible.cfg.
+        [WARNING]: Invalid characters were found in group names but not replaced, use
+        -vvvv to see details
+
+        PLAY [start docker with centos7] ***********************************************
+
+        TASK [Gathering Facts] *********************************************************
+        ok: [node]
+
+        TASK [download roles] **********************************************************
+        changed: [node]
+
+        TASK [Start a container] *******************************************************
+        [DEPRECATION WARNING]: The container_default_behavior option will change its 
+        default value from "compatibility" to "no_defaults" in community.docker 2.0.0. 
+        To remove this warning, please specify an explicit value for it now. This 
+        feature will be removed from community.docker in version 2.0.0. Deprecation 
+        warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+        changed: [node]
+
+        PLAY [Converge] ****************************************************************
+
+        TASK [Gathering Facts] *********************************************************
+        ok: [centos7]
+
+        TASK [Include logstash-role] ***************************************************
+
+        TASK [logstash-role : Download Logstash's rpm] *********************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Copy Logstash to manage host] ****************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Ensure Java is installed.] *******************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Install Logstash] ****************************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Configure startup options] *******************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Configure JVM options] ***********************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Create startup scripts] **********************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Create Logstash configuration files.] ********************
+        skipping: [centos7] => (item=simple_config.conf) 
+
+        TASK [logstash-role : install iproute] *****************************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Recollect facts] *****************************************
+        skipping: [centos7]
+
+        TASK [logstash-role : debug] ***************************************************
+        skipping: [centos7]
+
+        TASK [logstash-role : Get Logstash tar.gz] *************************************
+        ok: [centos7 -> localhost]
+
+        TASK [logstash-role : Copy Logstash to manage host] ****************************
+        changed: [centos7]
+
+        TASK [logstash-role : Create directrory for Logstash] **************************
+        changed: [centos7]
+
+        TASK [logstash-role : Extract Logstash in the installation directory] **********
+        changed: [centos7]
+
+        TASK [logstash-role : Create java options directory] ***************************
+        changed: [centos7] => (item=/opt/logstash/7.14.0/config/jvm.options.d)
+
+        TASK [logstash-role : Configure JVM options] ***********************************
+        changed: [centos7]
+
+        TASK [logstash-role : Create Logstash configuration files.] ********************
+        changed: [centos7] => (item=simple_config.conf)
+        changed: [centos7] => (item=pipelines.yml)
+        changed: [centos7] => (item=startup.options)
+
+        TASK [logstash-role : Set environment Logstash] ********************************
+        changed: [centos7]
+
+        TASK [logstash-role : try start Logstash binary in Docker] *********************
+        ok: [centos7 -> 127.0.0.1]
+
+        PLAY [Verify] ******************************************************************
+
+        TASK [Gathering Facts] *********************************************************
+        ok: [centos7]
+
+        TASK [get elastic] *************************************************************
+
+        TASK [elastic-role : Recollect facts] ******************************************
+        ok: [centos7]
+
+        TASK [elastic-role : Download Elasticsearch's rpm] *****************************
+        skipping: [centos7]
+
+        TASK [elastic-role : Install latest Elasticsearch] *****************************
+        skipping: [centos7]
+
+        TASK [elastic-role : Configure Elasticsearch] **********************************
+        skipping: [centos7]
+
+        TASK [elastic-role : install iproute] ******************************************
+        skipping: [centos7]
+
+        TASK [elastic-role : Recollect facts] ******************************************
+        skipping: [centos7]
+
+        TASK [elastic-role : Get Elasticsearch tar.gz] *********************************
+        changed: [centos7 -> localhost]
+
+        TASK [elastic-role : Copy Elasticsearch to manage host] ************************
+        changed: [centos7]
+
+        TASK [elastic-role : Create directrory for Elasticsearch] **********************
+        changed: [centos7]
+
+        TASK [elastic-role : Extract Elasticsearch in the installation directory] ******
+        changed: [centos7]
+
+        TASK [elastic-role : Configure Elasticsearch] **********************************
+        changed: [centos7] => (item={'src': 'elasticsearch.yml.j2', 'dest': '/opt/elasticsearch/7.14.0/config/elasticsearch.yml'})
+        changed: [centos7] => (item={'src': 'jvm.options.j2', 'dest': '/opt/elasticsearch/7.14.0/config/jvm.options'})
+
+        TASK [elastic-role : Set environment Elasticsearch] ****************************
+        changed: [centos7]
+
+        TASK [elastic-role : Create group] *********************************************
+        changed: [centos7]
+
+        TASK [elastic-role : Create user] **********************************************
+        changed: [centos7]
+
+        TASK [elastic-role : Create directories] ***************************************
+        changed: [centos7] => (item=/var/log/elasticsearch)
+        ok: [centos7] => (item=/opt/elasticsearch/7.14.0)
+
+        TASK [elastic-role : Set permissions] ******************************************
+        changed: [centos7] => (item=/var/log/elasticsearch)
+        changed: [centos7] => (item=/opt/elasticsearch/7.14.0)
+
+        TASK [elastic-role : restart Elasticsearch binary on docker] *******************
+        ok: [centos7 -> 127.0.0.1]
+
+        TASK [get kibana] **************************************************************
+
+        TASK [kibana-role : Download Kibana's rpm] *************************************
+        skipping: [centos7]
+
+        TASK [kibana-role : Install latest Kibana] *************************************
+        skipping: [centos7]
+
+        TASK [kibana-role : Configure Kibana] ******************************************
+        skipping: [centos7]
+
+        TASK [kibana-role : install iproute] *******************************************
+        skipping: [centos7]
+
+        TASK [kibana-role : Recollect facts] *******************************************
+        skipping: [centos7]
+
+        TASK [kibana-role : debug] *****************************************************
+        skipping: [centos7]
+
+        TASK [kibana-role : Get Kibana tar.gz] *****************************************
+        ok: [centos7 -> localhost]
+
+        TASK [kibana-role : Copy Elasticsearch to manage host] *************************
+        changed: [centos7]
+
+        TASK [kibana-role : Create directrory for Kibana] ******************************
+        changed: [centos7]
+
+        TASK [kibana-role : Extract Kibana in the installation directory] **************
+        changed: [centos7]
+
+        TASK [kibana-role : Configure Kibana] ******************************************
+        changed: [centos7]
+
+        TASK [kibana-role : Set environment Kibana] ************************************
+        changed: [centos7]
+
+        TASK [kibana-role : try start Kibana binary in Docker] *************************
+        ok: [centos7 -> 127.0.0.1]
+
+        TASK [test elastic web] ********************************************************
+        ok: [centos7]
+
+        TASK [test kibana web] *********************************************************
+        FAILED - RETRYING: test kibana web (10 retries left).
+        ok: [centos7]
+
+        TASK [apply filebeat-role to setup kibana dashboards] **************************
+
+        TASK [filebeat-role : Download Filebeat's rpm] *********************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Install latest Filebeat] *********************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Configure Filebeat] **************************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Enable and configure the system module] ******************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Load Kibana dashboards] **********************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : install iproute] *****************************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Recollect facts] *****************************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Get Filebeat tar.gz] *************************************
+        ok: [centos7 -> localhost]
+
+        TASK [filebeat-role : Copy Filebeat to manage host] ****************************
+        changed: [centos7]
+
+        TASK [filebeat-role : Create directrory for Filebeat] **************************
+        changed: [centos7]
+
+        TASK [filebeat-role : Extract Filebeat in the installation directory] **********
+        ok: [centos7]
+
+        TASK [filebeat-role : Configure Filebeat] **************************************
+        ok: [centos7]
+
+        TASK [filebeat-role : Set environment Filebeat] ********************************
+        changed: [centos7]
+
+        TASK [filebeat-role : Enable and configure the system module] ******************
+        changed: [centos7]
+
+        TASK [filebeat-role : Enable and configure the elasticsearch module] ***********
+        changed: [centos7]
+
+        TASK [filebeat-role : restart Filebeat binary on Docker] ***********************
+        ok: [centos7 -> 127.0.0.1]
+
+        TASK [filebeat-role : Load Kibana dashboards] **********************************
+        ok: [centos7]
+
+        TASK [check filebeat is running] ***********************************************
+        ok: [centos7 -> 127.0.0.1]
+
+        TASK [print what docker exec returned] *****************************************
+        ok: [centos7] => {
+            "msg": "filebeat process id = 4037"
+        }
+
+        TASK [check filebeat index exists] *********************************************
+        ok: [centos7]
+
+        TASK [checkif index not empty] *************************************************
+        ok: [centos7] => {
+            "msg": "number of documents in filebeat index = 363"
+        }
+
+        TASK [apply filebeat-role to setup kibana dashboards] **************************
+
+        TASK [filebeat-role : Download Filebeat's rpm] *********************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Install latest Filebeat] *********************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Configure Filebeat] **************************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Enable and configure the system module] ******************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Load Kibana dashboards] **********************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : install iproute] *****************************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Recollect facts] *****************************************
+        skipping: [centos7]
+
+        TASK [filebeat-role : Get Filebeat tar.gz] *************************************
+        ok: [centos7 -> localhost]
+
+        TASK [filebeat-role : Copy Filebeat to manage host] ****************************
+        ok: [centos7]
+
+        TASK [filebeat-role : Create directrory for Filebeat] **************************
+        ok: [centos7]
+
+        TASK [filebeat-role : Extract Filebeat in the installation directory] **********
+        ok: [centos7]
+
+        TASK [filebeat-role : Configure Filebeat] **************************************
+        ok: [centos7]
+
+        TASK [filebeat-role : Set environment Filebeat] ********************************
+        ok: [centos7]
+
+        TASK [filebeat-role : Enable and configure the system module] ******************
+        ok: [centos7]
+
+        TASK [filebeat-role : Enable and configure the elasticsearch module] ***********
+        ok: [centos7]
+
+        TASK [filebeat-role : restart Filebeat binary on Docker] ***********************
+        ok: [centos7 -> 127.0.0.1]
+
+        TASK [filebeat-role : Load Kibana dashboards] **********************************
+        skipping: [centos7]
+
+        TASK [make shure there are no any running logstashes] **************************
+        ok: [centos7 -> 127.0.0.1]
+
+        TASK [check logstash will answer normally] *************************************
+        ok: [centos7 -> 127.0.0.1]
+
+        TASK [print logstash answer if previous command exited well (retcode = 0)] *****
+        ok: [centos7] => {
+            "msg": [
+                "Using bundled JDK: /opt/logstash/7.14.0/jdk",
+                "Sending Logstash logs to /opt/logstash/7.14.0/logs which is now configured via log4j2.properties",
+                "[2022-03-25T07:31:04,674][INFO ][logstash.runner          ] Log4j configuration path used is: /opt/logstash/7.14.0/config/log4j2.properties",
+                "[2022-03-25T07:31:04,691][INFO ][logstash.runner          ] Starting Logstash {\"logstash.version\"=>\"7.14.0\", \"jruby.version\"=>\"jruby 9.2.19.0 (2.5.8) 2021-06-15 55810c552b OpenJDK 64-Bit Server VM 11.0.11+9 on 11.0.11+9 +indy +jit [linux-x86_64]\"}",
+                "[2022-03-25T07:31:05,609][WARN ][logstash.config.source.multilocal] Ignoring the 'pipelines.yml' file because modules or command line options are specified",
+                "[2022-03-25T07:31:08,959][INFO ][logstash.agent           ] Successfully started Logstash API endpoint {:port=>9600}",
+                "[2022-03-25T07:31:09,838][INFO ][org.reflections.Reflections] Reflections took 278 ms to scan 1 urls, producing 120 keys and 417 values ",
+                "[2022-03-25T07:31:11,917][INFO ][logstash.javapipeline    ][main] Starting pipeline {:pipeline_id=>\"main\", \"pipeline.workers\"=>2, \"pipeline.batch.size\"=>125, \"pipeline.batch.delay\"=>50, \"pipeline.max_inflight\"=>250, \"pipeline.sources\"=>[\"config string\"], :thread=>\"#<Thread:0x9322f9b run>\"}",
+                "[2022-03-25T07:31:14,125][INFO ][logstash.javapipeline    ][main] Pipeline Java execution initialization time {\"seconds\"=>2.19}",
+                "[2022-03-25T07:31:14,249][INFO ][logstash.javapipeline    ][main] Pipeline started {\"pipeline.id\"=>\"main\"}",
+                "[2022-03-25T07:31:14,358][INFO ][logstash.agent           ] Pipelines running {:count=>1, :running_pipelines=>[:main], :non_running_pipelines=>[]}",
+                "[2022-03-25T07:31:14,499][INFO ][logstash.javapipeline    ][main] Pipeline terminated {\"pipeline.id\"=>\"main\"}",
+                "[2022-03-25T07:31:14,974][INFO ][logstash.pipelinesregistry] Removed pipeline from registry successfully {:pipeline_id=>:main}",
+                "[2022-03-25T07:31:15,052][INFO ][logstash.runner          ] Logstash shut down."
+            ]
+        }
+
+        PLAY RECAP *********************************************************************
+        centos7                    : ok=58   changed=27   unreachable=0    failed=0    skipped=37   rescued=0    ignored=0   
+        node                       : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+        [Pipeline] cleanWs
+        [WS-CLEANUP] Deleting project workspace...
+        [WS-CLEANUP] Deferred wipeout is used...
+        [WS-CLEANUP] done
+        [Pipeline] }
+        [Pipeline] // stage
+        [Pipeline] }
+        [Pipeline] // node
+        [Pipeline] End of Pipeline
+        Finished: SUCCESS
+        ```
+
+        </details>
+
+        - <details><summary>Скриншот настроек проекта</summary>
+
+            ![a](media/94_jenkins_ScriptedPipeline_stage_settings.png)
+            </details>
+        - Stage view, 27 - запуск с `prod_run=false`, 28 - запуск с `prod_run=true`
+
+            ![a](media/94_jenkins_ScriptedPipeline_stage_view.png)
+        - Запуск с `prod_run=true`, пошагово
+
+            ![a](media/94_jenkins_ScriptedPipeline_stage_steps.png)
+
 8. Отправить две ссылки на репозитории в ответе: с ролью и Declarative Pipeline и c плейбукой и Scripted Pipeline.
 
-        <!-- </details>   -->
+</details>  
+
+### 8. Отправить две ссылки на репозитории в ответе: с ролью и Declarative Pipeline и c плейбукой и Scripted Pipeline.
+
+1. роль с Declarative Pipeline
+
+    https://github.com/run0ut/logstash-role
+
+2. плейбук со Scripted Pipeline
+
+    https://github.com/run0ut/ansible-elk
+
 
 ## Необязательная часть
 
