@@ -74,8 +74,8 @@ delete_agent(){
 }
 
 delete_network(){
-    yc compute instance delete teamcity
-    yc compute instance delete teamcity
+    yc vpc subnet delete net
+    yc vpc network delete net
 }
 
 declare ACTION=$1
