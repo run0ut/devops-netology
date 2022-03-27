@@ -65,12 +65,30 @@ create_agent(){
         --container-env=SERVER_URL=${server_url}
 }
 
+create_nexus(){
+    yc compute instance create \
+        --name nexus-instance \
+        --hostname nexus-intsance \
+        --network-interface subnet-name=subnet,nat-ip-version=ipv4 \
+        --zone ru-central1-a \
+        --ssh-key ~/.ssh/id_rsa.pub \
+        --cores 4 \
+        --core-fraction 100 \
+        --memory 4GB \
+        --platform "standard-v1" \
+        --create-boot-disk image-id=fd8bj507sn97j6sjlp1n
+}
+
 delete_teamcity(){
     yc compute instance delete teamcity
 }
 
 delete_agent(){
     yc compute instance delete teamcity-agent
+}
+
+delete_nexus(){
+    yc compute instance delete nexus-instance
 }
 
 delete_network(){
@@ -85,8 +103,10 @@ case $ACTION in
         create_network
         create_teamcity
         create_agent
+        create_nexus
         ;;
     "delete_all")
+        delete_nexus
         create_agent
         create_teamcity
         create_network
