@@ -92,7 +92,7 @@ delete_nexus(){
 }
 
 delete_network(){
-    yc vpc subnet delete net
+    yc vpc subnet delete subnet
     yc vpc network delete net
 }
 
@@ -107,9 +107,9 @@ case $ACTION in
         ;;
     "delete_all")
         delete_nexus
-        create_agent
-        create_teamcity
-        create_network
+        delete_agent
+        delete_teamcity
+        delete_network
         ;;
     *)
         $ACTION
