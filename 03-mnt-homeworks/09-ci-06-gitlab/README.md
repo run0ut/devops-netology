@@ -84,16 +84,16 @@ devops-netology
 
 ![Скриншот комментария "тестера"](media/96-tester-comment.png)
 
-</details>  
-
-[Ссылка на комментарий на GitLab](https://gitlab.com/run0ut/netology-96/-/issues/1#note_896535862)
-
 ```bash
 $ docker run -d --rm --name netology-96-issue-1 -p 5290:5290 netology-96:latest
 f901848485d34cc10b9aad6738b4543a87ecd9a52c0db2366b1da4e13d42a692
 $ curl localhost:5290/get_info
 {"version": 4, "method": "GET", "message": "Running"}
 ```
+
+</details>  
+
+[Ссылка на комментарий на GitLab](https://gitlab.com/run0ut/netology-96/-/issues/1#note_896535862)
 
 ## Итог
 
