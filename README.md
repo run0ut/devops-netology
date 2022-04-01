@@ -53,12 +53,14 @@ devops-netology
 
 8.4. [Работа с Roles](./03-mnt-homeworks/08-ansible-04-role/README.md)
 
-<details><summary></summary>
-
 8.5. [Тестирование Roles](./03-mnt-homeworks/08-ansible-05-testing/README.md)
+
+<details><summary></summary>
 
 8.6. [Создание собственных modules](./03-mnt-homeworks/08-ansible-06-module/README.md)
 
+</details>
+  
 ---
 
 9.1. [Жизненный цикл ПО](./03-mnt-homeworks/09-ci-01-intro/README.md)
@@ -74,6 +76,8 @@ devops-netology
 9.6. [Gitlab](./03-mnt-homeworks/09-ci-06-gitlab/README.md)
 
 ---
+
+<details><summary></summary>
 
 10.1. [Зачем и что нужно мониторить](./03-mnt-homeworks/10-monitoring-01-base/README.md)
 
