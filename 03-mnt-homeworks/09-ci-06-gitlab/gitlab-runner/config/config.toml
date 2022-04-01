@@ -7,7 +7,7 @@ check_interval = 0
 [[runners]]
   name = "netology-96"
   url = "https://gitlab.com/"
-  token = "zx-iJTHPWyR-gbZAS8eK"
+  token = "supersecrettoken"
   executor = "docker"
   [runners.custom_build_dir]
   [runners.cache]
