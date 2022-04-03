@@ -7,7 +7,7 @@ devops-netology
 
 ## Подготовка к выполнению
 
-<details><summary>.</summary>
+<details><summary></summary>
 
 1. Создайте пустой публичных репозиторий в любом своём проекте: `my_own_collection`
 2. Скачайте репозиторий ansible: `git clone https://github.com/ansible/ansible.git` по любому удобному вам пути
@@ -29,158 +29,309 @@ devops-netology
 
 1. В виртуальном окружении создать новый `my_own_module.py` файл
 2. Наполнить его содержимым:
-```python
-#!/usr/bin/python
 
-# Copyright: (c) 2018, Terry Jones <terry.jones@example.org>
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
+    <details><summary>Содержимое под катом</summary>
 
-DOCUMENTATION = r'''
+    ```python
+    #!/usr/bin/python
 
-module: my_test
+    # Copyright: (c) 2018, Terry Jones <terry.jones@example.org>
+    # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+    from __future__ import (absolute_import, division, print_function)
+    __metaclass__ = type
 
-short_description: This is my test module
+    DOCUMENTATION = r'''
 
-# If this is part of a collection, you need to use semantic versioning,
-# i.e. the version is of the form "2.5.0" and not "2.4".
-version_added: "1.0.0"
+    module: my_test
 
-description: This is my longer description explaining my test module.
+    short_description: This is my test module
 
-options:
-    name:
-        description: This is the message to send to the test module.
-        required: true
+    # If this is part of a collection, you need to use semantic versioning,
+    # i.e. the version is of the form "2.5.0" and not "2.4".
+    version_added: "1.0.0"
+
+    description: This is my longer description explaining my test module.
+
+    options:
+        name:
+            description: This is the message to send to the test module.
+            required: true
+            type: str
+        new:
+            description:
+                - Control to demo if the result of this module is changed or not.
+                - Parameter description can be a list as well.
+            required: false
+            type: bool
+    # Specify this value according to your collection
+    # in format of namespace.collection.doc_fragment_name
+    extends_documentation_fragment:
+        - my_namespace.my_collection.my_doc_fragment_name
+
+    author:
+        - Your Name (@yourGitHubHandle)
+    '''
+
+    EXAMPLES = r'''
+    # Pass in a message
+    - name: Test with a message
+    my_namespace.my_collection.my_test:
+        name: hello world
+
+    # pass in a message and have changed true
+    - name: Test with a message and changed output
+    my_namespace.my_collection.my_test:
+        name: hello world
+        new: true
+
+    # fail the module
+    - name: Test failure of the module
+    my_namespace.my_collection.my_test:
+        name: fail me
+    '''
+
+    RETURN = r'''
+    # These are examples of possible return values, and in general should use other names for return values.
+    original_message:
+        description: The original name param that was passed in.
         type: str
-    new:
-        description:
-            - Control to demo if the result of this module is changed or not.
-            - Parameter description can be a list as well.
-        required: false
-        type: bool
-# Specify this value according to your collection
-# in format of namespace.collection.doc_fragment_name
-extends_documentation_fragment:
-    - my_namespace.my_collection.my_doc_fragment_name
+        returned: always
+        sample: 'hello world'
+    message:
+        description: The output message that the test module generates.
+        type: str
+        returned: always
+        sample: 'goodbye'
+    '''
 
-author:
-    - Your Name (@yourGitHubHandle)
-'''
+    from ansible.module_utils.basic import AnsibleModule
 
-EXAMPLES = r'''
-# Pass in a message
-- name: Test with a message
-  my_namespace.my_collection.my_test:
-    name: hello world
+    def run_module():
+        # define available arguments/parameters a user can pass to the module
+        module_args = dict(
+            name=dict(type='str', required=True),
+            new=dict(type='bool', required=False, default=False)
+        )
 
-# pass in a message and have changed true
-- name: Test with a message and changed output
-  my_namespace.my_collection.my_test:
-    name: hello world
-    new: true
+        # seed the result dict in the object
+        # we primarily care about changed and state
+        # changed is if this module effectively modified the target
+        # state will include any data that you want your module to pass back
+        # for consumption, for example, in a subsequent task
+        result = dict(
+            changed=False,
+            original_message='',
+            message=''
+        )
 
-# fail the module
-- name: Test failure of the module
-  my_namespace.my_collection.my_test:
-    name: fail me
-'''
+        # the AnsibleModule object will be our abstraction working with Ansible
+        # this includes instantiation, a couple of common attr would be the
+        # args/params passed to the execution, as well as if the module
+        # supports check mode
+        module = AnsibleModule(
+            argument_spec=module_args,
+            supports_check_mode=True
+        )
 
-RETURN = r'''
-# These are examples of possible return values, and in general should use other names for return values.
-original_message:
-    description: The original name param that was passed in.
-    type: str
-    returned: always
-    sample: 'hello world'
-message:
-    description: The output message that the test module generates.
-    type: str
-    returned: always
-    sample: 'goodbye'
-'''
+        # if the user is working with this module in only check mode we do not
+        # want to make any changes to the environment, just return the current
+        # state with no modifications
+        if module.check_mode:
+            module.exit_json(**result)
 
-from ansible.module_utils.basic import AnsibleModule
+        # manipulate or modify the state as needed (this is going to be the
+        # part where your module will do what it needs to do)
+        result['original_message'] = module.params['name']
+        result['message'] = 'goodbye'
 
-def run_module():
-    # define available arguments/parameters a user can pass to the module
-    module_args = dict(
-        name=dict(type='str', required=True),
-        new=dict(type='bool', required=False, default=False)
-    )
+        # use whatever logic you need to determine whether or not this module
+        # made any modifications to your target
+        if module.params['new']:
+            result['changed'] = True
 
-    # seed the result dict in the object
-    # we primarily care about changed and state
-    # changed is if this module effectively modified the target
-    # state will include any data that you want your module to pass back
-    # for consumption, for example, in a subsequent task
-    result = dict(
-        changed=False,
-        original_message='',
-        message=''
-    )
+        # during the execution of the module, if there is an exception or a
+        # conditional state that effectively causes a failure, run
+        # AnsibleModule.fail_json() to pass in the message and the result
+        if module.params['name'] == 'fail me':
+            module.fail_json(msg='You requested this to fail', **result)
 
-    # the AnsibleModule object will be our abstraction working with Ansible
-    # this includes instantiation, a couple of common attr would be the
-    # args/params passed to the execution, as well as if the module
-    # supports check mode
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
-    # if the user is working with this module in only check mode we do not
-    # want to make any changes to the environment, just return the current
-    # state with no modifications
-    if module.check_mode:
+        # in the event of a successful module execution, you will want to
+        # simple AnsibleModule.exit_json(), passing the key/value results
         module.exit_json(**result)
 
-    # manipulate or modify the state as needed (this is going to be the
-    # part where your module will do what it needs to do)
-    result['original_message'] = module.params['name']
-    result['message'] = 'goodbye'
+    def main():
+        run_module()
 
-    # use whatever logic you need to determine whether or not this module
-    # made any modifications to your target
-    if module.params['new']:
-        result['changed'] = True
+    if __name__ == '__main__':
+        main()
+    ```
+    </details>
 
-    # during the execution of the module, if there is an exception or a
-    # conditional state that effectively causes a failure, run
-    # AnsibleModule.fail_json() to pass in the message and the result
-    if module.params['name'] == 'fail me':
-        module.fail_json(msg='You requested this to fail', **result)
-
-    # in the event of a successful module execution, you will want to
-    # simple AnsibleModule.exit_json(), passing the key/value results
-    module.exit_json(**result)
-
-def main():
-    run_module()
-
-if __name__ == '__main__':
-    main()
-```
-Или возьмите данное наполнение из [статьи](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html#creating-a-module).
+    Или возьмите данное наполнение из [статьи](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html#creating-a-module).
 
 3. Заполните файл в соответствии с требованиями ansible так, чтобы он выполнял основную задачу: module должен создавать текстовый файл на удалённом хосте по пути, определённом в параметре `path`, с содержимым, определённым в параметре `content`.
 4. Проверьте module на исполняемость локально.
+
+    ```bash
+    $ python -m ansible.modules.my_own_module payload.json
+
+    {"invocation": {"module_args": {"content": "redefine content", "path": "my_test_file.txt"}}, "changed": true}
+    $ cat my_test_file.txt
+    redefine content
+    ```
+
 5. Напишите single task playbook и используйте module в нём.
+
+    ```yml
+    ---
+    - name: Test module my_own_module
+      hosts: localhost
+      tasks:
+        - name: Testing
+          my_own_module:
+            path: './my_test_file.txt'
+            content: 'Testing playbook content'
+    ```
+
 6. Проверьте через playbook на идемпотентность.
+
+    <details><summary>Лог запуска плейбука два раза</summary>
+
+    ```log
+    $ ansible-playbook test_my_own_module.yml
+    [WARNING]: You are running the development version of Ansible. You should only run Ansible from "devel" if you are modifying the Ansible engine, or trying out features under development. This is a rapidly
+    changing source of code and can become unstable at any point.
+    [WARNING]: No inventory was parsed, only implicit localhost is available
+    [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+
+    PLAY [Test module my_own_module] ********************************************************************************************************************************************************************************
+
+    TASK [Gathering Facts] ******************************************************************************************************************************************************************************************
+    ok: [localhost]
+
+    TASK [Testing] **************************************************************************************************************************************************************************************************
+    changed: [localhost]
+
+    PLAY RECAP ******************************************************************************************************************************************************************************************************
+    localhost                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+    $ cat my_test_file.txt
+    Testing playbook content
+    $ ansible-playbook test_my_own_module.yml
+    [WARNING]: You are running the development version of Ansible. You should only run Ansible from "devel" if you are modifying the Ansible engine, or trying out features under development. This is a rapidly
+    changing source of code and can become unstable at any point.
+    [WARNING]: No inventory was parsed, only implicit localhost is available
+    [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+
+    PLAY [Test module my_own_module] ********************************************************************************************************************************************************************************
+
+    TASK [Gathering Facts] ******************************************************************************************************************************************************************************************
+    ok: [localhost]
+
+    TASK [Testing] **************************************************************************************************************************************************************************************************
+    ok: [localhost]
+
+    PLAY RECAP ******************************************************************************************************************************************************************************************************
+    localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+    ```
+
+    </details>
+
 7. Выйдите из виртуального окружения.
 8. Инициализируйте новую collection: `ansible-galaxy collection init my_own_namespace.yandex_cloud_elk`
+
+    ```log
+    $ ansible-galaxy collection init netology86.yandex_cloud_elk
+    - Collection netology86.yandex_cloud_elk was created successfully
+    ```
+
 9. В данную collection перенесите свой module в соответствующую директорию.
+
+    https://github.com/run0ut/my_own_collection/blob/main/plugins/modules/my_own_module.py
+
 10. Single task playbook преобразуйте в single task role и перенесите в collection. У role должны быть default всех параметров module
+
+    https://github.com/run0ut/my_own_collection/tree/main/roles/netology86-role
+
 11. Создайте playbook для использования этой role.
+
+    [playbook.yml](playbook-to-use-role/playbook.yml)
+
 12. Заполните всю документацию по collection, выложите в свой репозиторий, поставьте тег `1.0.0` на этот коммит.
+
+    - Документация
+        - https://github.com/run0ut/my_own_collection/blob/main/README.md
+        - https://github.com/run0ut/my_own_collection/blob/main/roles/netology86-role/README.md
+    - Релиз 
+        - https://github.com/run0ut/my_own_collection/releases/tag/1.0.0
+
 13. Создайте .tar.gz этой collection: `ansible-galaxy collection build` в корневой директории collection.
+
+    ```bash
+    $ ansible-galaxy collection build
+    Created collection for netology86.yandex_cloud_elk at /home/sergey/git/netology86/yandex_cloud_elk/netology86-yandex_cloud_elk-1.0.0.tar.gz
+    ```
+
 14. Создайте ещё одну директорию любого наименования, перенесите туда single task playbook и архив c collection.
+
+    [playbook.yml](netology86-test-collection/playbook.yml)
+
+    ```bash
+    mkdir ../netology86-test-collection
+    mv netology86-yandex_cloud_elk-1.0.0.tar.gz ../nnetology86-test-collection/
+    mv ../ansible/test_my_own_module.yml ../netology86-test-collection/playbook.yml
+    ```
+
 15. Установите collection из локального архива: `ansible-galaxy collection install <archivename>.tar.gz`
+
+    ```log
+    $ ansible-galaxy collection install netology86-yandex_cloud_elk-1.0.0.tar.gz
+    Starting galaxy collection install process
+    Process install dependency map
+    Starting collection install process
+    Installing 'netology86.yandex_cloud_elk:1.0.0' to '/home/sergey/.ansible/collections/ansible_collections/netology86/yandex_cloud_elk'
+    netology86.yandex_cloud_elk:1.0.0 was installed successfully
+    ```
+
 16. Запустите playbook, убедитесь, что он работает.
+
+    ```log
+    $ ansible-playbook -i inventory/prod/ playbook.yml
+
+    PLAY [Test module my_own_module] ********************************************************************************************************************************************************************************
+
+    TASK [Gathering Facts] ******************************************************************************************************************************************************************************************
+    ok: [testing_collection]
+
+    TASK [Testing my_own_module] ************************************************************************************************************************************************************************************
+    changed: [testing_collection]
+
+    PLAY RECAP ******************************************************************************************************************************************************************************************************
+    testing_collection         : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+    $ ansible-playbook -i inventory/prod/ playbook.yml
+
+    PLAY [Test module my_own_module] ********************************************************************************************************************************************************************************
+
+    TASK [Gathering Facts] ******************************************************************************************************************************************************************************************
+    ok: [testing_collection]
+
+    TASK [Testing my_own_module] ************************************************************************************************************************************************************************************
+    ok: [testing_collection]
+
+    PLAY RECAP ******************************************************************************************************************************************************************************************************
+    testing_collection         : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+    ```
+
 17. В ответ необходимо прислать ссылку на репозиторий с collection
 
+    https://github.com/run0ut/my_own_collection
+
 </details>  
+
+### 17. В ответ необходимо прислать ссылку на репозиторий с collection
+
+https://github.com/run0ut/my_own_collection
 
 ## Необязательная часть
 
