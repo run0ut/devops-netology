@@ -190,11 +190,13 @@ def main():
         supports_check_mode=True
     )
 
+    instance_info = json.loads(get_instance_info(module.params))
+
     # if the user is working with this module in only check mode we do not
     # want to make any changes to the environment, just return the current
     # state with no modifications
     if module.check_mode:
-        if not os.path.exists(module.params['path']):
+        if not "network_interfaces" in instance_info:
             result['changed'] = True
         module.exit_json(**result)
 
@@ -203,7 +205,6 @@ def main():
 
     # Assume file doesn't exist or has a different content
     # then theck if it's true
-    instance_info = json.loads(get_instance_info(module.params))
     if "network_interfaces" in instance_info:
         # print(instance_info['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'])
         pass
