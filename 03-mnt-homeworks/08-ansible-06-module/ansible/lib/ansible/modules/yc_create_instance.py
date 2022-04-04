@@ -10,50 +10,97 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: my_own_module
+module: yc_create_instance
 
-short_description: This is my test module
+short_description: This module creates Yandex Cloud compute instance
 
 # If this is part of a collection, you need to use semantic versioning,
 # i.e. the version is of the form "2.5.0" and not "2.4".
 version_added: "1.0.0"
 
-description: This is my longer description explaining my test module.
+description: This module creates Yandex Cloud compute instance and requires Yandex CLI to do that.
+             The module will only create instance and check it's existence. It will not be fixing
+             instance properties, if it's been changed manually or with a different tool.
+             The presence of the instance is checked by it's name.
 
 options:
-    path:
-        description: Path to file to create ot set content
+    network_interface:
+        description: VPC subnet name to tie the instance to/
         required: true
         type: str
-    content:
-        description: Content for the file.
+    name:
+        description: Name of the instance/
         required: false
         type: str
+    hostname:
+        description: Hostname of the instance/
+        required: false
+        type: str
+    zone:
+        description: Data center zone of availability/
+        required: false
+        type: str
+    ssh_key:
+        description: SSH pub key to copy for default user "yc-user". If not set, module will use default ssh pub key ~/.ssh/id_rsa.pub
+        required: false
+        type: str
+    cores:
+        description: Number of compute cores/
+        required: false
+        type: str
+    core_fraction:
+        description: Persentage of compute time guaranteed to the VM. Options 20, 50 and 100 are available.
+        required: false
+        type: str
+    memory:
+        description: RAM in gigabytes.
+        required: false
+        type: str
+    platform:
+        description: Compute platform. See the list in YC documentation.
+        required: false
+        type: str
+    image_family:
+        description: OS family for the boot image. For example "centos-7".
+        required: false
+        type: str
+    boot_disk_size: Boot disk size in gigabytes.
+        description:
+        required:
+        type: str
+
 # Specify this value according to your collection
 # in format of namespace.collection.doc_fragment_name
 extends_documentation_fragment:
-    - netology-86.yandex_cloud_elk.my_own_module
+    - netology-86.yandex_cloud_elk.yc_create_instance
 
 author:
     - Sergey Shadurskiy (@run0ut)
 '''
 
 EXAMPLES = r'''
-# Create a file
-- name: Testing module with default content
-  netology-86.yandex_cloud_elk.my_own_module:
-    path: "~/file.txt
+# Create completeley default instance with only required options.
+- name: Testing module with default config
+  host: localhost
+  netology-86.yandex_cloud_elk.yc_create_instance:
+    network_interface: "net-ru-central1-a"
 
-# change content of the  file and have changed true
-- name: Testing module with user defined content
-  netology-86.yandex_cloud_elk.my_own_module:
-    path: "~/file.txt
-    content: "My text"
+# More custom config to create a VM.
+- name: Create my fancy VM
+  host: localhost
+  netology-86.yandex_cloud_elk.yc_create_instance:
+    network_interface: "net-ru-central1-a"
+    name: "my_fancy_VM"
+    cores: 8
+    memory: 32
+    image_family: "debian-11"
+    boot_disk_size: "1000"
 
 # fail the module
 - name: Test failure of the module
-  my_namespace.my_collection.my_test:
-    name: fail me
+  host: localhost
+  netology-86.yandex_cloud_elk.yc_create_instance:
+    name: "fail me"
 '''
 
 RETURN = r'''
@@ -64,39 +111,6 @@ from ansible.module_utils.basic import AnsibleModule
 import os
 import subprocess
 import json
-
-def check_if_file_exists(path):
-    if os.path.exists(path):
-        return True
-    else:
-        return False
-
-
-def check_if_regular_file(path):
-    if os.path.isfile(path):
-        return True
-    else:
-        return False
-
-
-def get_file_content(path):
-    with open(path, 'r') as file:
-        content = file.read()
-    return content
-
-
-def check_if_content_the_same(path, content):
-    file_content = get_file_content(path)
-    if file_content == content:
-        return True
-    else:
-        return False
-
-
-def create_and_fill_file_with_content(path, content):
-    with open(path, 'w') as file:
-        file.write(content)
-    return True
 
 
 def create_instance(args):
@@ -157,7 +171,6 @@ def get_instance_info(args):
 
 
 def main():
-    # define available arguments/parameters a user can pass to the module
     module_args = dict(
         name=dict(type='str', required=False, default="netology86-instance"),
         hostname=dict(type='str', required=False, default="netology86-intsance"),
@@ -190,32 +203,25 @@ def main():
         supports_check_mode=True
     )
 
+    # Check if instance exists to decide if any action required
     instance_info = json.loads(get_instance_info(module.params))
 
-    # if the user is working with this module in only check mode we do not
-    # want to make any changes to the environment, just return the current
-    # state with no modifications
+    # If instance doesn't have network interface, it's most like doesn't exist
+    # because YC doesn't allow you to create instances not connected to a network
     if module.check_mode:
         if not "network_interfaces" in instance_info:
             result['changed'] = True
         module.exit_json(**result)
 
-    # manipulate or modify the state as needed (this is going to be the
-    # part where your module will do what it needs to do)
-
-    # Assume file doesn't exist or has a different content
-    # then theck if it's true
+    # Do nothing if instance exists or create one and return changed status to ansible
     if "network_interfaces" in instance_info:
         # print(instance_info['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'])
         pass
     else:
         create_instance(module.params)
         result['changed'] = True
-    
 
-    # during the execution of the module, if there is an exception or a
-    # conditional state that effectively causes a failure, run
-    # AnsibleModule.fail_json() to pass in the message and the result
+    # Just in case to test what it looks like when module fails
     if module.params['name'] == 'fail me':
         module.fail_json(msg='You requested this to fail', **result)
 
