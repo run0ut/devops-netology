@@ -56,18 +56,6 @@ class InventoryModule(BaseInventoryPlugin):
     def parse(self, inventory, loader, path, cache):
         '''Return dynamic inventory from source '''
         super(InventoryModule, self).parse(inventory, loader, path, cache)
-        # Read the inventory YAML file
-    #    self._read_config_data(path)
-    #    try:
-    #        # Store the options from the YAML file
-    #        self.plugin = self.get_option('plugin')
-    #        self.inv_dir = self.get_option('path_to_inventory')
-    #        self.inv_file = self.get_option('csv_file')
-    #    except Exception as e:
-    #        raise AnsibleParserError(
-    #            'All correct options required: {}'.format(e))
-    #    # Call our internal helper to populate the dynamic inventory
-    #    self._populate()
 
         instance_info = json.loads(self.get_instance_info())
 
