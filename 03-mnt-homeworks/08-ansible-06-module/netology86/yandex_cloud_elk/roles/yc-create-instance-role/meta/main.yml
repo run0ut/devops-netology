@@ -1,9 +1,9 @@
 galaxy_info:
   author: Sergey Shadurskiy 
-  description: Role tests module "my_own_module" for Netology DevOps course
+  description: Role tests module "yc_create_instance" for Netology DevOps course
   company: Netology DevOps course
-  role_name: netology86-role
-  galaxy_name: netology86-role
+  role_name: yc-create-instance-role
+  galaxy_name: yc-create-instance-role
   namespace: netology86
 
   # If the issue tracker for your role is not on github, uncomment the
