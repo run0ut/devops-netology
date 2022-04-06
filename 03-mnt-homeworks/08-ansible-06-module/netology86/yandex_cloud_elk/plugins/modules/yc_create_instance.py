@@ -28,6 +28,10 @@ options:
         description: VPC subnet name to tie the instance to/
         required: true
         type: str
+    state:
+        description: state of vm, "running" to create/start or "absence" to delete
+        required: false
+        type: str
     name:
         description: Name of the instance/
         required: false
@@ -95,6 +99,14 @@ EXAMPLES = r'''
     memory: 32
     image_family: "debian-11"
     boot_disk_size: "1000"
+    state: "running
+
+# delete instance
+- name: Test failure of the module
+  host: localhost
+  netology-86.yandex_cloud_elk.yc_create_instance:
+    name: "my_fancy_VM"
+    state: "absence"
 
 # fail the module
 - name: Test failure of the module
@@ -251,7 +263,7 @@ def main():
         instance_info['status'] = 'absence'
     # If exists, convert status to lower case for ease
     else:
-        instance_info['status'] = instance_info['status'].lower
+        instance_info['status'] = instance_info['status'].lower()
 
     # If instance doesn't have network interface, it's most like doesn't exist
     # because YC doesn't allow you to create instances not connected to a network
@@ -268,7 +280,7 @@ def main():
         # check if instance status is stopped, raise and result changed
         elif instance_info['status'] == "stopped":
             start_instance(module.params)
-            # result['changed'] = True
+            result['changed'] = True
         # check instance exists and status in running, starting, provisioning
         # if not, create and result changed
         elif instance_info['status'] in ("running", "starting", "provisioning"):
@@ -281,6 +293,7 @@ def main():
                 else:
                     instance_info['status'] != 'absence'
             create_instance(module.params)
+            result['changed'] = True
         else:
             create_instance(module.params)
             result['changed'] = True
