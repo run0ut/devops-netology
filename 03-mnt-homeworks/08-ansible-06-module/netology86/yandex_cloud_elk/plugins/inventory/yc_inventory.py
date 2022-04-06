@@ -74,9 +74,14 @@ class InventoryModule(BaseInventoryPlugin):
         self.inventory.add_group("yacloud")
 
         for instance in instance_info:
-            # print(instance_info['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address'])
-            instance['ipv4'] = instance['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address']
-            if not "name" in instance:
-                instance['name'] = instance['id']
-            self.inventory.add_host(instance["name"], group="yacloud")
-            self.inventory.set_variable(instance["name"], 'ansible_host', instance['ipv4'])
+            try:
+                if instance['status'] == "RUNNING":
+                    instance['ipv4'] = instance['network_interfaces'][0]['primary_v4_address']['one_to_one_nat']['address']
+                    # If instance was created nameless, use it's id insted. YC Web Console uses the same approach
+                    if not "name" in instance:
+                        instance['name'] = instance['id']
+                    self.inventory.add_host(instance["name"], group="yacloud")
+                    self.inventory.set_variable(instance["name"], 'ansible_host', instance['ipv4'])
+            except:
+                # Don't add instance into inventory, if it doesn't have a publick IP address
+                pass
