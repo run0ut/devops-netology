@@ -1,0 +1,20 @@
+---
+- name: Create instance
+  hosts: localhost
+  tasks:
+    - name: Create new Yandex Cloud Compute instance
+      netology86.yandex_cloud_elk.yc_create_instance:
+        network_interface: "net-ru-central1-a"
+        name: "test-instance"
+        status: "running"
+    - name: Refresh Inventory
+      meta: refresh_inventory
+
+- name: Add new host to inventory
+  hosts: all
+  gather_facts: false
+  user: yc-user
+  tasks:
+    - name: Wait for system to become reachable
+      wait_for_connection:
+        timeout: 100
