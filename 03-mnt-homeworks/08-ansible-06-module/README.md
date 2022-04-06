@@ -195,47 +195,7 @@ devops-netology
 
 6. Проверьте через playbook на идемпотентность.
 
-    <details><summary>Лог запуска плейбука два раза</summary>
-
-    ```log
-    $ ansible-playbook test_my_own_module.yml
-    [WARNING]: You are running the development version of Ansible. You should only run Ansible from "devel" if you are modifying the Ansible engine, or trying out features under development. This is a rapidly
-    changing source of code and can become unstable at any point.
-    [WARNING]: No inventory was parsed, only implicit localhost is available
-    [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
-
-    PLAY [Test module my_own_module] ********************************************************************************************************************************************************************************
-
-    TASK [Gathering Facts] ******************************************************************************************************************************************************************************************
-    ok: [localhost]
-
-    TASK [Testing] **************************************************************************************************************************************************************************************************
-    changed: [localhost]
-
-    PLAY RECAP ******************************************************************************************************************************************************************************************************
-    localhost                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
-
-    $ cat my_test_file.txt
-    Testing playbook content
-    $ ansible-playbook test_my_own_module.yml
-    [WARNING]: You are running the development version of Ansible. You should only run Ansible from "devel" if you are modifying the Ansible engine, or trying out features under development. This is a rapidly
-    changing source of code and can become unstable at any point.
-    [WARNING]: No inventory was parsed, only implicit localhost is available
-    [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
-
-    PLAY [Test module my_own_module] ********************************************************************************************************************************************************************************
-
-    TASK [Gathering Facts] ******************************************************************************************************************************************************************************************
-    ok: [localhost]
-
-    TASK [Testing] **************************************************************************************************************************************************************************************************
-    ok: [localhost]
-
-    PLAY RECAP ******************************************************************************************************************************************************************************************************
-    localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
-    ```
-
-    </details>
+    [Лог запуска два раза](media/ansible-idempotence.log)
 
 7. Выйдите из виртуального окружения.
 8. Инициализируйте новую collection: `ansible-galaxy collection init my_own_namespace.yandex_cloud_elk`
@@ -295,33 +255,7 @@ devops-netology
 
 16. Запустите playbook, убедитесь, что он работает.
 
-    ```log
-    $ ansible-playbook -i inventory/prod/ playbook.yml
-
-    PLAY [Test module my_own_module] ********************************************************************************************************************************************************************************
-
-    TASK [Gathering Facts] ******************************************************************************************************************************************************************************************
-    ok: [testing_collection]
-
-    TASK [Testing my_own_module] ************************************************************************************************************************************************************************************
-    changed: [testing_collection]
-
-    PLAY RECAP ******************************************************************************************************************************************************************************************************
-    testing_collection         : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
-
-    $ ansible-playbook -i inventory/prod/ playbook.yml
-
-    PLAY [Test module my_own_module] ********************************************************************************************************************************************************************************
-
-    TASK [Gathering Facts] ******************************************************************************************************************************************************************************************
-    ok: [testing_collection]
-
-    TASK [Testing my_own_module] ************************************************************************************************************************************************************************************
-    ok: [testing_collection]
-
-    PLAY RECAP ******************************************************************************************************************************************************************************************************
-    testing_collection         : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
-    ```
+    [Лог теста коллекции](media/ansible-test-collection.log)
 
 17. В ответ необходимо прислать ссылку на репозиторий с collection
 
@@ -338,9 +272,71 @@ https://github.com/run0ut/my_own_collection
 <details><summary>.</summary>
 
 1. Реализуйте свой собственный модуль для создания хостов в Yandex Cloud.
+
+    https://github.com/run0ut/my_own_collection/blob/main/plugins/modules/yc_create_instance.py
+
 2. Модуль может (и должен) иметь зависимость от `yc`, основной функционал: создание ВМ с нужным сайзингом на основе нужной ОС. Дополнительные модули по созданию кластеров Clickhouse, MySQL и прочего реализовывать не надо, достаточно простейшего создания ВМ.
+
+    https://github.com/run0ut/my_own_collection/blob/main/plugins/inventory/yc_inventory.py 
+
 3. Модуль может формировать динамическое inventory, но данная часть не является обязательной, достаточно, чтобы он делал хосты с указанной спецификацией в YAML.
+
+    Модуль формирует динамическое inventory:
+
+    ```bash
+    $ cat yc_inventory.yml
+    plugin: yc_inventory
+    ```
+
+    ```json
+    $ ansible-inventory -i yc_inventory.yml --list
+    [DEPRECATION WARNING]: Ansible will require Python 3.8 or newer on the controller starting with Ansible 2.12. Current version: 3.7.3 (default, Jan 22 2021, 20:04:44) [GCC 8.3.0]. This feature will be removed
+    from ansible-core in version 2.12. Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+    {
+        "_meta": {
+            "hostvars": {
+                "test-instance": {
+                    "ansible_host": "51.250.10.65"
+                }
+            }
+        },
+        "all": {
+            "children": [
+                "ungrouped",
+                "yacloud"
+            ]
+        },
+        "yacloud": {
+            "hosts": [
+                "test-instance"
+            ]
+        }
+    }
+    ```
+
 4. Протестируйте модуль на идемпотентность, исполнимость. При успехе - добавьте данный модуль в свою коллекцию.
+
+    [Лог теста идемпотентности модуля](media/ansible-yc-module-idempotence.log)
+
 5. Измените playbook так, чтобы он умел создавать инфраструктуру под inventory, а после устанавливал весь ваш стек ELK на нужные хосты и настраивал его.
+
+    [Playbook, создающий ELK-стек](https://github.com/run0ut/devops-netology/blob/main/03-mnt-homeworks/08-ansible-06-module/netology86-test-collection/playbook_with_dynamic_inventory.yml)
+
+    [Лог полного теста коллекции](media/ansible-yc-modules.log)
+
 6. В итоге, ваша коллекция обязательно должна содержать: elastic-role, kibana-role, filebeat-role, два модуля: my_own_module и модуль управления Yandex Cloud хостами и playbook, который демонстрирует создание ELK-стека.
 
+</details>
+
+> 6. В итоге, ваша коллекция обязательно должна содержать: elastic-role, kibana-role, filebeat-role, два модуля: my_own_module и модуль управления Yandex Cloud хостами и playbook, который демонстрирует создание ELK-стека.
+
+- [elastic-role](https://github.com/run0ut/my_own_collection/tree/main/roles/elastic-role)
+- [kibana-role](https://github.com/run0ut/my_own_collection/tree/main/roles/kibana-role)
+- [filebeat-role](https://github.com/run0ut/my_own_collection/tree/main/roles/filebeat-role)
+- [logstash-role](https://github.com/run0ut/my_own_collection/tree/main/roles/logstash-role)
+- [my_own_module](https://github.com/run0ut/my_own_collection/blob/main/plugins/modules/my_own_module.py)
+- [модуль управления Yandex Cloud хостами](https://github.com/run0ut/my_own_collection/blob/main/plugins/modules/yc_create_instance.py)
+- [модуль inventory для Yandex Cloud](https://github.com/run0ut/my_own_collection/blob/main/plugins/inventory/yc_inventory.py)
+- [Playbook, создающий ELK-стек](https://github.com/run0ut/devops-netology/blob/main/03-mnt-homeworks/08-ansible-06-module/netology86-test-collection/playbook_with_dynamic_inventory.yml)
+
+[Лог полного теста коллекции](media/ansible-yc-modules.log)
