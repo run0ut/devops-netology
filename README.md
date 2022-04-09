@@ -55,11 +55,7 @@ devops-netology
 
 8.5. [Тестирование Roles](./03-mnt-homeworks/08-ansible-05-testing/README.md)
 
-<details><summary></summary>
-
 8.6. [Создание собственных modules](./03-mnt-homeworks/08-ansible-06-module/README.md)
-
-</details>
   
 ---
 
