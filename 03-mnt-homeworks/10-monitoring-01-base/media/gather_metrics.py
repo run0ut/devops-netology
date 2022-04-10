@@ -84,9 +84,6 @@ def main():
     # Добавить данные по системе
     export_data = {**export_data, **cpu_info(), **mem_info(), "uptime_seconds": uptime_info()}
 
-    # Для дебага - лог в текущей директории
-    metcirs_log = f"./{cur_date}-awesome-monitoring.log"
-
     # Записываем в файл
     with open(metcirs_log, 'a') as f:
         f.write(json.dumps(export_data))
