@@ -46,29 +46,43 @@ def cpu_info():
 
 def mem_info():
     mem_info = {
-        "mem_total": 0,
-        "mem_free": 0,
-        "mem_available":0,
-        "swap_total": 0,
-        "swap_free": 0
+        "mem_total_kb": 0,
+        "mem_free_kb": 0,
+        "mem_available_kb":0,
+        "swap_total_kb": 0,
+        "swap_free_kb": 0
     }
+    # cat /proc/meminfo
+    with open('/proc/meminfo', 'r') as f:
+        for string in f:
+            mem_regexp = re.match(r'^([\w\(\)\_]*):\s*(\d*)\skB', string)
+            if mem_regexp and mem_regexp.group(1) == 'MemTotal':
+                mem_info['mem_total_kb'] = int(mem_regexp.group(2))
+            if mem_regexp and mem_regexp.group(1) == 'MemFree':
+                mem_info['mem_free_kb'] = int(mem_regexp.group(2))
+            if mem_regexp and mem_regexp.group(1) == 'MemAvailable':
+                mem_info['mem_available_kb'] = int(mem_regexp.group(2))
+            if mem_regexp and mem_regexp.group(1) == 'SwapTotal':
+                mem_info['swap_total_kb'] = int(mem_regexp.group(2))
+            if mem_regexp and mem_regexp.group(1) == 'SwapFree':
+                mem_info['swap_free_kb'] = int(mem_regexp.group(2))
     return mem_info
 
 
-def disk_info():
-    # "/proc/diskstats"
-    pass
 
-def net_info():
-    # "/proc/net/dev"
-    pass
+def uptime_info():
+    # "/proc/uptime"
+    with open('/proc/uptime', 'r') as f:
+        uptime_seconds = int(float(f.read().split()[0]))
+    return uptime_seconds
+
 
 def main():
 
     # Записать таймстемп
     export_data = {"timestamp": cur_timestamp}
     # Добавить данные по системе
-    export_data = {**export_data, **cpu_info(), **mem_info()}
+    export_data = {**export_data, **cpu_info(), **mem_info(), "uptime_seconds": uptime_info()}
 
     # Для дебага - лог в текущей директории
     metcirs_log = f"./{cur_date}-awesome-monitoring.log"
