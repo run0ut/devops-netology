@@ -64,13 +64,13 @@ def mem_info():
             mem_regexp = re.match(r'^([\w\(\)\_]*):\s*(\d*)\skB', string)
             if mem_regexp and mem_regexp.group(1) == 'MemTotal':
                 mem_info['mem_total_kb'] = int(mem_regexp.group(2))
-            if mem_regexp and mem_regexp.group(1) == 'MemFree':
+            elif mem_regexp and mem_regexp.group(1) == 'MemFree':
                 mem_info['mem_free_kb'] = int(mem_regexp.group(2))
-            if mem_regexp and mem_regexp.group(1) == 'MemAvailable':
+            elif mem_regexp and mem_regexp.group(1) == 'MemAvailable':
                 mem_info['mem_available_kb'] = int(mem_regexp.group(2))
-            if mem_regexp and mem_regexp.group(1) == 'SwapTotal':
+            elif mem_regexp and mem_regexp.group(1) == 'SwapTotal':
                 mem_info['swap_total_kb'] = int(mem_regexp.group(2))
-            if mem_regexp and mem_regexp.group(1) == 'SwapFree':
+            elif mem_regexp and mem_regexp.group(1) == 'SwapFree':
                 mem_info['swap_free_kb'] = int(mem_regexp.group(2))
     return mem_info
 
