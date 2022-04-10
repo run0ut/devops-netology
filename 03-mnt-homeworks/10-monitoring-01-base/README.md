@@ -118,6 +118,12 @@ P.P.S.: по желанию можно себя не ограничивать т
 
 ### а) работающий код python3-скрипта,
 
+[gather_metrics.py](media/gather_metrics.py)
+
 ### б) конфигурацию cron-расписания,
 
-### в) пример верно сформированного 'YY-MM-DD-awesome-monitoring.log', имеющий не менее 5 записей,
+[cron_metrics](media/cron_metrics)
+
+### в) пример верно сформированного 'YY-MM-DD-awesome-monitoring.log', имеющий не менее 5 записей
+
+[2022-04-11-awesome-monitoring.log](media/2022-04-11-awesome-monitoring.log)
