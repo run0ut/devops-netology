@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+# Скрипт собирает:
+# - данные по загрузке ЦП, load_average за последнюю минуту и % загрузки
+# - данные по ОЗУ и swap: общее количество, свободно и доступно
+# - uptime в секундах
+# Данные складывает в формате json в лог за текущий день в папке /var/log
+
 from datetime import datetime
 import json 
 import re
@@ -82,7 +88,12 @@ def main():
     # Записать таймстемп
     export_data = {"timestamp": cur_timestamp}
     # Добавить данные по системе
-    export_data = {**export_data, **cpu_info(), **mem_info(), "uptime_seconds": uptime_info()}
+    export_data = {
+        **export_data, 
+        **cpu_info(), 
+        **mem_info(), 
+        "uptime_seconds": uptime_info()
+    }
 
     # Записываем в файл
     with open(metcirs_log, 'a') as f:
