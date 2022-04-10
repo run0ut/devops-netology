@@ -1,0 +1,5 @@
+# Поместите в /etc/cron.d/
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+* * * * * root python3 /opt/gather_metrics.py
