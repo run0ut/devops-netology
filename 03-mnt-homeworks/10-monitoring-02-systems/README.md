@@ -40,7 +40,7 @@ devops-netology
 ### 2. Какие из ниже перечисленных систем относятся к push модели, а какие к pull? А может есть гибридные?
 
 | Система | Модель |
-| - | - | - |
+| - | - |
 | Prometheus  | Pull (Push с Pushgateway)|
 | TICK | Push |
 | Zabbix | Push (Pull с Zabbix Proxy) |
