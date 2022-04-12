@@ -45,8 +45,8 @@ devops-netology
 
 ### 3. Склонируйте себе [репозиторий](https://github.com/influxdata/sandbox/tree/master) и запустите TICK-стэк, используя технологии docker и docker-compose.
 
-> В виде решения на это упражнение приведите выводы команд с вашего компьютера (виртуальной машины):
-> 
+#### В виде решения на это упражнение приведите выводы команд с вашего компьютера (виртуальной машины)
+
 > - curl http://localhost:8086/ping
 > - curl http://localhost:8888
 > - curl http://localhost:9092/kapacitor/v1/ping
@@ -63,7 +63,7 @@ $ curl http://localhost:9092/kapacitor/v1/ping
 21:18:07 ~ sergey@Intel8086:~/git/sandbox (master=)
 ```
 
-> А также скриншот веб-интерфейса ПО chronograf (`http://localhost:8888`). 
+#### А также скриншот веб-интерфейса ПО chronograf (`http://localhost:8888`). 
 
 ![Скриншот Chronograf](media/10-3-chronograf.png)
 
@@ -82,6 +82,8 @@ $ curl http://localhost:9092/kapacitor/v1/ping
 ![Скриншот Chronograf с графиком CPU](media/10-4-chronograf-cpu.png)
 
 ### 5. Изучите список [telegraf inputs](https://github.com/influxdata/telegraf/tree/master/plugins/inputs). 
+
+<details><summary>Детали</summary>
 
 > Добавьте в конфигурацию telegraf следующий плагин - [docker](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/docker):
 > 
@@ -107,8 +109,7 @@ $ curl http://localhost:9092/kapacitor/v1/ping
 >       - "8125:8125/udp"
 > ```
 > 
-> После настройке перезапустите telegraf, обновите веб интерфейс и приведите скриншотом список `measurments` в 
-> веб-интерфейсе базы telegraf.autogen . Там должны появиться метрики, связанные с docker.
+> После настройке перезапустите telegraf, обновите веб интерфейс и приведите скриншотом список `measurments` в веб-интерфейсе базы telegraf.autogen . Там должны появиться метрики, связанные с docker.
 > 
 > Факультативно можете изучить какие метрики собирает telegraf после выполнения данного задания.
 
@@ -124,6 +125,10 @@ $ stat -c '%g' /var/run/docker.sock
     user: telegraf:1001
 ...
 ```
+
+</details>
+
+#### приведите скриншотом список `measurments` в веб-интерфейсе базы telegraf.autogen . Там должны появиться метрики, связанные с docker.
 
 ![Скриншот Chronograf с метриками Docker](media/10-5-docker.png)
 
