@@ -69,6 +69,8 @@ $ curl http://localhost:9092/kapacitor/v1/ping
 
 ### 4. Перейдите в веб-интерфейс Chronograf (`http://localhost:8888`) и откройте вкладку `Data explorer`.
 
+<details><summary>Детали</summary>
+
 > - Нажмите на кнопку `Add a query`
 > - Изучите вывод интерфейса и выберите БД `telegraf.autogen`
 > - В `measurments` выберите mem->host->telegraf_container_id , а в `fields` выберите used_percent. 
@@ -76,8 +78,11 @@ $ curl http://localhost:9092/kapacitor/v1/ping
 > - Вверху вы можете увидеть запрос, аналогичный SQL-синтаксису. 
 > Поэкспериментируйте с запросом, попробуйте изменить группировку и интервал наблюдений.
 > 
-> Для выполнения задания приведите скриншот с отображением метрик утилизации места на диске 
-> (disk->host->telegraf_container_id) из веб-интерфейса.
+> Для выполнения задания приведите скриншот с отображением метрик утилизации места на диске (disk->host->telegraf_container_id) из веб-интерфейса.
+
+</details>
+
+#### Для выполнения задания приведите скриншот с отображением метрик утилизации места на диске (disk->host->telegraf_container_id) из веб-интерфейса.
 
 ![Скриншот Chronograf с графиком CPU](media/10-4-chronograf-cpu.png)
 
