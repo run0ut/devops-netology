@@ -3,11 +3,7 @@ devops-netology
 
 # Домашнее задание к занятию "10.02. Системы мониторинга"
 
-<!-- </details>   -->
-
 ## Обязательные задания
-
-<!-- <details><summary>.</summary> -->
 
 ### 1. Опишите основные плюсы и минусы pull и push систем мониторинга.
 
@@ -87,36 +83,49 @@ $ curl http://localhost:9092/kapacitor/v1/ping
 
 ### 5. Изучите список [telegraf inputs](https://github.com/influxdata/telegraf/tree/master/plugins/inputs). 
 
-Добавьте в конфигурацию telegraf следующий плагин - [docker](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/docker):
+> Добавьте в конфигурацию telegraf следующий плагин - [docker](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/docker):
+> 
+> ```
+> [[inputs.docker]]
+>   endpoint = "unix:///var/run/docker.sock"
+> ```
+> 
+> Дополнительно вам может потребоваться донастройка контейнера telegraf в `docker-compose.yml` дополнительного volume и 
+> режима privileged:
+> ```
+>   telegraf:
+>     image: telegraf:1.4.0
+>     privileged: true
+>     volumes:
+>       - ./etc/telegraf.conf:/etc/telegraf/telegraf.conf:Z
+>       - /var/run/docker.sock:/var/run/docker.sock:Z
+>     links:
+>       - influxdb
+>     ports:
+>       - "8092:8092/udp"
+>       - "8094:8094"
+>       - "8125:8125/udp"
+> ```
+> 
+> После настройке перезапустите telegraf, обновите веб интерфейс и приведите скриншотом список `measurments` в 
+> веб-интерфейсе базы telegraf.autogen . Там должны появиться метрики, связанные с docker.
+> 
+> Факультативно можете изучить какие метрики собирает telegraf после выполнения данного задания.
 
+Потребовалось добавить ещё пользователя, который владеет сокетом:
+```bash
+$ stat -c '%g' /var/run/docker.sock
+1001
 ```
-[[inputs.docker]]
-  endpoint = "unix:///var/run/docker.sock"
-```
-
-Дополнительно вам может потребоваться донастройка контейнера telegraf в `docker-compose.yml` дополнительного volume и 
-режима privileged:
-```
-  telegraf:
-    image: telegraf:1.4.0
+```yml
+...
     privileged: true
-    volumes:
-      - ./etc/telegraf.conf:/etc/telegraf/telegraf.conf:Z
-      - /var/run/docker.sock:/var/run/docker.sock:Z
-    links:
-      - influxdb
-    ports:
-      - "8092:8092/udp"
-      - "8094:8094"
-      - "8125:8125/udp"
+    # https://github.com/influxdata/telegraf/issues/10050
+    user: telegraf:1001
+...
 ```
 
-После настройке перезапустите telegraf, обновите веб интерфейс и приведите скриншотом список `measurments` в 
-веб-интерфейсе базы telegraf.autogen . Там должны появиться метрики, связанные с docker.
-
-Факультативно можете изучить какие метрики собирает telegraf после выполнения данного задания.
-
-<!-- </details>   -->
+![Скриншот Chronograf с метриками Docker](media/10-5-docker.png)
 
 ## Дополнительное задание (со звездочкой*) - необязательно к выполнению
 
