@@ -49,27 +49,41 @@ devops-netology
 
 ### 3. Склонируйте себе [репозиторий](https://github.com/influxdata/sandbox/tree/master) и запустите TICK-стэк, используя технологии docker и docker-compose.
 
-В виде решения на это упражнение приведите выводы команд с вашего компьютера (виртуальной машины):
+> В виде решения на это упражнение приведите выводы команд с вашего компьютера (виртуальной машины):
+> 
+> - curl http://localhost:8086/ping
+> - curl http://localhost:8888
+> - curl http://localhost:9092/kapacitor/v1/ping
+>
+> P.S.: если при запуске некоторые контейнеры будут падать с ошибкой - проставьте им режим `Z`, например `./data:/var/lib:Z`
 
-- curl http://localhost:8086/ping
-- curl http://localhost:8888
-- curl http://localhost:9092/kapacitor/v1/ping
+```bash
+21:17:45 ~ sergey@Intel8086:~/git/sandbox (master=)
+$ curl http://localhost:8086/ping
+21:17:49 ~ sergey@Intel8086:~/git/sandbox (master=)
+$ curl http://localhost:8888
+<!DOCTYPE html><html><head><meta http-equiv="Content-type" content="text/html; charset=utf-8"><title>Chronograf</title><link rel="icon shortcut" href="/favicon.fa749080.ico"><link rel="stylesheet" href="/src.9cea3e4e.css"></head><body> <div id="react-root" data-basepath=""></div> <script src="/src.a969287c.js"></script> </body></html>21:17:59 ~ sergey@Intel8086:~/git/sandbox (master=)
+$ curl http://localhost:9092/kapacitor/v1/ping
+21:18:07 ~ sergey@Intel8086:~/git/sandbox (master=)
+```
 
-А также скриншот веб-интерфейса ПО chronograf (`http://localhost:8888`). 
+> А также скриншот веб-интерфейса ПО chronograf (`http://localhost:8888`). 
 
-P.S.: если при запуске некоторые контейнеры будут падать с ошибкой - проставьте им режим `Z`, например `./data:/var/lib:Z`
+![Скриншот Chronograf](media/10-3-chronograf.png)
 
 ### 4. Перейдите в веб-интерфейс Chronograf (`http://localhost:8888`) и откройте вкладку `Data explorer`.
 
-- Нажмите на кнопку `Add a query`
-- Изучите вывод интерфейса и выберите БД `telegraf.autogen`
-- В `measurments` выберите mem->host->telegraf_container_id , а в `fields` выберите used_percent. 
-Внизу появится график утилизации оперативной памяти в контейнере telegraf.
-- Вверху вы можете увидеть запрос, аналогичный SQL-синтаксису. 
-Поэкспериментируйте с запросом, попробуйте изменить группировку и интервал наблюдений.
+> - Нажмите на кнопку `Add a query`
+> - Изучите вывод интерфейса и выберите БД `telegraf.autogen`
+> - В `measurments` выберите mem->host->telegraf_container_id , а в `fields` выберите used_percent. 
+> Внизу появится график утилизации оперативной памяти в контейнере telegraf.
+> - Вверху вы можете увидеть запрос, аналогичный SQL-синтаксису. 
+> Поэкспериментируйте с запросом, попробуйте изменить группировку и интервал наблюдений.
+> 
+> Для выполнения задания приведите скриншот с отображением метрик утилизации места на диске 
+> (disk->host->telegraf_container_id) из веб-интерфейса.
 
-Для выполнения задания приведите скриншот с отображением метрик утилизации места на диске 
-(disk->host->telegraf_container_id) из веб-интерфейса.
+![Скриншот Chronograf с графиком CPU](media/10-4-chronograf-cpu.png)
 
 ### 5. Изучите список [telegraf inputs](https://github.com/influxdata/telegraf/tree/master/plugins/inputs). 
 
