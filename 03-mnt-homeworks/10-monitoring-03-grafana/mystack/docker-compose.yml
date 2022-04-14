@@ -46,4 +46,6 @@ services:
       - monitoring
     volumes:
       - grafana_data:/var/lib/grafana
-      # - grafana_etc:/etc/grafana
+      - ./prometheus_datasource.yml:/etc/grafana/provisioning/datasources/prometheus_datasource.yml
+      - ./prometheus_dashboard_1860.yml:/etc/grafana/provisioning/dashboards/prometheus_dashboard_1860.yml
+      - ./prometheus_dashboard_1860.json:/etc/grafana/provisioning/dashboards/prometheus_dashboard_1860.json
