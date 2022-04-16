@@ -34,6 +34,8 @@ devops-netology
 
 [Grafana, дешборд в json](mystack/prometheus_dashboard_1860.json)
 
+<details><summary>.</summary>
+
 `docker-compose` составил по следующим источникам:
 - [hub.docker.com, параметры для контейнера prometheus, как подключить волюм для данных](https://hub.docker.com/r/prom/prometheus)
 - [prometheus.io, настройка таргета node exporter](https://prometheus.io/docs/guides/node-exporter/)
@@ -49,6 +51,8 @@ devops-netology
 
 Нотификации настраивал по следующим:
 - [youtube.com, видео с примером настройки нотификации через бота в Telegram](https://www.youtube.com/watch?v=etIX59oxlXs)
+
+</details>
 
 #### В решении приведите скриншоты тестовых событий из каналов отификаций.
 
