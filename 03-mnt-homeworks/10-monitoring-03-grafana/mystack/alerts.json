@@ -1,0 +1,32 @@
+{
+    "template_files": {
+      "Attention, please!": "{{ define \"Attention, please!\" }}\n  Server is not ok.\n{{ end }}"
+    },
+    "alertmanager_config": {
+      "route": {
+        "receiver": "grafana-telegram"
+      },
+      "templates": [
+        "Attention, please!"
+      ],
+      "receivers": [
+        {
+          "name": "grafana-telegram",
+          "grafana_managed_receiver_configs": [
+            {
+              "uid": "opwhdX8nz",
+              "name": "grafana-telegram",
+              "type": "telegram",
+              "disableResolveMessage": false,
+              "settings": {
+                "chatid": "112821816"
+              },
+              "secureFields": {
+                "bottoken": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+}

@@ -31,8 +31,8 @@ services:
       - prometheus_data:/prometheus
     expose:
       - "9090"
-    ports:
-      - "9090:9090"
+    # ports:
+    #   - "9090:9090"
     networks:
       - monitoring
   grafana:

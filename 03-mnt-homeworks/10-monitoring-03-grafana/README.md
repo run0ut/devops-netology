@@ -47,6 +47,9 @@ devops-netology
 - [medium.com, статья с рецептом как именно провиженить связку grafana + prometheus](https://medium.com/56kcloud/provisioning-grafana-data-sources-and-dashboards-auto-magically-e27155d20652)
 - [grafana.com, классный дешборд  для данных из node_exporter, был в лекции](https://grafana.com/grafana/dashboards/1860)
 
+Нотификации настраивал по следующим:
+- [youtube.com, видео с примером настройки нотификации через бота в Telegram](https://www.youtube.com/watch?v=etIX59oxlXs)
+
 #### В решении приведите скриншоты тестовых событий из каналов отификаций.
 
 <details><summary>.</summary>
@@ -56,6 +59,8 @@ devops-netology
 > В решении приведите скриншоты тестовых событий из каналов отификаций.
 
 </details>  
+
+![Алёрты от Телеграм бота](media/103-3-alerts.png)
 
 ## Обязательные задания
 
@@ -129,13 +134,13 @@ devops-netology
 
 ## Задание 3
 
-<details><summary>.</summary>
+> Создайте для каждой Dashboard подходящее правило alert (можно обратиться к первой лекции в блоке "Мониторинг").
+> 
+> Для решения ДЗ - приведите скриншот вашей итоговой Dashboard.
 
-Создайте для каждой Dashboard подходящее правило alert (можно обратиться к первой лекции в блоке "Мониторинг").
+![Дешборд с алертами](media/103-3-dashboard-alerts.png)
 
-Для решения ДЗ - приведите скриншот вашей итоговой Dashboard.
-
-</details>  
+![Настройки алертов](media/103-3-alert-settings.png)
 
 ## Задание 4
 
