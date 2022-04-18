@@ -1,0 +1,109 @@
+version: '3.6'
+
+volumes:
+  es_hot_data:
+  es_warm_data:
+
+configs:
+  filebat-config:
+    name: "filebat-config"
+    file: ./filebeat.docker.yml
+
+networks:
+  elk:
+    driver: bridge
+
+services:
+  elasticsearch_hot:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
+    container_name: elasticsearch_hot
+    environment:
+      - node.name=es_hot
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es_warm
+      - cluster.initial_master_nodes=es_hot,es_warm
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_hot_data:/usr/share/elasticsearch/data
+    expose:
+      - "9200"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elk
+  elasticsearch_warm:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
+    container_name: elasticsearch_warm
+    environment:
+      - node.name=es_warm
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es_warm
+      - cluster.initial_master_nodes=es_hot,es_warm
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_warm_data:/usr/share/elasticsearch/data
+    expose:
+      - "9200"
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    networks:
+      - elk
+
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:7.17.2
+  #   container_name: logstash
+  #   volumes:
+  #   expose:
+  #     - "5044"
+  #   ports:
+  #     - "5044:5044"
+  #   networks:
+  #     - elk
+  # kibana:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
+  #   container_name: kibana
+  #   volumes:
+  #   expose:
+  #     - "5601"
+  #   ports:
+  #     - "5601:5601"
+  #   networks:
+  #     - elk
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.17.2
+    container_name: filebeat
+    # configs:
+    #   - source: filebat-config
+    #     target: /usr/share/filebeat/filebeat.yml
+    #     uid: "1000"
+    #     gid: "1000"
+    #     mode: 0644
+    # user: root
+    privileged: true
+    command:
+      - "--strict.perms=false"
+    # environment:
+    #   - output.logstash.hosts: "localhost:5044"
+      # - strict.perms=false
+    user: root
+    volumes:
+      - "./filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro"
+      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:Z"
+    # expose:
+    # ports:
+    networks:
+      - elk
