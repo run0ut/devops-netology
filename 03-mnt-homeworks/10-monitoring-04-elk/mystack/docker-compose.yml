@@ -14,22 +14,30 @@ networks:
     driver: bridge
 
 services:
-  elasticsearch_hot:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
-    container_name: elasticsearch_hot
+  es-hot:
+    image: elasticsearch:7.17.2
+    container_name: es-hot
     environment:
-      - node.name=es_hot
+      - node.name=es-hot
       - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es_warm
-      - cluster.initial_master_nodes=es_hot,es_warm
+      - discovery.seed_hosts=es-hot
+      - cluster.initial_master_nodes=es-hot
+      # - cluster.initial_master_nodes=es-hot,es-warm
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      # - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 500M
+        # reservations:
+        #   memory: 500M
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
       - es_hot_data:/usr/share/elasticsearch/data
+      - "./jvm.options:/usr/share/elasticsearch/config/jvm.options.d/jvm.options"
     expose:
       - "9200"
     ports:
@@ -37,16 +45,22 @@ services:
       - "9300:9300"
     networks:
       - elk
-  elasticsearch_warm:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
-    container_name: elasticsearch_warm
+  es-warm:
+    image: elasticsearch:7.17.2
+    container_name: es-warm
     environment:
       - node.name=es_warm
       - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es_warm
-      - cluster.initial_master_nodes=es_hot,es_warm
+      - discovery.seed_hosts=es-warm
+      - cluster.initial_master_nodes=es-hot,es-warm
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - "ES_JAVA_OPTS=-Xms96m -Xmx96m"
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 250M
+    #     reservations:
+    #       memory: 250M
     ulimits:
       memlock:
         soft: -1
@@ -61,29 +75,52 @@ services:
     networks:
       - elk
 
-  # logstash:
-  #   image: docker.elastic.co/logstash/logstash:7.17.2
-  #   container_name: logstash
-  #   volumes:
-  #   expose:
-  #     - "5044"
-  #   ports:
-  #     - "5044:5044"
-  #   networks:
-  #     - elk
-  # kibana:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
-  #   container_name: kibana
-  #   volumes:
-  #   expose:
-  #     - "5601"
-  #   ports:
-  #     - "5601:5601"
-  #   networks:
-  #     - elk
+  logstash:
+    image: logstash:7.17.2
+    container_name: logstash
+    environment:
+      - "ES_JAVA_OPTS=-Xms96m -Xmx96m"
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 250M
+    #     reservations:
+    #       memory: 250M
+    volumes:
+      - ./pipeline:/usr/share/logstash/pipeline
+    expose:
+      - "5044"
+    ports:
+      - "5044:5044"
+    networks:
+      - elk
+
+  kibana:
+    image: kibana:7.17.2
+    container_name: kibana
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 500M
+        # reservations:
+        #   memory: 250M
+    environment:
+      - "SERVER_NAME=kibana"
+      - "SERVER_HOST=0.0.0.0"
+      - "ELASTICSEARCH_HOSTS=http://es-hot:9200"
+      - "NODE_OPTIONS=--max-old-space-size=4096"
+      - "ES_JAVA_OPTS=-Xms96m -Xmx96m"
+    volumes:
+      - "./node.options:/opt/kibana/config/node.options"
+    expose:
+      - "5601"
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:7.17.2
+    image: elastic/filebeat:7.17.2
     container_name: filebeat
     # configs:
     #   - source: filebat-config
