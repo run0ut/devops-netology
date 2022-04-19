@@ -64,8 +64,10 @@ services:
       - "./logstash/jvm.options:/usr/share/logstash/config/jvm.options"
     expose:
       - "5044"
+      - "12345"
     ports:
       - "5044:5044"
+      - "12345:12345"
     networks:
       - elk
 
