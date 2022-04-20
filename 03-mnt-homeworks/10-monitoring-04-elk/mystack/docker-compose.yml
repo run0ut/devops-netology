@@ -14,6 +14,7 @@ services:
     container_name: es-hot
     environment:
       - node.name=es-hot
+      # - node.roles=master,data_hot,data_content
       - cluster.name=es-docker-cluster
       - cluster.initial_master_nodes=es-hot,es-warm
       - discovery.seed_hosts=es-warm
@@ -26,6 +27,7 @@ services:
     # volumes:
     #   - es_hot_data:/usr/share/elasticsearch/data
     expose:
+      - "9300"
       - "9200"
     ports:
       - "9200:9200"
@@ -37,6 +39,7 @@ services:
     container_name: es-warm
     environment:
       - node.name=es-warm
+      # - node.roles=data_warm,data_content
       - cluster.name=es-docker-cluster
       - cluster.initial_master_nodes=es-hot,es-warm
       - discovery.seed_hosts=es-hot
@@ -49,12 +52,15 @@ services:
     # volumes:
     #   - es_warm_data:/usr/share/elasticsearch/data
     expose:
+      - "9300"
       - "9200"
     ports:
       - "9201:9200"
       - "9301:9300"
     networks:
       - elk
+    depends_on:
+      - es-hot
 
   logstash:
     image: logstash:7.17.2
@@ -65,8 +71,10 @@ services:
     expose:
       - "5044"
       - "12345"
+      - "9600"
     ports:
       - "5044:5044"
+      - "9600:9600"
       - "12345:12345"
     networks:
       - elk
@@ -95,10 +103,18 @@ services:
       - "--strict.perms=false"
     volumes:
       - "./filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro"
+      #################################
+      ### KVM:
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+      ### WSL:
+      # - "/var/log:/var/log/host:ro"
+      # - "/mnt/w/version-pack-data/community/docker/containers:/var/lib/docker/containers:ro"
+      #################################
       - "/var/run/docker.sock:/var/run/docker.sock:Z"
     networks:
       - elk
+    depends_on:
+      - logstash
 
   json_sender:
     image: pycontribs/alpine:latest
@@ -108,3 +124,5 @@ services:
     entrypoint: python3 /opt/gather_metrics.py logstash 12345
     networks:
       - elk
+    depends_on:
+      - logstash

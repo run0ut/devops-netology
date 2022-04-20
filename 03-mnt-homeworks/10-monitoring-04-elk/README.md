@@ -61,6 +61,24 @@ Filebeat следует сконфигурировать для отправки
 
 </details>  
 
+Результатом выполнения данного задания должны быть:
+- скриншот `docker ps` через 5 минут после старта всех контейнеров (их должно быть 5)
+
+    ![docker ps](media/104-1-dockerps.png)
+
+- скриншот интерфейса kibana
+
+    ![kibana](media/104-1-kibana.png)
+
+- docker-compose манифест (если вы не использовали директорию help)
+
+    - [docker-compose.yml](mystack/docker-compose.yml)
+
+- ваши yml конфигурации для стека (если вы не использовали директорию help)
+
+    - [filebeat.docker.yml](mystack/filebeat/filebeat.docker.yml)
+     -  [simple_config.conf](mystack/logstash/pipeline/simple_config.conf)
+
 ## Задание 2
 
 <details><summary>.</summary>

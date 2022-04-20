@@ -3,6 +3,10 @@ filebeat.inputs:
   enabled: false
   paths:
     - /var/log/*.log
+- type: log
+  enabled: false
+  paths:
+    - /var/log/host/*.log
 - type: filestream
   enabled: false
   paths:
@@ -25,6 +29,9 @@ processors:
 #   hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
 #   username: '${ELASTICSEARCH_USERNAME:}'
 #   password: '${ELASTICSEARCH_PASSWORD:}'
+
+# output.console:
+#   enabled: true
 
 output.logstash:
   hosts: 'logstash:5044'
