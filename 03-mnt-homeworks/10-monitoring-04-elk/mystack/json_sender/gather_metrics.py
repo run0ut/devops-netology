@@ -122,7 +122,8 @@ def main(logstash_connect_params):
         **cpu_info(), 
         **mem_info(), 
         "uptime_seconds": uptime_info(),
-        "hostname": hostname
+        "hostname": hostname,
+        "appname": "json_sender"
     }
 
     # Записываем в файл
