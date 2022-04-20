@@ -99,3 +99,12 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:Z"
     networks:
       - elk
+
+  json_sender:
+    image: pycontribs/alpine:latest
+    container_name: json_sender
+    volumes:
+      - ./gather_metrics.py:/opt/gather_metrics.py
+    entrypoint: python3 /opt/gather_metrics.py logstash 12345
+    networks:
+      - elk
