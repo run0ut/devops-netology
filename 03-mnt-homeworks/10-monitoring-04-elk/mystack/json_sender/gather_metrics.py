@@ -144,6 +144,9 @@ def main(logstash_connect_params):
         sock.connect((HOST, PORT))
         # sock.send(data)
         sock.sendall(bytes(data,encoding="utf-8"))
+    except ConnectionRefusedError:
+        time.sleep(3)
+        pass
 
     finally:
         sock.close()
