@@ -79,12 +79,8 @@ devops-netology
 
 10.3. [Grafana](./03-mnt-homeworks/10-monitoring-03-grafana/README.md)
 
-<details><summary></summary>
-
 10.4. [ELK](./03-mnt-homeworks/10-monitoring-04-elk/README.md)
 
 10.5. [Sentry](./03-mnt-homeworks/10-monitoring-05-sentry/README.md)
 
 10.6. [Инцидент-менеджмент](./03-mnt-homeworks/10-monitoring-06-incident-management/README.md)
-
-</details>
