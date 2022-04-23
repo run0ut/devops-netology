@@ -1,13 +1,8 @@
 version: '3.6'
 
-volumes:
-  es_hot_data:
-  es_warm_data:
-
-configs:
-  filebat-config:
-    name: "filebat-config"
-    file: ./filebeat.docker.yml
+# volumes:
+#   es_hot_data:
+#   es_warm_data:
 
 networks:
   elk:
@@ -19,26 +14,20 @@ services:
     container_name: es-hot
     environment:
       - node.name=es-hot
+      # - node.roles=master,data_hot,data_content
       - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es-hot
-      - cluster.initial_master_nodes=es-hot
-      # - cluster.initial_master_nodes=es-hot,es-warm
+      - cluster.initial_master_nodes=es-hot,es-warm
+      - discovery.seed_hosts=es-warm
       - bootstrap.memory_lock=true
-      # - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 500M
-        # reservations:
-        #   memory: 500M
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - es_hot_data:/usr/share/elasticsearch/data
-      - "./jvm.options:/usr/share/elasticsearch/config/jvm.options.d/jvm.options"
+    # volumes:
+    #   - es_hot_data:/usr/share/elasticsearch/data
     expose:
+      - "9300"
       - "9200"
     ports:
       - "9200:9200"
@@ -49,69 +38,55 @@ services:
     image: elasticsearch:7.17.2
     container_name: es-warm
     environment:
-      - node.name=es_warm
+      - node.name=es-warm
+      # - node.roles=data_warm,data_content
       - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es-warm
       - cluster.initial_master_nodes=es-hot,es-warm
+      - discovery.seed_hosts=es-hot
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms96m -Xmx96m"
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 250M
-    #     reservations:
-    #       memory: 250M
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - es_warm_data:/usr/share/elasticsearch/data
+    # volumes:
+    #   - es_warm_data:/usr/share/elasticsearch/data
     expose:
+      - "9300"
       - "9200"
     ports:
       - "9201:9200"
       - "9301:9300"
     networks:
       - elk
+    depends_on:
+      - es-hot
 
   logstash:
     image: logstash:7.17.2
     container_name: logstash
-    environment:
-      - "ES_JAVA_OPTS=-Xms96m -Xmx96m"
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 250M
-    #     reservations:
-    #       memory: 250M
     volumes:
-      - ./pipeline:/usr/share/logstash/pipeline
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - "./logstash/jvm.options:/usr/share/logstash/config/jvm.options"
     expose:
       - "5044"
+      - "12345"
+      - "9600"
     ports:
       - "5044:5044"
+      - "9600:9600"
+      - "12345:12345"
     networks:
       - elk
 
   kibana:
     image: kibana:7.17.2
     container_name: kibana
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 500M
-        # reservations:
-        #   memory: 250M
     environment:
       - "SERVER_NAME=kibana"
       - "SERVER_HOST=0.0.0.0"
       - "ELASTICSEARCH_HOSTS=http://es-hot:9200"
-      - "NODE_OPTIONS=--max-old-space-size=4096"
-      - "ES_JAVA_OPTS=-Xms96m -Xmx96m"
-    volumes:
-      - "./node.options:/opt/kibana/config/node.options"
+      - "NODE_OPTIONS=--max-old-space-size=400"
     expose:
       - "5601"
     ports:
@@ -122,25 +97,43 @@ services:
   filebeat:
     image: elastic/filebeat:7.17.2
     container_name: filebeat
-    # configs:
-    #   - source: filebat-config
-    #     target: /usr/share/filebeat/filebeat.yml
-    #     uid: "1000"
-    #     gid: "1000"
-    #     mode: 0644
-    # user: root
+    user: root
     privileged: true
     command:
       - "--strict.perms=false"
-    # environment:
-    #   - output.logstash.hosts: "localhost:5044"
-      # - strict.perms=false
-    user: root
     volumes:
-      - "./filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro"
+      - "./filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro"
+      #################################
+      ### KVM:
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+      ### WSL:
+      # - "/var/log:/var/log/host:ro"
+      # - "/mnt/w/version-pack-data/community/docker/containers:/var/lib/docker/containers:ro"
+      #################################
       - "/var/run/docker.sock:/var/run/docker.sock:Z"
-    # expose:
-    # ports:
     networks:
       - elk
+    depends_on:
+      - logstash
+
+  json_sender:
+    image: pycontribs/alpine:latest
+    container_name: json_sender
+    volumes:
+      - ./json_sender/gather_metrics.py:/opt/gather_metrics.py
+    entrypoint: python3 /opt/gather_metrics.py logstash 12345
+    networks:
+      - elk
+    depends_on:
+      - logstash
+
+  some_application:
+    image: pycontribs/alpine:latest
+    container_name: some_app
+    volumes:
+      - ../help/pinger/run.py:/opt/run.py:Z
+    entrypoint: python3 /opt/run.py
+    networks:
+      - elk
+    depends_on:
+      - logstash

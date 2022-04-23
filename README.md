@@ -73,13 +73,13 @@ devops-netology
 
 ---
 
-<details><summary></summary>
-
 10.1. [Зачем и что нужно мониторить](./03-mnt-homeworks/10-monitoring-01-base/README.md)
 
 10.2. [Системы мониторинга](./03-mnt-homeworks/10-monitoring-02-systems/README.md)
 
 10.3. [Grafana](./03-mnt-homeworks/10-monitoring-03-grafana/README.md)
+
+<details><summary></summary>
 
 10.4. [ELK](./03-mnt-homeworks/10-monitoring-04-elk/README.md)
 

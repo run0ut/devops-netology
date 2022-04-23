@@ -61,6 +61,24 @@ Filebeat следует сконфигурировать для отправки
 
 </details>  
 
+Результатом выполнения данного задания должны быть:
+- скриншот `docker ps` через 5 минут после старта всех контейнеров (их должно быть 5)
+
+    ![docker ps](media/104-1-dockerps.png)
+
+- скриншот интерфейса kibana
+
+    ![kibana](media/104-1-kibana.png)
+
+- docker-compose манифест (если вы не использовали директорию help)
+
+    - [docker-compose.yml](mystack/docker-compose.yml)
+
+- ваши yml конфигурации для стека (если вы не использовали директорию help)
+
+    - [filebeat.docker.yml](mystack/filebeat/filebeat.docker.yml)
+     -  [simple_config.conf](mystack/logstash/pipeline/simple_config.conf)
+
 ## Задание 2
 
 <details><summary>.</summary>
@@ -75,5 +93,12 @@ Filebeat следует сконфигурировать для отправки
 Данные логи должны порождать индекс logstash-* в elasticsearch. Если данного индекса нет - воспользуйтесь советами 
 и источниками из раздела "Дополнительные ссылки" данного ДЗ.
  
+</details>  
 
- 
+### создайте несколько index-patterns из имеющихся
+
+![G](media/104-2-index_pattern.png)
+
+### Данные логи должны порождать индекс logstash-* в elasticsearc
+
+![G](media/104-2-index_management.png)

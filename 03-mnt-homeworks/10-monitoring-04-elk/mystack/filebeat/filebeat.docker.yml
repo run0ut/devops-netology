@@ -3,6 +3,10 @@ filebeat.inputs:
   enabled: false
   paths:
     - /var/log/*.log
+- type: log
+  enabled: false
+  paths:
+    - /var/log/host/*.log
 - type: filestream
   enabled: false
   paths:
@@ -19,12 +23,16 @@ filebeat.autodiscover:
       hints.enabled: true
 
 processors:
-- add_cloud_metadata: ~
+- add_docker_metadata:
+    host: "unix:///var/run/docker.sock"
 
-# output.elasticsearch:
-#   hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
-#   username: '${ELASTICSEARCH_USERNAME:}'
-#   password: '${ELASTICSEARCH_PASSWORD:}'
+- decode_json_fields:
+    fields: ["message"]
+    target: "json"
+    overwrite_keys: true
+
+# output.console:
+#   enabled: true
 
 output.logstash:
   hosts: 'logstash:5044'
