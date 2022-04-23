@@ -26,6 +26,10 @@ Free cloud account имеет следующие ограничения:
 
 </details>  
 
+### Для выполнения задания - пришлите скриншот меню Projects.
+
+![Projects после регистрации в Sentry.io](media/105-1-projects.png)
+
 ## Задание 2
 
 <details><summary>.</summary>
