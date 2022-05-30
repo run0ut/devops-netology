@@ -51,7 +51,7 @@ def login():
 
     return jwt.encode({'sub': login}, jwt_key, algorithm="HS256")
 
-
+@server.route('/v1/user', methods=['GET'])
 @server.route('/v1/token/validation', methods=['GET'])
 def validate():
     auth_header = request.headers.get('Authorization')
