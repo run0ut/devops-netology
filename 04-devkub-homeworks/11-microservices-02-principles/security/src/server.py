@@ -17,6 +17,23 @@ data = {
 def status():
     return {'status':'OK'}
 
+
+@server.route('/v1/user', methods=['POST'])
+def register():
+
+    login = request.json['login']
+    password = request.json['password']
+
+    if login and password:
+        if not login in data:
+            data[login] = pbkdf2_sha256.hash(password)
+            return make_response(jsonify({'Success':'User '+ login + ' registered'})), 200
+        else:
+            return make_response(jsonify({'error':'User already exists'})), 401
+    else:
+        return make_response(jsonify({'error':'Either login or password is missing'})), 401
+
+
 @server.route('/v1/token', methods=['POST'])
 def login():
     if not request.json or not 'login' in request.json or not 'password' in request.json:
