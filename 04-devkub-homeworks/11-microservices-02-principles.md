@@ -131,17 +131,17 @@
 
 1. Регистрация
     ```bash
-    00:37:16 ~ sergey@work10600:~$ curl -X POST -H 'Content-Type: application/json' -d '{"login":"new_user", "password":"secretpassword"}' http://localhost/register
+    00:37:16 ~ sergey@Intel8086:~$ curl -X POST -H 'Content-Type: application/json' -d '{"login":"new_user", "password":"secretpassword"}' http://localhost/register
     {"Success":"User new_user registered"}
     ```
 1. Получение токена
     ```bash
-    00:37:17 ~ sergey@work10600:~$ curl -X POST -H 'Content-Type: application/json' -d '{"login":"new_user", "password":"secretpassword"}' http://localhost/token
+    00:37:17 ~ sergey@Intel8086:~$ curl -X POST -H 'Content-Type: application/json' -d '{"login":"new_user", "password":"secretpassword"}' http://localhost/token
     eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdfdXNlciJ9.B5g59k4TY_oXJ7e0AcZ2Fz_N6cZz-dKRzWKTW1-f8t8
     ```
 1. Попытка загрузить картинку без токена
     ```bash
-    00:44:03 ~ sergey@work10600:~$ curl -X POST -H 'Content-Type: octet/stream' --data-binary @1.jpg http://localhost/upload
+    00:44:03 ~ sergey@Intel8086:~$ curl -X POST -H 'Content-Type: octet/stream' --data-binary @1.jpg http://localhost/upload
     <html>
     <head><title>401 Authorization Required</title></head>
     <body>
@@ -152,25 +152,25 @@
     ```
 1. Загрузка картинки с токеном
     ```bash
-    00:44:16 ~ sergey@work10600:~$ curl -X POST -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdfdXNlciJ9.B5g59k4TY_oXJ7e0AcZ2Fz_N6cZz-dKRzWKTW1-f8t8' -H 'Content-Type: octet/stream' --data-binary @1.jpg http://localhost/upload
+    00:44:16 ~ sergey@Intel8086:~$ curl -X POST -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdfdXNlciJ9.B5g59k4TY_oXJ7e0AcZ2Fz_N6cZz-dKRzWKTW1-f8t8' -H 'Content-Type: octet/stream' --data-binary @1.jpg http://localhost/upload
     {"filename":"8f5d79ba-931c-4b42-bc69-59c2fa510181.jpg"}
     ```
 1. Скачивание картинки
     ```bash
-    00:45:21 ~ sergey@work10600:~$ curl -X GET http://localhost/images/8f5d79ba-931c-4b42-bc69-59c2fa510181.jpg > 2.jpg
+    00:45:21 ~ sergey@Intel8086:~$ curl -X GET http://localhost/images/8f5d79ba-931c-4b42-bc69-59c2fa510181.jpg > 2.jpg
     % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                     Dload  Upload   Total   Spent    Left  Speed
     100 34509  100 34509    0     0  28.1M      0 --:--:-- --:--:-- --:--:-- 32.9M
     ```
 1. Проверка, что файл сохранён
     ```bash
-    00:45:40 ~ sergey@work10600:~$ ll *jpg
+    00:45:40 ~ sergey@Intel8086:~$ ll *jpg
     -rw-rw-r-- 1 sergey sergey 34509 мая 31 00:22 1.jpg
     -rw-rw-r-- 1 sergey sergey 34509 мая 31 00:45 2.jpg
     ```
 1. Проверка контрольных сумм - файл тот же
     ```bash
-    00:45:49 ~ sergey@work10600:~$ md5sum *jpg
+    00:45:49 ~ sergey@Intel8086:~$ md5sum *jpg
     b083d88611c22dcf06f3c5f907d7504c  1.jpg
     b083d88611c22dcf06f3c5f907d7504c  2.jpg
     ```
