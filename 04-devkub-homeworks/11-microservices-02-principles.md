@@ -129,6 +129,10 @@
 > curl -X GET http://localhost/images/4e6df220-295e-4231-82bc-45e4b1484430.jpg
 > ```
 
+Конфиг гейтвея [nginx.conf](./11-microservices-02-principles/gateway/nginx.conf)
+
+Проверка работы:
+
 1. Регистрация
     ```bash
     00:37:16 ~ sergey@Intel8086:~$ curl -X POST -H 'Content-Type: application/json' -d '{"login":"new_user", "password":"secretpassword"}' http://localhost/register
