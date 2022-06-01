@@ -1,0 +1,36 @@
+services:
+
+  vector:
+    image: timberio/vector:latest-alpine
+    expose:
+      - 8383
+    ports:
+      - 8383:8383
+    volumes:
+      - ./vector.toml:/etc/vector/vector.toml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  elastic:
+    image: elasticsearch:7.17.4
+    expose:
+      - 9200
+      - 9300
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      #
+      - discovery.type=single-node
+      #
+      # error type: illegal_argument_exception, reason: can't merge a non object mapping [label.com.docker.compose.project] with an object mapping
+      # - node.name=elastic
+      # - cluster.name="es-docker-cluster"
+      # - network.host=0.0.0.0
+      # - discovery.seed_hosts=elastic
+      # - cluster.initial_master_nodes=elastic
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
