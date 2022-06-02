@@ -35,7 +35,7 @@ services:
 
   createbuckets:
     image: minio/mc
-    container_name: devkub11-113-createbuckets
+    container_name: createbuckets
     depends_on:
       - storage
     restart: on-failure
@@ -70,6 +70,7 @@ services:
       - devkub113
   
   security:
+    container_name: devkub11-113-security
     build: ./security
     expose: 
       - 3000
@@ -145,7 +146,7 @@ services:
       - devkub113
 
   createindex: 
-    container_name: devkub11-113-createindex
+    container_name: createindex
     image: curlimages/curl:7.81.0 
     # image: elasticsearch:7.17.4
     depends_on:
