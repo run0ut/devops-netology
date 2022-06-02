@@ -6,7 +6,24 @@ docker-compose up --build
 
 # Как тестировать
 
-## Login
+## EVK
+
+Стек Elasticsearch + Vector + Kibana, мониторит логи всего стека.
+
+Доступен по адресу http://localhost:5601
+* Логин: `admin`
+* Пароль: `qwerty123456`
+
+## Prometheus + Grafana
+
+Стек для мониторинга метрик микросервисов.
+
+Доступен по адресу http://localhost:8081
+* Логин: `admin`
+* Пароль: `qwerty123456`
+
+## Microservices
+### Login
 Получить токен
 ```
 curl -X POST -H 'Content-Type: application/json' -d '{"login":"bob", "password":"qwe123"}' http://localhost/token
@@ -17,7 +34,7 @@ $ curl -X POST -H 'Content-Type: application/json' -d '{"login":"bob", "password
 eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJib2IifQ.hiMVLmssoTsy1MqbmIoviDeFPvo-nCd92d4UFiN2O2I
 ```
 
-## Test
+### Test
 Использовать полученный токен для загрузки картинки
 ```
 curl -X POST -H 'Authorization: Bearer <TODO: INSERT TOKEN>' -H 'Content-Type: octet/stream' --data-binary @1.jpg http://localhost/upload
@@ -28,7 +45,7 @@ $ curl -X POST -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ey
 {"filename":"c31e9789-3fab-4689-aa67-e7ac2684fb0e.jpg"}
 ```
 
- ## Проверить
+### Проверить
 Загрузить картинку и проверить что она открывается
 ```
 curl localhost/image/<filnename> > <filnename>

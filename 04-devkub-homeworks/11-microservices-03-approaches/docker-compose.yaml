@@ -191,7 +191,7 @@ services:
 
   grafana:
     image: grafana/grafana-oss
-    container_name: grafana
+    container_name: devkub11-113-grafana
     restart: always
     expose:
       - 3000
