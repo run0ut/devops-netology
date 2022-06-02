@@ -1,17 +1,4 @@
 #!/bin/sh
-# create_index=$(curl -v -X POST http://elastic:qwerty123456@kibana:5601/api/index_patterns/index_pattern \
-#     -H "kbn-xsrf: true" \
-#     -H "Content-Type: application/json" \
-#     -d'
-#     {
-#         "override": false,
-#         "refresh_fields": true,
-#         "index_pattern": {
-#             "title":"vector*",
-#             "timeFieldName":"timestamp"
-#         }
-#     }')
-# echo "create_index="$create_index
 ret_code=22
 http_code=$(curl --silent --output $(mktemp) -X POST http://elastic:qwerty123456@kibana:5601/api/index_patterns/index_pattern \
     -H "kbn-xsrf: true" \
