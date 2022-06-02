@@ -1,3 +1,8 @@
+
+networks:
+  devkub113:
+    name: devkub113
+
 volumes:
   data:
   prometheus-data:
@@ -25,6 +30,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - devkub113
 
   createbuckets:
     image: minio/mc
@@ -39,6 +46,8 @@ services:
       /usr/bin/mc policy set download storage/${Storage_Bucket:-data} &&
       exit 0;
       "
+    networks:
+      - devkub113
 
   uploader:
     container_name: devkub11-113-uploader
@@ -57,6 +66,8 @@ services:
       S3_ACCESS_KEY: ${Storage_AccessKey:-STORAGE_ACCESS_KEY}
       S3_ACCESS_SECRET: ${Storage_Secret:-STORAGE_SECRET_KEY}
       S3_BUCKET: ${Storage_Bucket:-STORAGE_BUCKET}
+    networks:
+      - devkub113
   
   security:
     build: ./security
@@ -66,6 +77,8 @@ services:
       - 3003:3000
     environment:
       PORT: 3000
+    networks:
+      - devkub113
 
   gateway:
     container_name: devkub11-113-gateway
@@ -78,3 +91,71 @@ services:
       - storage
       - uploader
       - security
+    networks:
+      - devkub113
+
+  elastic:
+    container_name: devkub11-113-elastic
+    image: elasticsearch:7.17.4
+    expose:
+      - 9200
+      - 9300
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=true
+      - "ELASTIC_PASSWORD=qwerty123456"
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - devkub113
+
+  vector:
+    container_name: devkub11-113-vector
+    image: timberio/vector:0.22.0-debian
+    expose:
+      - 8686
+    ports:
+      - 8686:8686
+    volumes:
+      - ./logs/vector.toml:/etc/vector/vector.toml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - elastic
+    networks:
+      - devkub113
+
+  kibana:
+    container_name: devkub11-113-kibana
+    image: kibana:7.17.4
+    environment:
+      - "ELASTICSEARCH_HOSTS=http://elastic:9200"
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=qwerty123456
+    expose:
+      - 5601
+    ports:
+      - 5601:5601
+    networks:
+      - devkub113
+
+  createindex: 
+    container_name: devkub11-113-createindex
+    image: curlimages/curl:7.81.0 
+    # image: elasticsearch:7.17.4
+    depends_on:
+      - kibana
+    restart: on-failure
+    volumes:
+      - ./logs/createindex.sh:/createindex.sh
+    entrypoint:
+      - sh
+      - -x
+      - /createindex.sh
+    networks:
+      - devkub113
