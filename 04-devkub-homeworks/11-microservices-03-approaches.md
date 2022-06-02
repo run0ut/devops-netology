@@ -106,8 +106,8 @@ PLG стек более производителен, но язык LogQL мен
 - [vector.toml](./11-microservices-03-approaches/logs/vector.toml)
 
 Для настройки пользователя admin в Эластике и создания паттерна индекса Kibana пришлось создать скрипты, т.к. их провижен не предусмотрен конфигами или передачей в переменных окружения:
-- [скрипт настройки пользователя Elastic](./11-microservices-03-approaches/logs/createindex.sh)
-- [скрипт создания паттерна индекса Kibana](./11-microservices-03-approaches/logs/elasticuserpassword.sh)
+- [скрипт настройки пользователя Elastic](./11-microservices-03-approaches/logs/elasticuserpassword.sh)
+- [скрипт создания паттерна индекса Kibana](./11-microservices-03-approaches/logs/createindex.sh)
 
 ## Задача 5: Мониторинг * (необязательная)
 
