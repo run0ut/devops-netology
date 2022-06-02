@@ -1,6 +1,7 @@
 #!/bin/sh
 ret_code=22
-http_code=$(curl --silent --output $(mktemp) -X POST http://elastic:qwerty123456@kibana:5601/api/index_patterns/index_pattern \
+http_code=$(curl --silent --output $(mktemp) \
+    -X POST http://${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}@kibana:5601/api/index_patterns/index_pattern \
     -H "kbn-xsrf: true" \
     -H "Content-Type: application/json" \
     -d'

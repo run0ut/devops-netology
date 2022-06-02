@@ -19,9 +19,9 @@ fields = ["label"]
 # image: timberio/vector:0.16.1-debian
 type = "elasticsearch"
 inputs = [ "docker_transformer" ]
-endpoint = "http://elastic:9200"
+endpoint = "${ELASTICSEARCH_HOSTS}"
 mode = "bulk"
 compression = "none"
 auth.strategy = "basic"
-auth.user = "elastic"
-auth.password = "qwerty123456"
+auth.user = "${ELASTICSEARCH_USERNAME}"
+auth.password = "${ELASTICSEARCH_PASSWORD}"
