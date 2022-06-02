@@ -13,12 +13,12 @@ http_code=$(curl --silent --output $(mktemp) -X POST http://elastic:qwerty123456
         }
     }' \
     --write-out "%{http_code}")
-if [ "$http_code" == "000" ]; then
+if [ "$http_code" == "200" ] || [ "$http_code" == "400" ]; then
+    ret_code=0
+elif [ "$http_code" == "000" ]; then
     ret_code=22
-elif [ "$http_code" != "200" ]; then
-    ret_code=${http_code}
 else
-    ret_code=22
+    ret_code=${http_code}
 fi
 echo $ret_code
 exit "$ret_code"
