@@ -22,3 +22,6 @@ inputs = [ "docker_transformer" ]
 endpoint = "http://elastic:9200"
 mode = "bulk"
 compression = "none"
+auth.strategy = "basic"
+auth.user = "elastic"
+auth.password = "qwerty123456"

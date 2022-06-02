@@ -11,7 +11,8 @@ services:
       - 9300:9300
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - "ELASTIC_PASSWORD=qwerty123456"
       - discovery.type=single-node
     ulimits:
       memlock:
@@ -37,7 +38,20 @@ services:
     image: kibana:7.17.4
     environment:
       - "ELASTICSEARCH_HOSTS=http://elastic:9200"
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=qwerty123456
     expose:
       - 5601
     ports:
       - 5601:5601
+
+    # curl -v -X POST "http://localhost:5601/api/index_patterns/index_pattern" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d'
+    # {
+    #   "override": false,
+    #   "refresh_fields": true,
+    #   "index_pattern": {
+    #     "title":"vector*",
+    #     "timeFieldName":"timestamp"
+    #   }
+    # }
+    # '
