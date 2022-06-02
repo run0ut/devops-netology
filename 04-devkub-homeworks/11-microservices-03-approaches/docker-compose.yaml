@@ -188,3 +188,18 @@ services:
       - "9090:9090"
     networks:
       - devkub113
+
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    restart: always
+    expose:
+      - 3000
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./mon/prometheus_datasource.yml:/etc/grafana/provisioning/datasources/prometheus_datasource.yml
+      - ./mon/prometheus_dashboards.yml:/etc/grafana/provisioning/dashboards/prometheus_dashboards.yml
+      # - ./prometheus_dashboard.json:/etc/grafana/provisioning/dashboards/prometheus_dashboard.json
+    networks:
+      - devkub113
