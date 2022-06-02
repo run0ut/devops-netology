@@ -1,3 +1,7 @@
+networks:
+  devkub113:
+    name: devkub113
+
 services:
 
   elastic:
@@ -18,6 +22,8 @@ services:
       memlock:
         soft: -1
         hard: -1
+    networks:
+      - devkub113
 
   vector:
     container_name: devkub11-113-vector
@@ -31,6 +37,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - elastic
+    networks:
+      - devkub113
 
 
   kibana:
@@ -44,14 +52,21 @@ services:
       - 5601
     ports:
       - 5601:5601
+    networks:
+      - devkub113
 
-    # curl -v -X POST "http://localhost:5601/api/index_patterns/index_pattern" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d'
-    # {
-    #   "override": false,
-    #   "refresh_fields": true,
-    #   "index_pattern": {
-    #     "title":"vector*",
-    #     "timeFieldName":"timestamp"
-    #   }
-    # }
-    # '
+  createindex: 
+    container_name: devkub11-113-createindex
+    image: curlimages/curl:7.81.0 
+    # image: elasticsearch:7.17.4
+    depends_on:
+      - kibana
+    restart: on-failure
+    volumes:
+      - ../logs/createindex.sh:/createindex.sh
+    entrypoint:
+      - sh
+      - -x
+      - /createindex.sh
+    networks:
+      - devkub113
