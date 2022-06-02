@@ -196,10 +196,13 @@ services:
     expose:
       - 3000
     ports:
-      - "3001:3000"
+      - "8081:8081"
+    env_file:
+      - .env
     volumes:
+      - ./mon/grafana.ini:/etc/grafana/grafana.ini
       - ./mon/prometheus_datasource.yml:/etc/grafana/provisioning/datasources/prometheus_datasource.yml
       - ./mon/prometheus_dashboards.yml:/etc/grafana/provisioning/dashboards/prometheus_dashboards.yml
-      # - ./prometheus_dashboard.json:/etc/grafana/provisioning/dashboards/prometheus_dashboard.json
+      - ./mon/prometheus_dashboard.json:/etc/grafana/provisioning/dashboards/prometheus_dashboard.json
     networks:
       - devkub113
