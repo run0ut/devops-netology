@@ -80,7 +80,7 @@ PLG стек более производителен, но язык LogQL мен
 
 Оптимальной будет связка:
 - `node_exporter` для предоставления метрик о состоянии узлов
-- Интеграция [Prometheus client libraties](https://prometheus.io/docs/instrumenting/clientlibs/) в код микросервисов для экспорта специфичных метрик
+- Интеграция [Prometheus client libraries](https://prometheus.io/docs/instrumenting/clientlibs/) в код микросервисов для экспорта специфичных метрик
 - `Prometheus` для сбора и валидации метрик в единое хранилище
 - `Grafana` для построения дешбордов
 
@@ -102,12 +102,14 @@ PLG стек более производителен, но язык LogQL мен
 
 Порт Kibana я оставил стандартным, 5601. Порт 8081 будет использоваться для Grafana.
 
-- [docker-compose.yaml](https://github.com/run0ut/devops-netology/blob/1a44f4a35c9e255dbbbe5e5817b23a69feb73050/04-devkub-homeworks/11-microservices-03-approaches/docker-compose.yaml#L12-L90)
+- [Изменения docker-compose.yaml](https://github.com/run0ut/devops-netology/blob/1a44f4a35c9e255dbbbe5e5817b23a69feb73050/04-devkub-homeworks/11-microservices-03-approaches/docker-compose.yaml#L12-L90)
 - [vector.toml](./11-microservices-03-approaches/logs/vector.toml)
 
 Для настройки пользователя admin в Эластике и создания паттерна индекса Kibana пришлось создать скрипты, т.к. их провижен не предусмотрен конфигами или передачей в переменных окружения:
 - [скрипт настройки пользователя Elastic](./11-microservices-03-approaches/logs/elasticuserpassword.sh)
 - [скрипт создания паттерна индекса Kibana](./11-microservices-03-approaches/logs/createindex.sh)
+
+![Kibana UI](./11-microservices-03-approaches/media/113-kibana.png)
 
 ## Задача 5: Мониторинг * (необязательная)
 
@@ -124,3 +126,16 @@ PLG стек более производителен, но язык LogQL мен
 
 > docker compose файл запустив который можно перейти по адресу http://localhost:8081 по которому доступна Grafana с настроенным Dashboard.
 > Логин в Grafana должен быть admin пароль qwerty123456
+
+
+- [Изменения docker-compose.yaml](https://github.com/run0ut/devops-netology/blob/044f237c9f7c3c84e3910a80b129d191a182bbe1/04-devkub-homeworks/11-microservices-03-approaches/docker-compose.yaml#L180-L208)
+- [Изменения nginx.conf](https://github.com/run0ut/devops-netology/blob/044f237c9f7c3c84e3910a80b129d191a182bbe1/04-devkub-homeworks/11-microservices-03-approaches/gateway/nginx.conf#L52-L63)
+- [Конфигурация Prometheus](./11-microservices-03-approaches/mon/prometheus.yml)
+- [Конфигурация Grafana](./11-microservices-03-approaches/mon/grafana.ini)
+- [Дешборд в JSON](./11-microservices-03-approaches/mon/prometheus_dashboard.json)
+
+Провижен Grafana:
+- [Datasource](./11-microservices-03-approaches/mon/prometheus_datasource.yml)
+- [Dashboard](./11-microservices-03-approaches/mon/prometheus_dashboards.yml)
+
+![Grafana](./11-microservices-03-approaches/media/113-grafana.png)
