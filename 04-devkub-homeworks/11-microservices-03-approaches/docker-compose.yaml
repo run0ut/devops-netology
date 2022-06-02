@@ -90,7 +90,7 @@ services:
       - devkub113
 
   storage:
-    container_name: devkub11-113-services
+    container_name: devkub11-113-storage
     image: minio/minio:latest
     command: server /data --console-address ":37755"
     restart: always
@@ -172,5 +172,17 @@ services:
       - storage
       - uploader
       - security
+    networks:
+      - devkub113
+
+  prometheus:
+    image: prom/prometheus
+    container_name: devkub11-113-prometheus
+    volumes:
+      - ./mon/prometheus.yml:/etc/prometheus/prometheus.yml
+    expose:
+      - "9090"
+    ports:
+      - "9090:9090"
     networks:
       - devkub113
