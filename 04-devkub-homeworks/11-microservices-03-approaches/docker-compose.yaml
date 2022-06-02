@@ -103,6 +103,8 @@ services:
       MINIO_ROOT_USER: ${Storage_AccessKey:-STORAGE_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${Storage_Secret:-STORAGE_SECRET_KEY}
       MINIO_PROMETHEUS_AUTH_TYPE: public
+      MINIO_PROMETHEUS_URL: http://prometheus:9090
+      MINIO_PROMETHEUS_JOB_ID: storage
     volumes:
       - data:/data
     healthcheck:
