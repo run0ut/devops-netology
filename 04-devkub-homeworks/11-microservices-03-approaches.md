@@ -105,7 +105,7 @@ PLG стек более производителен, но язык LogQL мен
 - [Изменения docker-compose.yaml](https://github.com/run0ut/devops-netology/blob/1a44f4a35c9e255dbbbe5e5817b23a69feb73050/04-devkub-homeworks/11-microservices-03-approaches/docker-compose.yaml#L12-L90)
 - [vector.toml](./11-microservices-03-approaches/logs/vector.toml)
 
-Для настройки пользователя admin в Эластике и создания паттерна индекса Kibana пришлось создать скрипты, т.к. их провижен не предусмотрен конфигами или передачей в переменных окружения:
+Для настройки пользователя admin в Эластике и создания паттерна индекса Kibana пришлось создать скрипты, т.к. я не нашел более простого способа их провижена:
 - [скрипт настройки пользователя Elastic](./11-microservices-03-approaches/logs/elasticuserpassword.sh)
 - [скрипт создания паттерна индекса Kibana](./11-microservices-03-approaches/logs/createindex.sh)
 
