@@ -1,0 +1,170 @@
+---
+- name: Create instance
+  hosts: localhost
+  tasks:
+    - name: Create netology114-vm1
+      netology86.yandex_cloud_elk.yc_create_instance:
+        network_interface: "net-ru-central1-a"
+        name: "netology114-vm1"
+        image_family: "centos-7"
+        status: "running"
+
+    - name: Create netology114-vm2
+      netology86.yandex_cloud_elk.yc_create_instance:
+        network_interface: "net-ru-central1-a"
+        name: "netology114-vm2"
+        image_family: "centos-7"
+        status: "running"
+
+    - name: Create netology114-vm3
+      netology86.yandex_cloud_elk.yc_create_instance:
+        network_interface: "net-ru-central1-a"
+        name: "netology114-vm3"
+        image_family: "centos-7"
+        status: "running"
+
+    - name: Refresh Inventory
+      meta: refresh_inventory
+
+- name: Add new host to inventory
+  hosts: all
+  gather_facts: false
+  user: yc-user
+  tasks:
+    - name: Wait for system to become reachable
+      wait_for_connection:
+        timeout: 100
+
+# https://aytemuryakup.medium.com/install-redis-cluster-with-ansible-3c8b3729b430
+- name: Redis Cluster Install
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+
+    - name: Download redis.rpm file
+      get_url:
+        url: http://rpmfind.net/linux/remi/enterprise/7/remi/x86_64/redis-6.2.7-1.el7.remi.x86_64.rpm
+        dest: ~/
+        mode: '0644'
+
+    - name: install redis
+      yum:
+        name: /root/redis-6.2.7-1.el7.remi.x86_64.rpm
+        state: present
+
+    - name: stop firewall service if exists
+      block:
+      - name: stop firewall service
+        service:
+          name: firewalld
+          state: stopped
+          enabled: no
+      rescue:
+        - name: Print message
+          ansible.builtin.debug:
+            msg: 'firewalld was not found on the host'
+
+    - name: Swappoff disable
+      command: swapoff -a
+      ignore_errors: yes
+
+    - name: Disable SELinux
+      selinux:
+        state: disabled
+
+    - name: Redis.conf backup 
+      command: mv /etc/redis.conf /etc/redis_backup.conf
+
+    - name: Download redis.conf file
+      get_url:
+        url: https://raw.githubusercontent.com/aytemuryakup/ansible/master/Redis/redis.conf
+        dest: /etc/
+        mode: '0755'
+
+# - name: Redis Cluster Install
+#   hosts: r1
+#   become: yes
+#   become_user: root
+#   gather_facts: no
+#   tasks:  
+#      - name: Insert configuration bind section
+#        lineinfile:
+#         path: /etc/redis.conf
+#         regexp: 'bind 127.0.0.1'
+#         line: 'bind master1'
+
+# - name: Redis Cluster Install
+#   hosts: r2
+#   become: yes
+#   become_user: root
+#   gather_facts: no
+#   tasks:  
+#      - name: Insert configuration bind section
+#        lineinfile:
+#         path: /etc/redis.conf
+#         regexp: 'bind 127.0.0.1'
+#         line: 'bind master2'
+
+# - name: Redis Cluster Install
+#   hosts: r3
+#   become: yes
+#   become_user: root
+#   gather_facts: no
+#   tasks:  
+#      - name: Insert configuration bind section
+#        lineinfile:
+#         path: /etc/redis.conf
+#         regexp: 'bind 127.0.0.1'
+#         line: 'bind master3'
+
+# - name: Redis Cluster Install
+#   hosts: r4
+#   become: yes
+#   become_user: root
+#   gather_facts: no
+#   tasks:  
+#      - name: Insert configuration bind section
+#        lineinfile:
+#         path: /etc/redis.conf
+#         regexp: 'bind 127.0.0.1'
+#         line: 'bind slave1'
+
+# - name: Redis Cluster Install
+#   hosts: r5
+#   become: yes
+#   become_user: root
+#   gather_facts: no
+#   tasks:  
+#      - name: Insert configuration bind section
+#        lineinfile:
+#         path: /etc/redis.conf
+#         regexp: 'bind 127.0.0.1'
+#         line: 'bind slave2'
+
+# - name: Redis Cluster Install
+#   hosts: r6
+#   become: yes
+#   become_user: root
+#   gather_facts: no
+#   tasks:  
+#      - name: Insert configuration bind section
+#        lineinfile:
+#         path: /etc/redis.conf
+#         regexp: 'bind 127.0.0.1'
+#         line: 'bind slave3'
+
+# - name: Start redis.service
+#   hosts: redis
+#   become: yes
+#   become_user: root
+#   gather_facts: no
+#   tasks:
+
+#     - name: Restart for all server
+#       reboot:
+
+#      - name: Start redis service
+#        service:
+#          name: redis
+#          state: started
