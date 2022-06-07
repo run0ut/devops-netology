@@ -1,0 +1,21 @@
+---
+    - name: Create instance
+      hosts: localhost
+      tasks:
+        - name: Destroy netology114-vm1
+          netology86.yandex_cloud_elk.yc_create_instance:
+            network_interface: "net-ru-central1-a"
+            name: "netology114-vm1"
+            status: "absence"
+    
+        - name: Destroy netology114-vm2
+          netology86.yandex_cloud_elk.yc_create_instance:
+            network_interface: "net-ru-central1-a"
+            name: "netology114-vm2"
+            status: "absence"
+    
+        - name: Destroy netology114-vm3
+          netology86.yandex_cloud_elk.yc_create_instance:
+            network_interface: "net-ru-central1-a"
+            name: "netology114-vm3"
+            status: "absence"
