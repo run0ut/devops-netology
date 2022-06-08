@@ -35,24 +35,36 @@
       wait_for_connection:
         timeout: 100
 
-# https://aytemuryakup.medium.com/install-redis-cluster-with-ansible-3c8b3729b430
-- name: Redis Cluster Install
+- name: Install Docker on nodes
   hosts: all
   become: yes
   gather_facts: no
   tasks:
+    - name: Add docker repository
+      command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-    - name: Download redis.rpm file
-      get_url:
-        url: http://rpmfind.net/linux/remi/enterprise/7/remi/x86_64/redis-6.2.7-1.el7.remi.x86_64.rpm
-        dest: ~/
-        mode: '0644'
+    - name: Installing docker package
+      yum: >
+          name={{ item }}
+          state=present
+          update_cache=yes
+      with_items:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
 
-    - name: install redis
-      yum:
-        name: /root/redis-6.2.7-1.el7.remi.x86_64.rpm
-        state: present
+    - name: Enable docker daemon
+      systemd:
+          name: docker
+          state: started
+          enabled: yes
 
+- name: Configure OS
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
     - name: stop firewall service if exists
       block:
       - name: stop firewall service
@@ -73,120 +85,30 @@
       selinux:
         state: disabled
 
-    - name: Redis.conf backup 
-      command: mv /etc/redis/redis.conf /etc/redis/redis_backup.conf
-
-    - name: Upload redis.conf file
-      copy:
-        src: ./conf/redis.conf
-        dest: /etc/redis/redis.conf
-        mode: '0755'
-      notify: 
-        - Restart redis
-
-  handlers:
-    - name: Restart redis
-      ansible.builtin.service:
-        name: redis
-        state: restarted
-
-- name: Start redis.service
+- name: Copy files
   hosts: all
   become: yes
   gather_facts: no
   tasks:
+    - name: Copy configs
+      copy:
+        src: conf/
+        dest: /root/conf/
+        mode: 0644
+        directory_mode: true
 
-    # - name: Restart for all server
-    #   reboot:
+    - name: Copy compose file
+      copy:
+        src: conf/docker-compose.yml
+        dest: /root/docker-compose.yml
+        mode: 0644
 
-    - name: Start redis service
-      service:
-        name: redis
-        state: started
-
-# - name: Redis Cluster Install
-#   hosts: r1
-#   become: yes
-#   become_user: root
-#   gather_facts: no
-#   tasks:  
-#      - name: Insert configuration bind section
-#        lineinfile:
-#         path: /etc/redis.conf
-#         regexp: 'bind 127.0.0.1'
-#         line: 'bind master1'
-
-# - name: Redis Cluster Install
-#   hosts: r2
-#   become: yes
-#   become_user: root
-#   gather_facts: no
-#   tasks:  
-#      - name: Insert configuration bind section
-#        lineinfile:
-#         path: /etc/redis.conf
-#         regexp: 'bind 127.0.0.1'
-#         line: 'bind master2'
-
-# - name: Redis Cluster Install
-#   hosts: r3
-#   become: yes
-#   become_user: root
-#   gather_facts: no
-#   tasks:  
-#      - name: Insert configuration bind section
-#        lineinfile:
-#         path: /etc/redis.conf
-#         regexp: 'bind 127.0.0.1'
-#         line: 'bind master3'
-
-# - name: Redis Cluster Install
-#   hosts: r4
-#   become: yes
-#   become_user: root
-#   gather_facts: no
-#   tasks:  
-#      - name: Insert configuration bind section
-#        lineinfile:
-#         path: /etc/redis.conf
-#         regexp: 'bind 127.0.0.1'
-#         line: 'bind slave1'
-
-# - name: Redis Cluster Install
-#   hosts: r5
-#   become: yes
-#   become_user: root
-#   gather_facts: no
-#   tasks:  
-#      - name: Insert configuration bind section
-#        lineinfile:
-#         path: /etc/redis.conf
-#         regexp: 'bind 127.0.0.1'
-#         line: 'bind slave2'
-
-# - name: Redis Cluster Install
-#   hosts: r6
-#   become: yes
-#   become_user: root
-#   gather_facts: no
-#   tasks:  
-#      - name: Insert configuration bind section
-#        lineinfile:
-#         path: /etc/redis.conf
-#         regexp: 'bind 127.0.0.1'
-#         line: 'bind slave3'
-
-# - name: Start redis.service
-#   hosts: redis
-#   become: yes
-#   become_user: root
-#   gather_facts: no
-#   tasks:
-
-#     - name: Restart for all server
-#       reboot:
-
-#      - name: Start redis service
-#        service:
-#          name: redis
-#          state: started
+- name: Run compose
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Run compose
+      shell:
+        cmd: "docker compose -f docker-compose.yml up -d"
+        chdir: /root/
