@@ -43,22 +43,58 @@
     - name: Add docker repository
       command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-    - name: Installing docker package
+    - name: Installing EPEL
       yum: >
           name={{ item }}
           state=present
           update_cache=yes
       with_items:
+          - epel-release
+
+    - name: Installing Docker and pip packages
+      yum: >
+          name={{ item }}
+          state=present
+          update_cache=yes
+      with_items:
+          - wget
+          - python-pip
           - docker-ce
           - docker-ce-cli
           - containerd.io
           - docker-compose-plugin
+
+    - name: Download pip
+      get_url:
+        url: https://bootstrap.pypa.io/pip/2.7/get-pip.py
+        dest: /root/get-pip.py
+        mode: '0755'
+    - name: execute pip install script
+      shell: 
+        cmd: python get-pip.py
+        chdir: /root
+      changed_when: false
+
+    # Не работает, слишком старый pip
+    # - name: update pip
+    #   pip: 
+    #     name: pip
+    #     extra_args: --upgrade
+    
+    - name: Install Docker python package
+      pip:
+        name: "{{ item }}"
+        extra_args: --ignore-installed
+      with_items:
+        - docker==4.4.4
+        - docker-compose
 
     - name: Enable docker daemon
       systemd:
           name: docker
           state: started
           enabled: yes
+
 
 - name: Configure OS
   hosts: all
@@ -85,30 +121,44 @@
       selinux:
         state: disabled
 
-- name: Copy files
+- name: Run compose
   hosts: all
   become: yes
   gather_facts: no
   tasks:
-    - name: Copy configs
+    - name: Copy redis and compose configs
       copy:
         src: conf/
         dest: /root/conf/
         mode: 0644
         directory_mode: true
+      notify:
+        - Compose restart
 
     - name: Copy compose file
       copy:
         src: conf/docker-compose.yml
         dest: /root/docker-compose.yml
         mode: 0644
+      notify:
+        - Compose restart
 
-- name: Run compose
-  hosts: all
-  become: yes
-  gather_facts: no
-  tasks:
     - name: Run compose
-      shell:
-        cmd: "docker compose -f docker-compose.yml up -d"
-        chdir: /root/
+      # shell:
+      #   cmd: "docker compose -f docker-compose.yml up -d"
+      #   chdir: /root/
+      docker_compose:
+        api_version: 1.41
+        project_src: /root
+        files:
+        - docker-compose.yml
+        state: present
+
+  handlers:
+    - name: Compose restart
+      docker_compose:
+        api_version: 1.41
+        project_src: /root
+        files:
+        - docker-compose.yml
+        state: present
