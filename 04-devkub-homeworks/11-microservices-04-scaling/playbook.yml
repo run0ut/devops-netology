@@ -161,4 +161,5 @@
         project_src: /root
         files:
         - docker-compose.yml
-        state: present
+        state: absent
+        restarted: yes
