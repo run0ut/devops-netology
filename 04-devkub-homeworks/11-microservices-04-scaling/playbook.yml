@@ -74,13 +74,35 @@
         state: disabled
 
     - name: Redis.conf backup 
-      command: mv /etc/redis.conf /etc/redis_backup.conf
+      command: mv /etc/redis/redis.conf /etc/redis/redis_backup.conf
 
-    - name: Download redis.conf file
-      get_url:
-        url: https://raw.githubusercontent.com/aytemuryakup/ansible/master/Redis/redis.conf
-        dest: /etc/
+    - name: Upload redis.conf file
+      copy:
+        src: ./conf/redis.conf
+        dest: /etc/redis/redis.conf
         mode: '0755'
+      notify: 
+        - Restart redis
+
+  handlers:
+    - name: Restart redis
+      ansible.builtin.service:
+        name: redis
+        state: restarted
+
+- name: Start redis.service
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+
+    # - name: Restart for all server
+    #   reboot:
+
+    - name: Start redis service
+      service:
+        name: redis
+        state: started
 
 # - name: Redis Cluster Install
 #   hosts: r1
