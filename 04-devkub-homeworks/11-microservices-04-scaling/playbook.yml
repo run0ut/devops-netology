@@ -134,6 +134,8 @@
         directory_mode: true
       notify:
         - Compose restart
+        # - Compose remove
+        # - Compose create
 
     - name: Copy compose file
       copy:
@@ -142,24 +144,26 @@
         mode: 0644
       notify:
         - Compose restart
-
-    - name: Run compose
-      # shell:
-      #   cmd: "docker compose -f docker-compose.yml up -d"
-      #   chdir: /root/
-      docker_compose:
-        api_version: 1.41
-        project_src: /root
-        files:
-        - docker-compose.yml
-        state: present
+        # - Compose remove
+        # - Compose create
 
   handlers:
-    - name: Compose restart
+    - name: Compose remove
       docker_compose:
-        api_version: 1.41
         project_src: /root
         files:
         - docker-compose.yml
         state: absent
+    - name: Compose create
+      docker_compose:
+        project_src: /root
+        files:
+        - docker-compose.yml
+        state: present
+    - name: Compose restart
+      docker_compose:
+        project_src: /root
+        files:
+        - docker-compose.yml
+        state: present
         restarted: yes
