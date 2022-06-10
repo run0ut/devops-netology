@@ -44,3 +44,25 @@
 > ### Схема:
 > 
 > <img src="./11-microservices-04-scaling/media/scheme.png" alt="11-04-01" width="600"/>
+
+`CLUSTER INFO` из консоли
+![cluster nodes](./11-microservices-04-scaling/media/114-cluster_nodes.png)
+
+Кластер развернул в Яндекс.Облаке: 
+* Создал ноды и установил ПО с помощью Ansible: [playbook.yml](./11-microservices-04-scaling/ansible/playbook.yml)
+* В качестве среды выбрал Docker: [docker-compose.yml](./11-microservices-04-scaling/docker/docker-compose.yml), он разворачивается тем же плейбуком.
+* Для взаимодействия с Yandex использовал собственную коллекцию, сделанную в рамках курса на [08.06](../03-mnt-homeworks/08-ansible-06-module/README.md): модуль [инвентаризации](https://github.com/run0ut/my_own_collection/blob/main/plugins/inventory/yc_inventory.py) и модуль [работы с Compute Cloud](https://github.com/run0ut/my_own_collection/blob/main/plugins/modules/yc_create_instance.py)
+* Объединение нод в кластер и настройку реплик автоматизировал скриптом [cluster.sh](./11-microservices-04-scaling/cluster.sh), у него есть команды:
+    - `provision` развернёт стек целиком и настроит кластер
+    - `show_nodes` выполнит `CLUSTER INFO`, подключившись к первой ноде
+    - `show_docker` выполнит `docker ps` на первой ноде
+    - `destroy_nodes` удалит виртуальные машины
+* [Пример лога](./11-microservices-04-scaling/media/provision.log) выполнения скрипта `cluster.sh` с командой `provision`
+
+Скриншот ВМ в Яндекс.Облаке
+![yandex console](./11-microservices-04-scaling/media/114-yandex_console.png)
+
+Вывод `docker ps` со всех нод
+![docker ps](./11-microservices-04-scaling/media/114-docker_ps.png)
+
+
