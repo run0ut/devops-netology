@@ -128,10 +128,13 @@
   tasks:
     - name: Copy redis and compose configs
       copy:
-        src: conf/
-        dest: /root/conf/
+        src: "../docker/{{ item }}"
+        dest: /opt/redis/conf/
         mode: 0644
         directory_mode: true
+      with_items:
+        - redis.conf
+        - redis.slave.conf
       notify:
         - Compose restart
         # - Compose remove
@@ -139,8 +142,8 @@
 
     - name: Copy compose file
       copy:
-        src: conf/docker-compose.yml
-        dest: /root/docker-compose.yml
+        src: ../docker/docker-compose.yml
+        dest: /opt/redis/docker-compose.yml
         mode: 0644
       notify:
         - Compose restart
@@ -150,19 +153,19 @@
   handlers:
     - name: Compose remove
       docker_compose:
-        project_src: /root
+        project_src: /opt/redis/
         files:
         - docker-compose.yml
         state: absent
     - name: Compose create
       docker_compose:
-        project_src: /root
+        project_src: /opt/redis/
         files:
         - docker-compose.yml
         state: present
     - name: Compose restart
       docker_compose:
-        project_src: /root
+        project_src: /opt/redis/
         files:
         - docker-compose.yml
         state: present

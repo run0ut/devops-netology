@@ -4,30 +4,30 @@ declare NODES=()
 declare MASTER_PORT=6379
 declare SLAVE_PORT=6380
 
-roles(){
+install_collection(){
     is_role_installed=$(ansible-galaxy collection list --format yaml | grep -c -w netology86.yandex_cloud_elk)
     if [[ "$is_role_installed" == "0" ]]; then
-        ansible-galaxy install -r requirements.yml
+        ansible-galaxy install -r ansible/requirements.yml
     fi
 }
 
 playbook(){
-    ansible-playbook -i yc_inventory.yml playbook.yml
+    ansible-playbook -i ansible/yc_inventory.yml ansible/playbook.yml
 }
 
-destroy(){
-    ansible-playbook -i yc_inventory.yml destroy.yml
+destroy_nodes(){
+    ansible-playbook -i ansible/yc_inventory.yml destroy.yml
 }
 
 nodes(){
     NODES=($(
-        ansible -i yc_inventory.yml -m debug -a "var=hostvars[inventory_hostname].ansible_host" all | \
+        ansible -i ansible/yc_inventory.yml -m debug -a "var=hostvars[inventory_hostname].ansible_host" all | \
         grep ansible_host | \
         sed 's/.*\.ansible_host//g; s/[: "]*//g; s/$//g'
     ))
 }
 
-create(){
+create_cluster(){
     exec_line="redis-cli --cluster create"
     for node in ${NODES[*]}; do 
         exec_line="$exec_line ${node}:${MASTER_PORT}"
@@ -37,7 +37,7 @@ create(){
     eval $exec_line
 }
 
-meet(){
+meet_nodes(){
     for i in ${!NODES[@]}; do
         for y in $(seq 1 $((${#NODES[@]}-1))); do
             echo redis-cli -h ${NODES[$i]} -p ${MASTER_PORT} CLUSTER MEET ${NODES[$(($i-$y))]} ${MASTER_PORT}
@@ -46,7 +46,7 @@ meet(){
     done
 }
 
-show(){
+show_nodes(){
     # Это нужно чтобы правильно работал греп
     # Т.к. ноды а) в яндексе с белым адресом выданным методом статик ната б) в докере
     # В общем, нода не знает свой внешний айпишник и в выводе себя всегда показывает с серым
@@ -57,15 +57,29 @@ show(){
     redis-cli -h ${NODES[$node_id]} -p ${MASTER_PORT} cluster NODES
 }
 
-remove(){
-    for node in ${NODES[@]}; do redis-cli -h ${node} -p ${MASTER_PORT} cluster reset; done
+remove_cluster(){
+    for node in ${NODES[@]}; do 
+        echo redis-cli -h ${node} -p ${MASTER_PORT} cluster reset; 
+        redis-cli -h ${node} -p ${MASTER_PORT} cluster reset; 
+    done
 }
 
-slaves(){
+configure_slaves(){
     echo
     for i in ${!NODES[@]}; do
-        master_id=$(show $i | grep ${NODES[$i]}:${MASTER_PORT} | awk '{print $1}')
-        redis-cli --cluster add-node ${NODES[$(($i-1))]}:${SLAVE_PORT} ${NODES[$i]}:${MASTER_PORT} --cluster-slave --cluster-master-id $master_id
+        master_id=$(show_nodes $i | grep ${NODES[$i]}:${MASTER_PORT} | awk '{print $1}')
+        echo redis-cli --cluster \
+            add-node \
+                ${NODES[$(($i-1))]}:${SLAVE_PORT} \
+                ${NODES[$i]}:${MASTER_PORT} \
+            --cluster-slave \
+            --cluster-master-id $master_id
+        redis-cli --cluster \
+            add-node \
+                ${NODES[$(($i-1))]}:${SLAVE_PORT} \
+                ${NODES[$i]}:${MASTER_PORT} \
+            --cluster-slave \
+            --cluster-master-id $master_id
         echo
     done
 }
@@ -73,23 +87,23 @@ slaves(){
 echo "Hi, Netology 11.4! Let's make some devops stuff!"
 
 case $1 in
-    "create"|"meet"|"show"|"remove"|"slaves")
-        echo "gather NODES info"
+    "create_cluster"|"meet_nodes"|"show_nodes"|"remove_cluster"|"configure_slaves")
+        echo "gather nodes info"
         nodes
         $1
         ;;
-    "playbook"|"destroy")
+    "playbook"|"destroy_nodes")
         echo "check collection is insatlled"
-        roles
+        install_collection
         $1
         ;;
     "provision")
-        echo "create complete stack"
-        roles
+        echo "deploy complete stack"
+        install_collection
         playbook
         nodes
-        create
-        slaves
+        create_cluster
+        configure_slaves
         ;;
     *)
         $1
