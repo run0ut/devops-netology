@@ -16,7 +16,7 @@ playbook(){
 }
 
 destroy_nodes(){
-    ansible-playbook -i ansible/yc_inventory.yml destroy.yml
+    ansible-playbook -i ansible/yc_inventory.yml ansible/destroy.yml
 }
 
 nodes(){
@@ -25,6 +25,14 @@ nodes(){
         grep ansible_host | \
         sed 's/.*\.ansible_host//g; s/[: "]*//g; s/$//g'
     ))
+}
+
+show_docker(){
+    for node in ${NODES[@]}; do
+        echo ssh yc-user@${node} sudo docker ps
+        ssh yc-user@${node} sudo docker ps
+        echo
+    done
 }
 
 create_cluster(){
@@ -87,7 +95,7 @@ configure_slaves(){
 echo "Hi, Netology 11.4! Let's make some devops stuff!"
 
 case $1 in
-    "create_cluster"|"meet_nodes"|"show_nodes"|"remove_cluster"|"configure_slaves")
+    "create_cluster"|"meet_nodes"|"show_nodes"|"remove_cluster"|"configure_slaves"|"show_docker")
         echo "gather nodes info"
         nodes
         $1

@@ -21,6 +21,10 @@
     ```bash
     ./cluster.sh show_nodes
     ```
+* Показать запущенные контейнеры на нодах (`docker ps`)
+    ```
+    ./cluster.sh show_docker
+    ```
 * Удалить виртуальные машины
     ```bash
     ./cluster.sh destroy_nodes
