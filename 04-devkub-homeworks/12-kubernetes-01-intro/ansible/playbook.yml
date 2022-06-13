@@ -86,3 +86,76 @@
       debug:
         var: get_pods.stdout_lines
 
+- name: Run hello node in Kuber
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+
+    - name: Check if hello-node is deployed
+      shell: kubectl get deployments | grep -w ^hello-node
+      register: check_hello_node
+      changed_when: False
+      failed_when: False
+    - name: Deploy hello-node
+      command: 
+        cmd: kubectl create deployment hello-node --image=k8s.gcr.io/echoserver:1.4
+      when: check_hello_node.rc != 0
+
+    - name: Check if hello-node is exposed
+      shell: kubectl get services | grep -w ^hello-node.*8080 
+      register: check_hello_node_exposed
+      changed_when: False
+      failed_when: False
+    - name: Expose hello-node
+      command: 
+        cmd: kubectl expose deployment hello-node --type=LoadBalancer --port=8080 --protocol=TCP --target-port=8080
+      when: check_hello_node_exposed.rc != 0
+
+    # - name: Make minikube service
+    #   command: 
+    #     cmd: minikube service hello-node
+
+    - name: Check if dashboard is enabled
+      shell: minikube addons list | grep dashboard.*enabled
+      register: check_dashboard
+      changed_when: False
+      failed_when: False
+    - name: Enable minikube addon dashboard
+      command: 
+        cmd: minikube addons enable dashboard
+      when: check_dashboard.rc != 0
+
+    - name: Check if metrics-server is enabled
+      shell: minikube addons list | grep metrics-server.*enabled
+      register: check_metrics_server
+      changed_when: False
+      failed_when: False
+    - name: Enable minikube addon metrics-server
+      command: 
+        cmd: minikube addons enable metrics-server
+      when: check_metrics_server.rc != 0
+
+    - name: Check if ingress is enabled
+      shell: minikube addons list | grep ingress.*enabled
+      register: check_ingress
+      changed_when: False
+      failed_when: False
+    - name: Enable minikube addon ingress
+      command: 
+        cmd: minikube addons enable ingress
+      when: check_ingress.rc != 0
+
+    # - name: Run minikube dashboard
+    #   shell: minikube dashboard --url & 
+
+    # - name: Run kubectl proxy
+    #   shell: kubectl proxy --address='0.0.0.0' --disable-filter=true &
+
+# kubectl get deployments
+# kubectl get pods
+# kubectl get events
+# kubectl config view
+# kubectl get services
+# minikube addons list
+# kubectl get pod,svc -n kube-system
