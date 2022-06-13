@@ -1,0 +1,9 @@
+---
+- name: Create instance
+  hosts: localhost
+  tasks:
+    - name: "Destroy {{ homework }}-vm1"
+      netology86.yandex_cloud_elk.yc_create_instance:
+        network_interface: "net-ru-central1-a"
+        name: "{{ homework }}-vm1"
+        status: "absence"
