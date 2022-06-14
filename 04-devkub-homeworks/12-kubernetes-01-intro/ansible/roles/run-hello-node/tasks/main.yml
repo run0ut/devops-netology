@@ -15,7 +15,11 @@
   failed_when: False
 - name: Expose hello-node
   command: 
-    cmd: kubectl expose deployment hello-node --type=LoadBalancer --port=8080 --protocol=TCP --target-port=8080
+    cmd: kubectl expose deployment hello-node --type=LoadBalancer --port=8080
+  when: check_hello_node_exposed.rc != 0
+- name: Minikube service hello-node
+  command: 
+    cmd: minikube service hello-node
   when: check_hello_node_exposed.rc != 0
 
 - name: Check if dashboard is enabled
@@ -47,6 +51,18 @@
   command: 
     cmd: minikube addons enable ingress
   when: check_ingress.rc != 0
+
+- name: Check if hello node port forwarded
+  shell: ss -tunlp | grep 8080
+  changed_when: False
+  failed_when: False
+  register: check_port_forward
+- name: Forward hello node port
+  shell: nohup kubectl port-forward service/hello-node 8080:8080 --address=0.0.0.0 >/dev/null 2>&1 &
+  async: 10
+  poll: 0
+  register: forward_result
+  when: check_port_forward.rc != 0
 
 - name: Check if proxy is running
   shell: ss -tunlp | grep 8001

@@ -7,6 +7,7 @@
       - conntrack
       - docker.io
       - iproute2
+      - socat
 
 - name: Get kube version
   uri:
