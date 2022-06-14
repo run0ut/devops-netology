@@ -37,11 +37,12 @@
       with_items:
           - conntrack
           - docker.io
+          - iproute2
 
 - name: Install and run Kuber
   hosts: all
   become: yes
-  gather_facts: no
+  gather_facts: yes
   tasks:
     - name: Get kube version
       uri:
@@ -62,18 +63,39 @@
     - name: Check Kuber version
       command: minikube version
       register: check_minikube_version
+      changed_when: False
     - name: Print minikube version
       debug: 
         var: check_minikube_version.stdout_lines
 
+    - name: Check if minikube is running
+      shell: minikube status | grep host.*Running
+      register: check_minikube_server
+      changed_when: False
+      failed_when: False
     - name: Run minikube
-      command: 
-        cmd: minikube start --vm-driver=none
+      block:
+      - name: Run minikube
+        command: 
+          cmd: minikube start --vm-driver=none --apiserver-ips {{ ansible_host }} {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} 127.0.0.1
+        when: check_minikube_server.rc != 0
+      rescue:
+      - name: Fix sysctl fs.protected_regular
+        sysctl:
+          name: fs.protected_regular
+          value: '0'
+          state: present
+      - name: Rerun minikube
+        command: 
+          cmd: minikube start --vm-driver=none --apiserver-ips {{ ansible_host }} {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} 127.0.0.1
+        when: check_minikube_server.rc != 0
 
     - name: Get minikube status
       command: 
         cmd: minikube status
       register: get_minikube_status
+      changed_when: False
+      failed_when: False
     - name: Print minikube status
       debug:
         var: get_minikube_status.stdout_lines
@@ -82,6 +104,8 @@
       command: 
         cmd: kubectl get pods --namespace=kube-system
       register: get_pods
+      changed_when: False
+      failed_when: False
     - name: Print kubectl pods
       debug:
         var: get_pods.stdout_lines
@@ -146,16 +170,18 @@
         cmd: minikube addons enable ingress
       when: check_ingress.rc != 0
 
-    # - name: Run minikube dashboard
-    #   shell: minikube dashboard --url & 
+    - name: Check if proxy is running
+      shell: ss -tunlp | grep 8001
+      register: check_ingress
+      changed_when: False
+      failed_when: False
+      register: check_proxy
+    - name: Run kubectl proxy to view dashboard
+      shell: "(kubectl proxy --address='0.0.0.0' --disable-filter=true &)"
+      async: 10
+      poll: 0
+      when: check_proxy.rc != 0
 
-    # - name: Run kubectl proxy
-    #   shell: kubectl proxy --address='0.0.0.0' --disable-filter=true &
-
-# kubectl get deployments
-# kubectl get pods
-# kubectl get events
-# kubectl config view
-# kubectl get services
-# minikube addons list
-# kubectl get pod,svc -n kube-system
+    - name: Echo dashboard link
+      debug: 
+        msg: "http://{{ ansible_host }}:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/"
