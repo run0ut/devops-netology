@@ -1,0 +1,12 @@
+- name: "Create {{ homework }}-vm1"
+  netology86.yandex_cloud_elk.yc_create_instance:
+    network_interface: "net-ru-central1-a"
+    name: "{{ homework }}-vm1"
+    # image_family: "centos-stream-8"
+    image_family: "ubuntu-2004-lts"
+    cores: 2
+    memory: 4
+    status: "running"
+
+- name: Refresh Inventory
+  meta: refresh_inventory

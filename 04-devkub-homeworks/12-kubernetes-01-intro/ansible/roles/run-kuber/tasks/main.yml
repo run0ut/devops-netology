@@ -1,0 +1,64 @@
+- name: Check if hello-node is deployed
+  shell: kubectl get deployments | grep -w ^hello-node
+  register: check_hello_node
+  changed_when: False
+  failed_when: False
+- name: Deploy hello-node
+  command: 
+    cmd: kubectl create deployment hello-node --image=k8s.gcr.io/echoserver:1.4
+  when: check_hello_node.rc != 0
+
+- name: Check if hello-node is exposed
+  shell: kubectl get services | grep -w ^hello-node.*8080 
+  register: check_hello_node_exposed
+  changed_when: False
+  failed_when: False
+- name: Expose hello-node
+  command: 
+    cmd: kubectl expose deployment hello-node --type=LoadBalancer --port=8080 --protocol=TCP --target-port=8080
+  when: check_hello_node_exposed.rc != 0
+
+- name: Check if dashboard is enabled
+  shell: minikube addons list | grep dashboard.*enabled
+  register: check_dashboard
+  changed_when: False
+  failed_when: False
+- name: Enable minikube addon dashboard
+  command: 
+    cmd: minikube addons enable dashboard
+  when: check_dashboard.rc != 0
+
+- name: Check if metrics-server is enabled
+  shell: minikube addons list | grep metrics-server.*enabled
+  register: check_metrics_server
+  changed_when: False
+  failed_when: False
+- name: Enable minikube addon metrics-server
+  command: 
+    cmd: minikube addons enable metrics-server
+  when: check_metrics_server.rc != 0
+
+- name: Check if ingress is enabled
+  shell: minikube addons list | grep ingress.*enabled
+  register: check_ingress
+  changed_when: False
+  failed_when: False
+- name: Enable minikube addon ingress
+  command: 
+    cmd: minikube addons enable ingress
+  when: check_ingress.rc != 0
+
+- name: Check if proxy is running
+  shell: ss -tunlp | grep 8001
+  changed_when: False
+  failed_when: False
+  register: check_proxy
+- name: Run kubectl proxy to view dashboard
+  shell: "(kubectl proxy --address='0.0.0.0' --disable-filter=true &)"
+  async: 10
+  poll: 0
+  when: check_proxy.rc != 0
+
+- name: Echo dashboard link
+  debug: 
+    msg: "http://{{ ansible_host }}:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/"
