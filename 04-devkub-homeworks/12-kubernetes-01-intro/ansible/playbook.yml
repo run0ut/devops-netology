@@ -172,7 +172,6 @@
 
     - name: Check if proxy is running
       shell: ss -tunlp | grep 8001
-      register: check_ingress
       changed_when: False
       failed_when: False
       register: check_proxy
