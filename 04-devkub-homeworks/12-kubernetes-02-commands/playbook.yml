@@ -1,0 +1,25 @@
+---
+- name: Create instance
+  collections:
+    - netology.study_collection
+  hosts: localhost
+  roles:
+    - create-vm-simple
+
+- name: Wait for instance to become available
+  hosts: all
+  user: yc-user
+  gather_facts: false
+  collections:
+    - netology.study_collection
+  roles:
+    - wait-vm
+
+- name: Deploy minikube cluster
+  hosts: all
+  become: yes
+  gather_facts: yes
+  collections:
+    - netology.study_collection
+  roles:
+    - install-kuber

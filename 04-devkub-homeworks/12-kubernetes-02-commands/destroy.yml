@@ -1,0 +1,7 @@
+---
+- name: Create instance
+  hosts: localhost
+  collections:
+    - netology.study_collection
+  roles:
+    - destroy-vm

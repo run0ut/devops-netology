@@ -25,7 +25,7 @@
     hello-node   2/2     2            2           14s
     ```
 * ```kubectl get pods```
-    ```
+    ```console
     root@netology122-vm1:~# kubectl get pods
     NAME                          READY   STATUS    RESTARTS   AGE
     hello-node-6b89d599b9-c5tpn   1/1     Running   0          2m7s

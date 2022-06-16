@@ -1,0 +1,4 @@
+collections:
+  - name: git@github.com:run0ut/netology_study_collection.git
+    type: git
+    version: main
