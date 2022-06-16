@@ -36,7 +36,7 @@
 
 Установил на ВМ в Яндекс.Облаке.
 
-```bash
+```console
 $ ssh yc-user@51.250.11.80
 Warning: Permanently added '51.250.11.80' (ED25519) to the list of known hosts.
 Welcome to Ubuntu 20.04.4 LTS (GNU/Linux 5.4.0-117-generic x86_64)
@@ -68,28 +68,28 @@ storage-provisioner                       1/1     Running   0          7m28s
 ### Развернуть через Minikube тестовое приложение
 
 Сервисы
-```
+```console
 root@netology121-vm1:~# kubectl get deployment | grep hello
 hello-node   1/1     1            1           12m
 ```
 Деплоймент
-```
+```console
 root@netology121-vm1:~# kubectl get services | grep hello
 hello-node   LoadBalancer   10.105.50.197   <pending>     8080:30122/TCP   12m
 ```
 Под
-```
+```console
 root@netology121-vm1:~# kubectl get pods | grep hello
 hello-node-6b89d599b9-w5kvx   1/1     Running   0          12m
 ```
 Сервисы minikube
-```
+```console
 root@netology121-vm1:~# minikube service list | grep hello
 | default              | hello-node                         |         8080 | http://10.128.0.25:30122 |
 ```
 ### Установить аддоны ingress и dashboard
 
-```
+```console
 root@netology121-vm1:~# minikube addons list | grep enabled
 | dashboard                   | minikube | enabled ✅   | kubernetes                     |
 | default-storageclass        | minikube | enabled ✅   | kubernetes                     |
@@ -106,14 +106,14 @@ root@netology121-vm1:~# minikube addons list | grep enabled
 
 Установил minikube на отдельном сервере с Debian 11:
 * скопировал конфигурацию `.kube` и `.minicube` с ВМ на Яндексе на отдельный хост
-  ```
+  ```console
   $ ll .kube/
   total 8
   drwxr-x--- 4 sergey sergey 4096 Jun 15 00:21 cache
   -rw-r--r-- 1 sergey sergey  827 Jun 15 00:22 config
   00:39:44 ~ sergey@ekbvm:~
   ```
-  ```
+  ```console
   $ ll .minikube/
   total 48
   drwxr-xr-x 2 sergey docker 4096 Jun 15 00:24 addons
@@ -131,12 +131,12 @@ root@netology121-vm1:~# minikube addons list | grep enabled
   -rw------- 1 sergey docker 1679 Jun 15 00:24 proxy-client-ca.key
   ```
 * исправил `server` в `.kube/config`:
-  ```
+  ```console
   $ kubectl config view | grep server
       server: https://51.250.11.80:8443
   ```
 * Тест `minikube`
-  ```
+  ```console
   00:29:53 ~ sergey@ekbvm:~
   $ kubectl version --short
   Flag --short has been deprecated, and will be removed in the future. The --short output will become the default.
@@ -145,7 +145,7 @@ root@netology121-vm1:~# minikube addons list | grep enabled
   Server Version: v1.23.3
   ```
 * Тест `port-forward`, лог `kubectl`
-  ```
+  ```console
   $ kubectl port-forward service/hello-node 8080:8080
 
 
@@ -155,7 +155,7 @@ root@netology121-vm1:~# minikube addons list | grep enabled
   ```
 
 * Тест `port-forward`, вывод `curl`
-  ```
+  ```console
   00:30:31 ~ sergey@ekbvm:~
   $ curl localhost:8080
   CLIENT VALUES:
