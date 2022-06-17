@@ -42,8 +42,104 @@
 >  * пользователь прописан в локальный конфиг (~/.kube/config, блок users)
 >  * пользователь может просматривать логи подов и их конфигурацию (kubectl logs pod <pod_id>, kubectl describe pod <pod_id>)
 
-```console
-```
+* Создание неймспейса с деплоем hello-node
+    ```console
+    root@netology122-vm1:~# kubectl create namespace app-namespace
+    namespace/app-namespace created
+    root@netology122-vm1:~# kubectl create deployment hello-node --image=k8s.gcr.io/echoserver:1.4 --namespace=app-namespace
+    deployment.apps/hello-node created
+    ```
+* Создание пользователя для разработчика
+    ```console
+    root@netology122-vm1:~# mkdir dev
+    root@netology122-vm1:~# cd dev
+    root@netology122-vm1:~/dev# openssl genrsa -out dev.key 2048
+    Generating RSA private key, 2048 bit long modulus (2 primes)
+    ..............................................................................................+++++
+    .......................................................................+++++
+    e is 65537 (0x010001)
+    root@netology122-vm1:~/dev# openssl req -new -key dev.key -out dev.csr -subj "/CN=dev"
+    root@netology122-vm1:~/dev# openssl x509 -req -in dev.csr -CA /root/.minikube/ca.crt -CAkey /root/.minikube/ca.key -CAcreateserial -out dev.crt -days 500
+    Signature ok
+    subject=CN = dev
+    Getting CA Private Key
+    root@netology122-vm1:~/dev# kubectl config set-credentials dev --client-certificate=/root/dev/dev.crt --client-key=/root/dev/dev.key
+    User "dev" set.
+    root@netology122-vm1:~/dev# kubectl config set-context app-namespace-dev --namespace=app-namespace --cluster=minikube --user=dev
+    Context "app-namespace-dev" created.
+    ```
+* Проверка, что получилось: сертификат, ключ и подписанный сертификат.
+    ```console
+    root@netology122-vm1:~/dev# ll
+    total 20
+    drwxr-xr-x 2 root root 4096 Jun 17 19:29 ./
+    drwx------ 8 root root 4096 Jun 17 19:29 ../
+    -rw-r--r-- 1 root root  985 Jun 17 19:29 dev.crt
+    -rw-r--r-- 1 root root  883 Jun 17 19:29 dev.csr
+    -rw------- 1 root root 1679 Jun 17 19:29 dev.key
+    ```
+* Cоздание роли
+    ```console
+    root@netology122-vm1:~/dev# cat <<EOF > role.yml
+    > apiVersion: rbac.authorization.k8s.io/v1
+    > kind: Role
+    > metadata:
+    >   namespace: app-namespace
+    >   name: dev-role
+    > rules:
+    > - apiGroups: [""]
+    >   resources: ["pods", "pods/log"]
+    >   verbs: ["get", "list"]
+    > EOF
+    root@netology122-vm1:~/dev# kubectl apply -f role.yml
+    role.rbac.authorization.k8s.io/dev-role created
+    ```
+* Создание рольбиндинга
+    ```console
+    root@netology122-vm1:~/dev# cat <<EOF > rolebinding.yml
+    > apiVersion: rbac.authorization.k8s.io/v1
+    > kind: RoleBinding
+    > metadata:
+    >   name: dev-rolebinding
+    >   namespace: app-namespace
+    > subjects:
+    > - kind: User
+    >   name: dev
+    >   apiGroup: rbac.authorization.k8s.io
+    > roleRef:
+    >   kind: Role
+    >   name: dev-role
+    >   apiGroup: rbac.authorization.k8s.io
+    > EOF
+    root@netology122-vm1:~/dev# kubectl apply -f rolebinding.yml
+    rolebinding.rbac.authorization.k8s.io/dev-rolebinding created
+    ```
+* Переключение контекста
+    ```console
+    root@netology122-vm1:~/dev# kubectl config use-context app-namespace-dev
+    Switched to context "app-namespace-dev".
+    ```
+    Проверка, что пользователь может посмотреть информацию по подам и логи. Логов не оказалось, но и ошибки не возникло.
+    ```console
+    root@netology122-vm1:~/dev# kubectl get pods
+    NAME                          READY   STATUS    RESTARTS   AGE
+    hello-node-6b89d599b9-whrkr   1/1     Running   0          6m10s
+    root@netology122-vm1:~/dev# kubectl describe pods | head -n 3
+    Name:         hello-node-6b89d599b9-whrkr
+    Namespace:    app-namespace
+    Priority:     0
+    root@netology122-vm1:~/dev# kubectl logs pods/hello-node-6b89d599b9-whrkr
+    root@netology122-vm1:~/dev#
+    ```
+* Проверка, что пользователь не может удалить или сделать что-то ещё, например создать деплоймент или посмотреть информацию о нодах.
+    ```console
+    root@netology122-vm1:~/dev# kubectl delete pod hello-node-6b89d599b9-whrkr
+    Error from server (Forbidden): pods "hello-node-6b89d599b9-whrkr" is forbidden: User "dev" cannot delete resource "pods" in API group "" in the namespace "app-namespace"
+    root@netology122-vm1:~/dev# kubectl create deployment hello-node --image=k8s.gcr.io/echoserver:1.4
+    error: failed to create deployment: deployments.apps is forbidden: User "dev" cannot create resource "deployments" in API group "apps" in the namespace "app-namespace"
+    root@netology122-vm1:~/dev# kubectl get nodes
+    Error from server (Forbidden): nodes is forbidden: User "dev" cannot list resource "nodes" in API group "" at the cluster scope
+    ```
 
 ## Задание 3: Изменение количества реплик 
 
