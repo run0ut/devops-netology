@@ -23,3 +23,58 @@
     - netology.study_collection
   roles:
     - install-kuber
+    - run-hello-node
+
+- name: Get kuber credentials
+  hosts: all
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Save host to var
+      set_fact:
+        kube_control_node: "{{ ansible_host }}"
+    - name: Print fact
+      debug:
+        var: kube_control_node
+    - name: Duplicate folder kube
+      copy:
+        src: /root/.kube/
+        dest: /root/.cache/.kube/
+        remote_src: yes
+        directory_mode: yes
+        mode: 0755
+    - name: Duplicate folder minikube
+      copy:
+        src: /root/.minikube/
+        dest: /root/.cache/.minikube/
+        remote_src: yes
+        directory_mode: yes
+        mode: 0755
+    - name: Set Kube IP in config
+      replace:
+        path: ~/.cache/.kube/config
+        regexp: 'server: https://[0-9.]*:'
+        replace: "server: https://{{ kube_control_node }}:"
+    - name: Set path to certs in config
+      replace:
+        path: ~/.cache/.kube/config
+        regexp: '[/|~/].*/.minikube/'
+        replace: "/home/sergey/.minikube/"
+    - name: Fetch folder Kube
+      synchronize:
+        src: /root/.cache/.kube/
+        dest: ~/.kube/
+        delete: yes
+        recursive: yes
+        owner: no
+        group: no
+        mode: pull
+    - name: Fetch folder Minikube
+      synchronize:
+        src: /root/.cache/.minikube/
+        dest: ~/.minikube/
+        delete: yes
+        recursive: yes
+        owner: no
+        group: no
+        mode: pull
