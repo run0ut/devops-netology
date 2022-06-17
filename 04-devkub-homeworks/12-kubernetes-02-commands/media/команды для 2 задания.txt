@@ -1,0 +1,56 @@
+Создание неймспейса с деплоем hello-node
+kubectl create namespace app-namespace
+kubectl create deployment hello-node --image=k8s.gcr.io/echoserver:1.4 --namespace=app-namespace
+
+Создание пользователя для разработчика
+
+mkdir dev
+cd dev
+openssl genrsa -out dev.key 2048
+openssl req -new -key dev.key -out dev.csr -subj "/CN=dev"
+openssl x509 -req -in dev.csr -CA /root/.minikube/ca.crt -CAkey /root/.minikube/ca.key -CAcreateserial -out dev.crt -days 500
+kubectl config set-credentials dev --client-certificate=/root/dev/dev.crt --client-key=/root/dev/dev.key
+kubectl config set-context app-namespace-dev --namespace=app-namespace --cluster=minikube --user=dev
+
+------------------
+
+Cоздание роли и рольбиндинга
+
+cat <<EOF > role.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: app-namespace
+  name: dev-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "list"]
+EOF
+
+kubectl apply -f role.yml
+
+------------------
+
+cat <<EOF > rolebinding.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-rolebinding
+  namespace: app-namespace
+subjects:
+- kind: User
+  name: dev
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: dev-role
+  apiGroup: rbac.authorization.k8s.io
+EOF
+
+kubectl apply -f rolebinding.yml
+
+------------------
+
+kubectl config use-context app-namespace-dev
+kubectl config use-context minikube
