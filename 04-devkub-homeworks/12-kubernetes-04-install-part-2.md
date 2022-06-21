@@ -13,20 +13,23 @@
 
 * [inventory](./12-kubernetes-04-install-part-2/kubespray/inventory/mycluster/inventory.ini) файл
 * Ноды
+
     ![nodes](./media/12-4-nodes.png)
 * Поды
+
     ![pods](./media/12-4-pods.png)
 
 ### В качестве CRI — containerd;
 
 * Листинг контейнеров в `crictl`
-![crictl](./media/12-4-crictl.png)
 
+    ![crictl](./media/12-4-crictl.png)
 
 ### Запуск etcd производить на мастере
 
 * etcd на control ноде
-![etcd](./media/12-4-etcd.png)
+
+    ![etcd](./media/12-4-etcd.png)
 
 ## Задание 2 (*): подготовить и проверить инвентарь для кластера в AWS
 
