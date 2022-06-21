@@ -21,7 +21,7 @@
 
 ### В качестве CRI — containerd;
 
-* Листинг контейнеров в `crictl`
+* Листинг контейнеров в `crictl` на control ноде
 
     ![crictl](./media/12-4-crictl.png)
 
