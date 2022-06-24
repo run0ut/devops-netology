@@ -28,14 +28,14 @@ NAME             STATUS   ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL
 n125-control-0   Ready    control-plane   96m   v1.24.2   10.128.0.25   <none>        Ubuntu 20.04.4 LTS   5.4.0-120-generic   containerd://1.6.6
 n125-worker-0    Ready    <none>          94m   v1.24.2   10.128.0.4    <none>        Ubuntu 20.04.4 LTS   5.4.0-120-generic   containerd://1.6.6
 ```
-деплоймент
+Деплоймент
 ```console
 $ kubectl get deploy -o wide
 NAME         READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                      SELECTOR
 hello-node   2/2     2            2           90m   echoserver   k8s.gcr.io/echoserver:1.4   app=hello-node
 ```
 Поды
-```konsole
+```console
 $ kubectl get pods -o wide
 NAME                          READY   STATUS    RESTARTS   AGE   IP            NODE            NOMINATED NODE   READINESS GATES
 hello-node-6d5f754cc9-bk4t7   1/1     Running   0          91m   10.233.72.2   n125-worker-0   <none>           <none>
@@ -55,12 +55,12 @@ kubernetes   ClusterIP      10.233.0.1     <none>        443/TCP          97m   
 * [default-ingress-deny](./12-kubernetes-05-cni/policies/default-ingress-deny.yml) - запрещает прочие коммуникации
 
 Проверяем доступ без политик
-```
+```console
 $ kubectl get netpol -A
 No resources found
 ```
 * Доступ от одного пода к другому - работает
-    ```
+    ```console
     18:37:58 ~ sergey@Intel8086:~/git/devops-netology/04-devkub-homeworks/12-kubernetes-05-cni/policies (main *=)
     $ kubectl exec hello-node-6d5f754cc9-bk4t7 -- curl -m 1 -s http://10.233.72.3:8080 | grep -e request_uri -e host -e client_address
     client_address=10.233.72.2
@@ -73,7 +73,7 @@ No resources found
     host=10.233.72.2:8080
     ```
 * Доступ извне - работает
-    ```
+    ```console
     18:37:50 ~ sergey@Intel8086:~/git/devops-netology/04-devkub-homeworks/12-kubernetes-05-cni/policies (main *=)
     $ curl -s -m 1 http://62.84.114.21:31619 | grep -e request_uri -e host -e client_address
     client_address=10.233.101.0
@@ -81,22 +81,22 @@ No resources found
     host=62.84.114.21:31619
     ```
 Применяем политики
-```
+```console
 $ kubectl apply -f accept-pods-communication.yml
 networkpolicy.networking.k8s.io/accept-pods-communication created
 ```
-```
+```console
 $ kubectl apply -f default-ingress-deny.yml
 networkpolicy.networking.k8s.io/default-deny-ingress created
 ```
-```
+```console
 $ kubectl get netpol -A
 NAMESPACE   NAME                        POD-SELECTOR     AGE
 default     accept-pods-communication   app=hello-node   22s
 default     default-deny-ingress        app=hello-node   17s
 ```
 * Доступ от одного пода к другому - по-прежнему работает
-    ```
+    ```console
     18:40:16 ~ sergey@Intel8086:~/git/devops-netology/04-devkub-homeworks/12-kubernetes-05-cni/policies (main *=)
     $ kubectl exec hello-node-6d5f754cc9-bk4t7 -- curl -m 1 -s http://10.233.72.3:8080 | grep -e request_uri -e host -e client_address
     client_address=10.233.72.2
@@ -109,7 +109,7 @@ default     default-deny-ingress        app=hello-node   17s
     host=10.233.72.2:8080
     ```
 * Доступ извне - не работает.
-    ```
+    ```console
     18:42:17 ~ sergey@Intel8086:~/git/devops-netology/04-devkub-homeworks/12-kubernetes-05-cni/policies (main *=)
     $ curl -s -v -m 1 http://62.84.114.21:31619 | grep -e request_uri -e host -e client_address
     *   Trying 62.84.114.21:31619...
