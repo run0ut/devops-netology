@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nt131
+  name: nt131
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nt131
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nt131
+    spec:
+      initContainers:
+      - name: wait-for-db
+        image: postgres:13-alpine
+        command: [ "sh", "-c", "until pg_isready -h db -p 5432 -U postgres:postgress; do echo 'not yet'; sleep 2; done" ]
+      containers:
+      - image: runout/13-kubernetes-config_backend:latest
+        imagePullPolicy: IfNotPresent
+        name: backend
+      - image: runout/13-kubernetes-config_frontend:latest
+        imagePullPolicy: IfNotPresent
+        name: frontend
