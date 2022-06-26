@@ -7,8 +7,7 @@ metadata:
 spec:
   selector: {} 
   ports:
-    -
-      name: "ext-api"
+    - name: "ext-api"
       protocol: "TCP"
       port: 443
       nodePort: 0
