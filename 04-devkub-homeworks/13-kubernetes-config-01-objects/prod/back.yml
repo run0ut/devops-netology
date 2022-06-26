@@ -23,6 +23,9 @@ spec:
       - image: runout/13-kubernetes-config_backend:latest
         imagePullPolicy: IfNotPresent
         name: backend
+        env:
+          - name: DATABASE_URL
+            value: postgres://postgres:postgres@db:5432/news
 ---
 apiVersion: v1
 kind: Service
