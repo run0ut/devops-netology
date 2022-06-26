@@ -1,0 +1,29 @@
+---
+kind: "Service"
+apiVersion: "v1"
+metadata:
+  name: "ext-api"
+  namespace: prod
+spec:
+  selector: {} 
+  ports:
+    -
+      name: "ext-api"
+      protocol: "TCP"
+      port: 443
+      nodePort: 0
+---
+# curl -s 'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=37.42159&longitude=-122.0837&localityLanguage=en'
+# curl -sk  -H "Host: api.bigdatacloud.net" 'https://13.248.207.97/data/reverse-geocode-client?latitude=37.42159&longitude=-122.0837&localityLanguage=en'
+# curl -sk  -H "Host: api.bigdatacloud.net" 'https://ext-api/data/reverse-geocode-client?latitude=37.42159&longitude=-122.0837&localityLanguage=en'
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ext-api
+  namespace: prod
+subsets:
+  - addresses:
+      - ip: "13.248.207.97"
+    ports:
+      - name: ext-api
+        port: 443
