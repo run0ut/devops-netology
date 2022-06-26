@@ -18,7 +18,7 @@ spec:
       initContainers:
       - name: wait-for-db
         image: postgres:13-alpine
-        command: [ "sh", "-c", "until pg_isready -h db -p 5432 -U postgres:postgress; do echo 'not yet'; sleep 2; done" ]
+        command: [ "sh", "-c", "until pg_isready -h db -p 5432 -U postgres:postgres; do echo 'not yet'; sleep 2; done" ]
       containers:
       - image: runout/13-kubernetes-config_backend:latest
         imagePullPolicy: IfNotPresent
