@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nt131front
+  name: nt131front
+  namespace: prod
+spec:
+  selector:
+    matchLabels:
+      app: nt131front
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nt131front
+    spec:
+      containers:
+      - image: runout/13-kubernetes-config_frontend:latest
+        imagePullPolicy: IfNotPresent
+        name: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nt131front
+  name: nt131front
+  namespace: prod
+spec:
+  type: ClusterIP
+  ports:
+  - name: nt131front
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nt131front

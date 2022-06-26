@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nt131back
+  name: nt131back
+  namespace: prod
+spec:
+  selector:
+    matchLabels:
+      app: nt131back
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nt131back
+    spec:
+      initContainers:
+      - name: wait-for-db
+        image: postgres:13-alpine
+        command: [ "sh", "-c", "until pg_isready -h db -p 5432 -U postgres:postgres; do echo 'not yet'; sleep 2; done" ]
+      containers:
+      - image: runout/13-kubernetes-config_backend:latest
+        imagePullPolicy: IfNotPresent
+        name: backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nt131back
+  name: nt131back
+  namespace: prod
+spec:
+  type: ClusterIP
+  ports:
+  - name: nt131back
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app: nt131back
