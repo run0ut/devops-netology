@@ -4,7 +4,7 @@ metadata:
   labels:
     app: nt131
   name: nt131
-  namespace: default
+  namespace: stage
 spec:
   selector:
     matchLabels:

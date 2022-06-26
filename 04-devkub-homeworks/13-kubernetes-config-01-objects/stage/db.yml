@@ -4,7 +4,7 @@ metadata:
   labels:
     app: db
   name: db 
-  namespace: default
+  namespace: stage
 spec:  
   selector:
     matchLabels:
@@ -41,6 +41,7 @@ metadata:
   labels:
     app: db
   name: db
+  namespace: stage
 spec:
   type: ClusterIP
   ports:
