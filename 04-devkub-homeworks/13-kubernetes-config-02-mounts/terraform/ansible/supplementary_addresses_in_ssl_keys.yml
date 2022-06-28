@@ -8,4 +8,4 @@
         replace:
           path: ../kubespray/inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml
           regexp: '^.*supplementary_addresses_in_ssl_keys:.*'
-          replace: "supplementary_addresses_in_ssl_keys: [127.0.0.1, {{ hostvars['n125-control-0']['ansible_host'] }}]"
+          replace: "supplementary_addresses_in_ssl_keys: [127.0.0.1, {{ hostvars[hw_index + '-control-0']['ansible_host'] }}]"

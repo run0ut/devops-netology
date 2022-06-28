@@ -10,7 +10,7 @@ resource "null_resource" "wait" {
 
 resource "null_resource" "public_access" {
   provisioner "local-exec" {
-    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i kubespray/inventory/mycluster/inventory.ini ansible/supplementary_addresses_in_ssl_keys.yml -b -v"
+    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -e 'hw_index=${var.hw_index}' -i kubespray/inventory/mycluster/inventory.ini ansible/supplementary_addresses_in_ssl_keys.yml -b -v"
   }
 
   depends_on = [
@@ -30,7 +30,7 @@ resource "null_resource" "cluster" {
 
 resource "null_resource" "hello_node" {
   provisioner "local-exec" {
-    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -i kubespray/inventory/mycluster/inventory.ini ansible/playbook.yml -b -v"
+    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -e 'hw_index=${var.hw_index}' -i kubespray/inventory/mycluster/inventory.ini ansible/playbook.yml -b -v"
   }
 
   depends_on = [

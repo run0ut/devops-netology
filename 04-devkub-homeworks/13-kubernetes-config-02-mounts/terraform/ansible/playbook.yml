@@ -1,6 +1,6 @@
 ---
 - name: Get kuber credentials
-  hosts: n125-control-0
+  hosts: "{{ hw_index }}-control-0"
   become: yes
   gather_facts: yes
   tasks:

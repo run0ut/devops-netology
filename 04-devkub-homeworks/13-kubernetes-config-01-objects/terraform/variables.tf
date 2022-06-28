@@ -19,5 +19,9 @@ variable "control_count" {
 }
 
 variable "worker_count" {
-  default = "1"
+  default = "2"
+}
+
+variable "hw_index" {
+  default = "n132"
 }
