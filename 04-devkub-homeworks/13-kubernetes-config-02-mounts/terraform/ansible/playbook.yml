@@ -16,7 +16,7 @@
         src: /etc/kubernetes/admin.conf
         dest: /etc/kubernetes/admin_export.conf
         remote_src: yes
-        mode: 0755
+        mode: 0600
 
     - name: Set Kube IP in config
       replace:
