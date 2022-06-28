@@ -24,13 +24,13 @@ spec:
         imagePullPolicy: IfNotPresent
         name: backend
         volumeMounts:
-          - mountPath: "/stata/static"
+          - mountPath: "/data/static"
             name: static-storage
       - image: runout/13-kubernetes-config_frontend:latest
         imagePullPolicy: IfNotPresent
         name: frontend
         volumeMounts:
-          - mountPath: "/data/cache"
+          - mountPath: "/tmp/cache"
             name: static-storage
       volumes:
       - name: static-storage
