@@ -26,3 +26,18 @@
 > * все бекенды подключаются к одному PV в режиме ReadWriteMany;
 > * фронтенды тоже подключаются к этому же PV с таким же режимом;
 > * файлы, созданные бекендом, должны быть доступны фронту.
+
+Изменённые манифесты с прошлого задания: 
+- [deployment | backend](./13-kubernetes-config-02-mounts/prod/back.yml)
+- [deployment | frontend](./13-kubernetes-config-02-mounts/prod/front.yml)
+
+Новый манифест:
+- [pvc](./13-kubernetes-config-02-mounts/prod/pvc.yml)
+
+В качестве провиженера использовал [Kubernetes NFS Subdir External Provisioner](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner).
+
+NFS расположен на отдельной виртуальной машине.
+
+В деплойментах фронта и бека специально указано требование по памяти больше половины ресурсов ноды. Так получилось заставить поды подняться на разных нодах и проверить, что NFS доступен со всех нод кластера.
+
+![Скрншот терминала](./media/13-2-2-%D1%81%D0%BA%D1%80%D0%B8%D0%BD%D1%88%D0%BE%D1%82-%D1%82%D0%B5%D1%80%D0%BC%D0%B8%D0%BD%D0%B0%D0%BB%D0%B0.png)
