@@ -2,40 +2,50 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: nt131front
-  name: nt131front
+    app: nt131-front
+  name: nt131-front
   namespace: prod
 spec:
   selector:
     matchLabels:
-      app: nt131front
+      app: nt131-front
   replicas: 1
   template:
     metadata:
       labels:
-        app: nt131front
+        app: nt131-front
     spec:
       containers:
       - image: runout/13-kubernetes-config_frontend:latest
         imagePullPolicy: IfNotPresent
         name: frontend
+        resources:
+          requests:
+            memory: "1000Mi"
         env:
           - name: BASE_URL
-            value: http://nt131back:9000
+            value: http://nt131-back:9000
+        volumeMounts:
+          - mountPath: "/tmp/cache"
+            name: static-storage
+      volumes:
+        - name: static-storage
+          persistentVolumeClaim:
+            claimName: static-storage-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: nt131front
-  name: nt131front
+    app: nt131-front
+  name: nt131-front
   namespace: prod
 spec:
   type: ClusterIP
   ports:
-  - name: nt131front
+  - name: nt131-front
     port: 80
     protocol: TCP
     targetPort: 80
   selector:
-    app: nt131front
+    app: nt131-front

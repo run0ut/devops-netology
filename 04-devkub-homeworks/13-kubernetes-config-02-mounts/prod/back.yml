@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: nt131back
-  name: nt131back
+    app: nt131-back
+  name: nt131-back
   namespace: prod
 spec:
   selector:
     matchLabels:
-      app: nt131back
+      app: nt131-back
   replicas: 1
   template:
     metadata:
       labels:
-        app: nt131back
+        app: nt131-back
     spec:
       initContainers:
       - name: wait-for-db
@@ -23,23 +23,33 @@ spec:
       - image: runout/13-kubernetes-config_backend:latest
         imagePullPolicy: IfNotPresent
         name: backend
+        resources:
+          requests:
+            memory: "1000Mi"
         env:
           - name: DATABASE_URL
             value: postgres://postgres:postgres@db:5432/news
+        volumeMounts:
+          - mountPath: "/data/static"
+            name: static-storage
+      volumes:
+        - name: static-storage
+          persistentVolumeClaim:
+            claimName: static-storage-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: nt131back
-  name: nt131back
+    app: nt131-back
+  name: nt131-back
   namespace: prod
 spec:
   type: ClusterIP
   ports:
-  - name: nt131back
+  - name: nt131-back
     port: 9000
     protocol: TCP
     targetPort: 9000
   selector:
-    app: nt131back
+    app: nt131-back

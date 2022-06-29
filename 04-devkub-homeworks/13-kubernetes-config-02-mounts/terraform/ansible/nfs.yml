@@ -1,0 +1,87 @@
+---
+- name: Install NFS utils on all nodes
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Install nfs-common package
+      apt:
+        name: nfs-common
+        state: present
+
+- name: Install NFS provisioner on control node
+  hosts: localhost, {{ hw_index }}-nfs
+  become: no
+  gather_facts: yes
+  tasks:
+
+    - name: Check if helm installed
+      shell:
+        cmd: helm --help
+      register: helm_installed
+      failed_when: false
+      changed_when: false
+      when: (inventory_hostname == "localhost")
+    - name: Install helm
+      shell: 
+        cmd: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+      when: (inventory_hostname == "localhost") and (helm_installed.rc != 0)
+
+    - name: Check Helm NFS client repo is installed
+      shell:
+        cmd: helm repo list | grep nfs-subdir-external-provisioner
+      register: helm_repo
+      changed_when: false
+      failed_when: false
+      when: (inventory_hostname == "localhost")
+    - name: Add helm repo for NFS provider
+      shell:
+        cmd: helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+      when: (inventory_hostname == "localhost") and (helm_repo.rc != 0)
+
+    - name: Check NFS client provisioner is installed
+      shell:
+        cmd: kubectl get deployments.apps --namespace=prod | grep nfs-subdir-external-provisioner
+      register: nfs_client
+      failed_when: false
+      changed_when: false
+      when: (inventory_hostname == "localhost")
+    - name: Install NFS provider
+      shell:
+        cmd: >
+          helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+              --set nfs.server={{ hostvars[hw_index + '-nfs']['ansible_default_ipv4']['address'] }} \
+              --set nfs.path=/mnt/myshareddir \
+              --namespace=prod
+      when: (inventory_hostname == "localhost") and (nfs_client.rc != 0)
+
+- name: Configure NFS server
+  hosts: "{{ hw_index }}-nfs"
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Install nfs kernel from repo
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nfs-common
+        - nfs-kernel-server
+    - name: Create directory to share
+      file:
+        path: /mnt/myshareddir
+        state: directory
+        owner: nobody
+        group: nogroup
+        mode: 0777
+    - name: Configure exports
+      lineinfile:
+        path: /etc/exports
+        line: /mnt/myshareddir *(rw,sync,no_subtree_check)
+        # insertafter: EOF
+        state: present
+      register: exports
+    - name: Update exports
+      shell:
+        cmd: exportfs -ar
+      when: exports is changed

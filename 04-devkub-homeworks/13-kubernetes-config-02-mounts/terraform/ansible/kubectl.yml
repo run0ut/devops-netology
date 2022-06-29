@@ -32,3 +32,25 @@
         owner: no
         group: no
         mode: pull
+
+    - name: check namespace stage
+      shell:
+        cmd: kubectl get namespaces  | grep '^stage.*Active'
+      register: stage_ns_exists
+      changed_when: false
+      failed_when: false
+    - name: create namespace stage
+      shell:
+        cmd: kubectl create namespace stage
+      when: stage_ns_exists.rc != 0
+
+    - name: check namespace prod
+      shell:
+        cmd: kubectl get namespaces  | grep '^prod.*Active'
+      register: prod_ns_exists
+      changed_when: false
+      failed_when: false
+    - name: create namespace prod
+      shell:
+        cmd: kubectl create namespace prod
+      when: prod_ns_exists.rc != 0

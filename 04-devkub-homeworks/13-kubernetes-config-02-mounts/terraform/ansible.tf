@@ -10,7 +10,7 @@ resource "null_resource" "wait" {
 
 resource "null_resource" "public_access" {
   provisioner "local-exec" {
-    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -e 'hw_index=${var.hw_index}' -i kubespray/inventory/mycluster/inventory.ini ansible/supplementary_addresses_in_ssl_keys.yml -b -v"
+    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -e 'hw_index=${var.hw_index}' -i kubespray/inventory/mycluster/inventory.ini ansible/kubespray_ssl.yml -b -v"
   }
 
   depends_on = [
@@ -28,12 +28,22 @@ resource "null_resource" "cluster" {
   ]
 }
 
-resource "null_resource" "hello_node" {
+resource "null_resource" "kubectl_host" {
   provisioner "local-exec" {
-    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -e 'hw_index=${var.hw_index}' -i kubespray/inventory/mycluster/inventory.ini ansible/playbook.yml -b -v"
+    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -e 'hw_index=${var.hw_index}' -i kubespray/inventory/mycluster/inventory.ini ansible/kubectl.yml -b -v"
   }
 
   depends_on = [
     null_resource.cluster
+  ]
+}
+
+resource "null_resource" "nfs" {
+  provisioner "local-exec" {
+    command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook -e 'hw_index=${var.hw_index}' -i kubespray/inventory/mycluster/inventory.ini ansible/nfs.yml -b -v"
+  }
+
+  depends_on = [
+    null_resource.kubectl_host
   ]
 }

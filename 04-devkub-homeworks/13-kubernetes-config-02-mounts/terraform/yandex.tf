@@ -7,10 +7,6 @@ provider "yandex" {
 
 data "yandex_compute_image" "ubuntu" {
   family = "ubuntu-2004-lts"
-
-  depends_on = [
-    null_resource.folder
-  ]
 }
 
 resource "yandex_compute_instance" "control" {

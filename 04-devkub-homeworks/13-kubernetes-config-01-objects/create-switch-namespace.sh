@@ -7,7 +7,10 @@ case $NS in
         kubectl create namespace $NS
         kubectl config set-context --current --namespace=$NS
         ;;
+    "default")
+        kubectl config set-context --current --namespace=$NS
+        ;;
     *)
-        echo "Введите stage или prod"
+        echo "Введите stage, prod или default"
         ;;
 esac
