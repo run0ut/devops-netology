@@ -1,0 +1,16 @@
+apiVersion: v2
+name: nt134
+description: Netology devops course homework 13.4
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# Application info
+home: https://github.com/run0ut/devops-netology/blob/main/04-devkub-homeworks/13-kubernetes-config-04-helm.md
+sources: 
+  - https://github.com/run0ut/devops-netology/tree/main/04-devkub-homeworks/13-kubernetes-config-04-helm
+icon: https://netology.ru/favicon-16x16.png
+appVersion: "1.0.0"

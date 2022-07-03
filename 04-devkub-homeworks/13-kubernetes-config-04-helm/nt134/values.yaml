@@ -1,0 +1,68 @@
+# Default values for nt134.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  namespace: prod
+  persistence: 
+    enabled: false
+
+apps:
+  replicaCount: 1
+  backend:
+    app: nt131-back
+    image: runout/13-kubernetes-config_backend:latest
+    imagePullPolicy: IfNotPresent
+    env:
+      - name: DATABASE_URL
+        value: postgres://postgres:postgres@db:5432/news
+    mounts:
+      - name: static-storage
+        mountPath: "/data/static"
+  frontend:
+    app: nt131-front
+    image: runout/13-kubernetes-config_frontend:latest
+    imagePullPolicy: IfNotPresent
+    env:
+      - name: BASE_URL
+        value: http://nt131-back:9000
+    mounts:
+      - mountPath: "/tmp/cache"
+        name: static-storage
+  db:
+    app: db
+    image: postgres:13-alpine
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    env:
+      - name: POSTGRES_USER
+        value: postgres
+      - name: POSTGRES_PASSWORD
+        value: postgres
+      - name: POSTGRES_DB
+        value: news
+    service:
+      type: ClusterIP
+      ports:
+      - name: db
+        deployment_name: postgres
+        port: 5432
+        protocol: TCP
+        targetPort: 5432
+
+misc:
+  pvc:
+  volumes:
+    deployments:
+      - name: static-storage
+        persistentVolumeClaim:
+          claimName: static-storage-pvc
+
+resources:
+  requests:
+    memory: 1000Mi
+
+autoscaling:
+  enabled: false

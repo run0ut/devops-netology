@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nt131-back
+  name: nt131-back
+  namespace: prod
+spec:
+  type: ClusterIP
+  ports:
+  - name: nt131-back
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app: nt131-back

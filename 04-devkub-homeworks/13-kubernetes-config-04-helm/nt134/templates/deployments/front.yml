@@ -1,0 +1,49 @@
+---
+{{- $resources := .Values.resources }}
+{{- $volumes := .Values.misc.volumes.apps }}
+{{- $namespace := .Values.global.namespace }}
+{{- $replicas := .Values.apps.replicaCount }}
+{{- $persistence := .Values.global.persistence.enabled}}
+apiVersion: apps/v1
+kind: Deployment
+{{- with .Values.apps.frontend }}
+metadata:
+  labels:
+    app: {{ .app }}
+  name: {{ .app }}
+  namespace: {{ $namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .app }}
+  replicas: {{ $replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ .app }}
+    spec:
+      containers:
+      - image: {{ .image }}
+        imagePullPolicy: {{ .imagePullPolicy }}
+        name: frontend
+        resources:
+          {{- toYaml $resources | nindent 10 }}
+        env:
+          {{- range $index, $data := .env }}
+          - name: {{ $data.name }}
+            value: {{ $data.value }}
+          {{- end}}
+      {{- if $persistence }}
+        volumeMounts:
+          {{- range $index, $data := .mounts }}
+          - name: {{ $data.name }}
+            mountPath: {{ $data.mountPath }}
+          {{- end}}
+      volumes:
+        {{- range $index, $data := $volumes }}
+        - name: {{ $data.name }}
+          persistentVolumeClaim:
+            claimName: {{ $data.persistentVolumeClaim.claimName }}
+        {{- end}}
+      {{ end }}
+{{ end }}

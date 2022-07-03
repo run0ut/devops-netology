@@ -1,0 +1,40 @@
+---
+{{- $volumes := .Values.misc.volumes.apps }}
+{{- $namespace := .Values.global.namespace }}
+{{- $replicas := .Values.apps.replicaCount }}
+apiVersion: apps/v1
+kind: StatefulSet
+{{- with .Values.apps.db }}
+metadata:
+  labels:
+    app: {{ .app }}
+  name: {{ .app }} 
+  namespace: prod
+spec:  
+  selector:
+    matchLabels:
+      app: {{ .app }}
+  serviceName: "db"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .app }}
+    spec:
+      containers:
+        - name: {{ .app }}
+          image: {{ .image }}
+          ports:
+            {{- range $index, $data := .service.ports }}
+            - name: {{ $data.deployment_name }}
+              containerPort: {{ $data.port }}
+              protocol: {{ $data.protocol }}
+            {{- end}}
+          resources:
+          {{- toYaml .resources | nindent 12 }}
+          env:
+            {{- range $index, $data := .env }}
+            - name: {{ $data.name }}
+              value: {{ $data.value }}
+            {{- end}}
+{{ end }}
