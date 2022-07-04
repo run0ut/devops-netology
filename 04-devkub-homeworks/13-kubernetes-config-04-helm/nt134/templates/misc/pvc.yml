@@ -1,11 +1,9 @@
-{{- $namespace := .Values.global.namespace }}
 {{- if  .Values.global.persistence.enabled }}
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: static-storage-pvc
-  namespace: {{ $namespace }}
 spec:
   storageClassName: "nfs-client"
   accessModes:

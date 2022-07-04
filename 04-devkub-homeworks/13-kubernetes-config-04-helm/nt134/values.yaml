@@ -79,7 +79,7 @@ misc:
         persistentVolumeClaim:
           claimName: static-storage-pvc
 
-nfs-subdir-external-provisioner:
+nfs-client:
   nfs:
     server: 10.128.0.37
     path: /mnt/myshareddir

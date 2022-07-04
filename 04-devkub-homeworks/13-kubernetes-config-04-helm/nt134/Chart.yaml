@@ -20,3 +20,4 @@ dependencies:
     version: ~4.0.16
     repository: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
     condition: global.persistence.enabled
+    alias: nfs-client
