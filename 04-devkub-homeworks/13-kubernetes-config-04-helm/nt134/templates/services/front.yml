@@ -1,17 +1,22 @@
 ---
+{{- $namespace := .Values.global.namespace }}
+{{- with .Values.apps.front }}
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: nt131-front
-  name: nt131-front
-  namespace: prod
+    app: {{ .app }}
+  name: {{ .app }}
+  namespace: {{ $namespace }}
 spec:
-  type: ClusterIP
+  type: {{ .service.type }}
   ports:
-  - name: nt131-front
-    port: 80
-    protocol: TCP
-    targetPort: 80
+  {{- range $index, $data := .service.ports }}
+  - name: {{ $data.name }}
+    port: {{ $data.port }}
+    protocol: {{ $data.protocol }}
+    targetPort: {{ $data.targetPort }}
+  {{- end}}
   selector:
-    app: nt131-front
+    app: {{ .app }}
+{{ end }}

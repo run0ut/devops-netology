@@ -1,5 +1,4 @@
 ---
-{{- $volumes := .Values.misc.volumes.apps }}
 {{- $namespace := .Values.global.namespace }}
 {{- $replicas := .Values.apps.replicaCount }}
 apiVersion: apps/v1
@@ -9,7 +8,7 @@ metadata:
   labels:
     app: {{ .app }}
   name: {{ .app }} 
-  namespace: prod
+  namespace: {{ $namespace }}
 spec:  
   selector:
     matchLabels:

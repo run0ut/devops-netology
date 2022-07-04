@@ -1,11 +1,16 @@
+{{- $namespace := .Values.global.namespace }}
+{{- if  .Values.global.persistence.enabled }}
+---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: static-storage-pvc
+  namespace: {{ $namespace }}
 spec:
   storageClassName: "nfs-client"
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 2Gi
+      storage: {{  .Values.global.persistence.storage_size }}
+{{ end }}

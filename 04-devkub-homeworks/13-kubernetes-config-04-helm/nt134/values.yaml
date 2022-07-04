@@ -3,9 +3,10 @@
 # Declare variables to be passed into your templates.
 
 global:
-  namespace: prod
+  namespace: default
   persistence: 
-    enabled: false
+    enabled: true
+    storage_size: 2Gi
 
 apps:
   replicaCount: 1
@@ -19,6 +20,14 @@ apps:
     mounts:
       - name: static-storage
         mountPath: "/data/static"
+    service:
+      type: ClusterIP
+      ports:
+      - name: nt131-back
+        deployment_name: nt131-back
+        port: 9000
+        protocol: TCP
+        targetPort: 9000
   frontend:
     app: nt131-front
     image: runout/13-kubernetes-config_frontend:latest
@@ -29,6 +38,14 @@ apps:
     mounts:
       - mountPath: "/tmp/cache"
         name: static-storage
+    service:
+      type: ClusterIP
+      ports:
+      - name: nt131-front
+        deployment_name: nt131-front
+        port: 80
+        protocol: TCP
+        targetPort: 80
   db:
     app: db
     image: postgres:13-alpine
@@ -53,12 +70,16 @@ apps:
         targetPort: 5432
 
 misc:
-  pvc:
   volumes:
-    deployments:
+    apps:
       - name: static-storage
         persistentVolumeClaim:
           claimName: static-storage-pvc
+
+nfs-subdir-external-provisioner:
+  nfs:
+    server: 10.128.0.37
+    path: /mnt/myshareddir
 
 resources:
   requests:

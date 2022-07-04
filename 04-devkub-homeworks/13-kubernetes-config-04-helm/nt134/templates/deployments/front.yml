@@ -3,7 +3,7 @@
 {{- $volumes := .Values.misc.volumes.apps }}
 {{- $namespace := .Values.global.namespace }}
 {{- $replicas := .Values.apps.replicaCount }}
-{{- $persistence := .Values.global.persistence.enabled}}
+{{- $persistence := .Values.global.persistence.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 {{- with .Values.apps.frontend }}
