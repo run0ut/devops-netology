@@ -5,7 +5,7 @@
 global:
   namespace: default
   persistence: 
-    enabled: true
+    enabled: false
     storage_size: 2Gi
 
 apps:

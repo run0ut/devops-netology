@@ -1,13 +1,13 @@
 ---
-{{- $namespace := .Values.global.namespace }}
+{{- $namespace  := .Values.global.namespace }}
+{{- $release    := .Release.Name }}
 {{- with .Values.apps.front }}
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: {{ .app }}
-  name: {{ .app }}
-  namespace: {{ $namespace }}
+  name: {{ $release }}-{{ .app }}
 spec:
   type: {{ .service.type }}
   ports:

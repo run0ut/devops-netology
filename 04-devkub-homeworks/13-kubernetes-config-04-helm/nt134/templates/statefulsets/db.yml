@@ -1,13 +1,14 @@
 ---
 {{- $namespace := .Values.global.namespace }}
 {{- $replicas := .Values.apps.replicaCount }}
+{{- $release    := .Release.Name }}
 apiVersion: apps/v1
 kind: StatefulSet
 {{- with .Values.apps.db }}
 metadata:
   labels:
     app: {{ .app }}
-  name: {{ .app }} 
+  name: {{ $release }}-{{ .app }} 
   namespace: {{ $namespace }}
 spec:  
   selector:

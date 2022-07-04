@@ -4,13 +4,14 @@
 {{- $namespace := .Values.global.namespace }}
 {{- $replicas := .Values.apps.replicaCount }}
 {{- $persistence := .Values.global.persistence.enabled }}
+{{- $release    := .Release.Name }}
 apiVersion: apps/v1
 kind: Deployment
 {{- with .Values.apps.frontend }}
 metadata:
   labels:
     app: {{ .app }}
-  name: {{ .app }}
+  name: {{ $release }}-{{ .app }}
   namespace: {{ $namespace }}
 spec:
   selector:
