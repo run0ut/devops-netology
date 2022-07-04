@@ -23,7 +23,7 @@ spec:
         app: {{ .app }}
     spec:
       containers:
-      - image: {{ .image }}
+      - image: {{ .image }}:{{ .version }}
         imagePullPolicy: {{ .imagePullPolicy }}
         name: frontend
         resources:

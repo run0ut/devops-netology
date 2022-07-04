@@ -3,8 +3,7 @@
 {{- $volumes := .Values.misc.volumes.apps }}
 {{- $namespace := .Values.global.namespace }}
 {{- $replicas := .Values.apps.replicaCount }}
-# {{- $db_port := .Values.apps.db.service.ports }}
-{{- $db_port := "5432" }}
+{{- $db_info := .Values.apps.db }}
 {{- $persistence := .Values.global.persistence.enabled}}
 apiVersion: apps/v1
 kind: Deployment
@@ -26,10 +25,10 @@ spec:
     spec:
       initContainers:
       - name: wait-for-db
-        image: postgres:13-alpine
-        command: [ "sh", "-c", "until pg_isready -h db -p {{ $db_port }} -U postgres:postgres; do echo 'not yet'; sleep 2; done" ]
+        image: {{ $db_info.image }}:{{ $db_info.version }} 
+        command: [ "sh", "-c", "until pg_isready -h db -p {{ (first $db_info.service.ports).port }} -U postgres:postgres; do echo 'not yet'; sleep 2; done" ]
       containers:
-      - image: {{ .image }}
+      - image: {{ .image }}:{{ .version }}
         imagePullPolicy: {{ .imagePullPolicy }}
         name: backend
         resources:

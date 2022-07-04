@@ -11,8 +11,9 @@ global:
 apps:
   replicaCount: 1
   backend:
-    app: nt131-back
-    image: runout/13-kubernetes-config_backend:latest
+    app: nt134-back
+    image: runout/13-kubernetes-config_backend
+    version: latest
     imagePullPolicy: IfNotPresent
     env:
       - name: DATABASE_URL
@@ -23,32 +24,34 @@ apps:
     service:
       type: ClusterIP
       ports:
-      - name: nt131-back
-        deployment_name: nt131-back
+      - name: nt134-back
+        deployment_name: nt134-back
         port: 9000
         protocol: TCP
         targetPort: 9000
   frontend:
-    app: nt131-front
-    image: runout/13-kubernetes-config_frontend:latest
+    app: nt134-front
+    image: runout/13-kubernetes-config_frontend
+    version: latest
     imagePullPolicy: IfNotPresent
     env:
       - name: BASE_URL
-        value: http://nt131-back:9000
+        value: http://nt134-back:9000
     mounts:
       - mountPath: "/tmp/cache"
         name: static-storage
     service:
       type: ClusterIP
       ports:
-      - name: nt131-front
-        deployment_name: nt131-front
+      - name: nt134-front
+        deployment_name: nt134-front
         port: 80
         protocol: TCP
         targetPort: 80
   db:
     app: db
-    image: postgres:13-alpine
+    image: postgres
+    version: 13-alpine
     resources:
       requests:
         cpu: 100m

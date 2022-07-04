@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: {{ .app }}
-          image: {{ .image }}
+          image: {{ .image }}:{{ .version }}
           ports:
             {{- range $index, $data := .service.ports }}
             - name: {{ $data.deployment_name }}
