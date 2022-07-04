@@ -3,7 +3,6 @@
 # Declare variables to be passed into your templates.
 
 global:
-  namespace: default
   persistence: 
     enabled: false
     storage_size: 2Gi

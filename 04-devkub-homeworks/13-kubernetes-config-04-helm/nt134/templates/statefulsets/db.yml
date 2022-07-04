@@ -1,5 +1,4 @@
 ---
-{{- $namespace := .Values.global.namespace }}
 {{- $replicas := .Values.apps.replicaCount }}
 {{- $release    := .Release.Name }}
 apiVersion: apps/v1
@@ -9,7 +8,6 @@ metadata:
   labels:
     app: {{ .app }}
   name: {{ $release }}-{{ .app }} 
-  namespace: {{ $namespace }}
 spec:  
   selector:
     matchLabels:

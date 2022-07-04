@@ -1,7 +1,6 @@
 ---
 {{- $resources := .Values.resources }}
 {{- $volumes := .Values.misc.volumes.apps }}
-{{- $namespace := .Values.global.namespace }}
 {{- $replicas := .Values.apps.replicaCount }}
 {{- $persistence := .Values.global.persistence.enabled }}
 {{- $release    := .Release.Name }}
@@ -12,7 +11,6 @@ metadata:
   labels:
     app: {{ .app }}
   name: {{ $release }}-{{ .app }}
-  namespace: {{ $namespace }}
 spec:
   selector:
     matchLabels:

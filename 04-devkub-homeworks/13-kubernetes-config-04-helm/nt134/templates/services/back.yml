@@ -1,5 +1,4 @@
 ---
-{{- $namespace  := .Values.global.namespace }}
 {{- $release    := .Release.Name }}
 {{- with .Values.apps.backend }}
 apiVersion: v1
