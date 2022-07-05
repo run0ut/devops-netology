@@ -8,13 +8,13 @@
 > * каждый компонент приложения деплоится отдельным deployment’ом/statefulset’ом;
 > * в переменных чарта измените образ приложения для изменения версии.
 
-[Чарт](./13-kubernetes-config-04-helm/nt134/):
-- [ deployment | back ](./13-kubernetes-config-04-helm/nt134/templates/deployments/back.yml)
-- [ deployment | front ](./13-kubernetes-config-04-helm/nt134/templates/deployments/front.yml)
-- [ statefulset | db ](./13-kubernetes-config-04-helm/nt134/templates/statefulsets/db.yml)
-- [ service | back ](./13-kubernetes-config-04-helm/nt134/templates/services/back.yml)
-- [ service | front ](./13-kubernetes-config-04-helm/nt134/templates/services/front.yml)
-- [ service | db ](./13-kubernetes-config-04-helm/nt134/templates/services/db.yml)
+[Чарт](./13-kubernetes-config-04-helm/helm/):
+- [ deployment | back ](./13-kubernetes-config-04-helm/helm/templates/deployments/back.yml)
+- [ deployment | front ](./13-kubernetes-config-04-helm/helm/templates/deployments/front.yml)
+- [ statefulset | db ](./13-kubernetes-config-04-helm/helm/templates/statefulsets/db.yml)
+- [ service | back ](./13-kubernetes-config-04-helm/helm/templates/services/back.yml)
+- [ service | front ](./13-kubernetes-config-04-helm/helm/templates/services/front.yml)
+- [ service | db ](./13-kubernetes-config-04-helm/helm/templates/services/db.yml)
 
 ## Задание 2: запустить 2 версии в разных неймспейсах
 > Подготовив чарт, необходимо его проверить. Попробуйте запустить несколько копий приложения:
