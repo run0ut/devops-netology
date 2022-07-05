@@ -25,7 +25,7 @@ spec:
       initContainers:
       - name: wait-for-db
         image: {{ $db_info.image }}:{{ $db_info.version }} 
-        command: [ "sh", "-c", "until pg_isready -h db -p {{ (first $db_info.service.ports).port }} -U postgres:postgres; do echo 'not yet'; sleep 2; done" ]
+        command: [ "sh", "-c", "until pg_isready -h {{ $release }}-db -p {{ (first $db_info.service.ports).port }} -U postgres:postgres; do echo 'not yet'; sleep 2; done" ]
       containers:
       - image: {{ .image }}:{{ .version }}
         imagePullPolicy: {{ .imagePullPolicy }}

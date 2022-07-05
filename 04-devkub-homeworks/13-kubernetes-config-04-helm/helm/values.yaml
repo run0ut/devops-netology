@@ -85,7 +85,7 @@ nfs-client:
 
 resources:
   requests:
-    memory: 1000Mi
+    memory: 100Mi
 
 autoscaling:
   enabled: false
