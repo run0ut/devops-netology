@@ -80,7 +80,7 @@ local db_svc_type = 'ClusterIP';
               env: [
                 {
                   name: 'DATABASE_URL',
-                  value: 'postgres://' + db_user + ':' + db_pasword + '@db:' + db_port + '/news',
+                  value: 'postgres://' + db_user + ':' + db_pasword + '@db:' + db_port + '/' + db_database,
                 },
               ],
             },
@@ -105,8 +105,8 @@ local db_svc_type = 'ClusterIP';
         {
           name: 'nt131-back',
           port: back_port,
-          protocol: front_proto,
-          targetPort: front_out_port,
+          protocol: back_proto,
+          targetPort: back_out_port,
         },
       ],
       selector: {
