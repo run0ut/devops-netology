@@ -5,20 +5,22 @@
     back: {
       image: 'runout/13-kubernetes-config_backend',
       version: 'latest',
-      memory: '1000Mi',
+      memory: '100Mi',
       port: 9000,
       out_port: 9000,
       proto: 'TCP',
-      svc_type: 'ClusterIP'
+      svc_type: 'ClusterIP',
+      replicas: 1
     },
     front: {
       image: 'runout/13-kubernetes-config_frontend',
       version: 'latest',
-      memory: '1000Mi',
+      memory: '100Mi',
       port: 80,
       out_port: 80,
       proto: 'TCP',
-      svc_type: 'ClusterIP'
+      svc_type: 'ClusterIP',
+      replicas: 1
     },
     db: {
       image: 'postgres',

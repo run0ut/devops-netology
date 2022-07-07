@@ -1,4 +1,3 @@
-
 local p = import '../params.libsonnet';
 local params = p.components.front;
 local back_params = p.components.back;
@@ -19,7 +18,7 @@ local back_params = p.components.back;
           app: 'nt131-front',
         },
       },
-      replicas: 1,
+      replicas: params.replicas,
       template: {
         metadata: {
           labels: {

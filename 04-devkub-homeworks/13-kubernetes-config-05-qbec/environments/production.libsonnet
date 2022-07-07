@@ -5,10 +5,10 @@ local base = import './base.libsonnet';
 base {
   components +: {
     back +: {
-      replicas: 1
+      replicas: 3
     },
     front +: {
-      replicas: 1
+      replicas: 3
     }
   }
 }

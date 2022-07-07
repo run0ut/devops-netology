@@ -19,7 +19,7 @@ local db_params = p.components.db;
           app: 'nt131-back',
         },
       },
-      replicas: 1,
+      replicas: params.replicas,
       template: {
         metadata: {
           labels: {
@@ -34,7 +34,7 @@ local db_params = p.components.db;
               command: [
                 'sh',
                 '-c',
-                '"until pg_isready -h db -p ' + db_params.port + ' -U ' + db_params.user + '; do echo not yet; sleep 2; done"',
+                'until pg_isready -h db -p ' + db_params.port + ' -U ' + db_params.user + '; do echo not yet; sleep 2; done',
               ],
             },
           ],
