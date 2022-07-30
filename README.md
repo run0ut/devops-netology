@@ -16,3 +16,7 @@ devops-netology
 ## [Администрирование и конфигурация Kubernetes ](./04-devkub-homeworks/README.md)
 
 * 04 мая — 30 июня
+
+## [Kubernetes и облачные сервисы](./05-clokub-homeworks/README.md)
+
+* 27 июля — 6 сентября
