@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: netology-14.1-2
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+      protocol: TCP
+    - containerPort: 443
+      protocol: TCP
+    volumeMounts:
+    - name: certs
+      mountPath: "/etc/nginx/nt-ssl"
+      readOnly: true
+    env:
+      - name: SECRET_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: basic-auth
+            key: username.txt
+            optional: false
+      - name: SECRET_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: basic-auth
+            key: password.txt
+            optional: false
+  volumes:
+  - name: certs
+    secret:
+      secretName: domain-cert
