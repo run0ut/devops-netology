@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: netolog-142-module
+spec:
+  serviceAccountName: netology-142-module
+  containers:
+    - name: netology-142-module
+      image: runout/netology-142:latest

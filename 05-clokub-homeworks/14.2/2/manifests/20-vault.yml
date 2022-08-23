@@ -29,7 +29,7 @@ spec:
               protocol: TCP
           env:
             - name: VAULT_LOCAL_CONFIG
-              value: '{"listener":{"tcp":{"address":"0.0.0.0:8200","tls_disable":1}},"storage":{"file":{"path":"/vault/secrets"}},"ui":true}'
+              value: '{"listener":{"tcp":{"address":"0.0.0.0:8200","tls_disable":1}},"storage":{"file":{"path":"/vault/secrets"}},"ui":true, "log_level": "debug"}'
           volumeMounts:
             - mountPath: /vault/secrets
               name: vault-secrets
