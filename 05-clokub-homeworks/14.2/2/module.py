@@ -6,8 +6,8 @@ client = hvac.Client(
 )
 
 client.auth.approle.login(
-    role_id='709dc70d-1ace-b13b-47a2-e20c5b1563db',
-    secret_id='e88e81db-f57a-5ab7-26f3-b89a71b88a8a',
+    role_id='07607268-e31c-a759-49e1-fe918895f818',
+    # secret_id='658fa890-1419-fd75-093a-5395ac07e599'
 )
 
 # client.is_authenticated()
@@ -24,5 +24,5 @@ secret = client.secrets.kv.v2.read_secret_version(
 )
 
 
-print(secret)
+print(secret['data']['data'])
 
