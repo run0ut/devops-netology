@@ -11,14 +11,3 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   hostPath: 
     path: /data/netology14-2-2
-    # type: DirectoryOrCreate
-  # local:
-  #   path: /data/netology14-2-2
-  # nodeAffinity: # nodeAffinity is required when using local volumes.
-  #   required:
-  #     nodeSelectorTerms:
-  #     - matchExpressions:
-  #       - key: kubernetes.io/hostname
-  #         operator: In
-  #         values:
-  #         - node-hostname
