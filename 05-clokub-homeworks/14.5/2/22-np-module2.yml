@@ -20,4 +20,3 @@ spec:
     - podSelector:
         matchLabels:
           role: module1
-
