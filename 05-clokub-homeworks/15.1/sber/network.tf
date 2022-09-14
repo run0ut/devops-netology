@@ -1,3 +1,6 @@
+################################################################################
+# VPC и сабнеты
+
 resource "sbercloud_vpc" "n15" {
   name = "n15"
   cidr = "10.10.0.0/16"
@@ -17,62 +20,36 @@ resource "sbercloud_vpc_subnet" "private" {
   vpc_id     = sbercloud_vpc.n15.id
 }
 
-resource "sbercloud_network_acl_rule" "allow_all" {
-  name                   = "allow-all"
-  description            = "allow any traffic"
-  action                 = "allow"
-  protocol               = "any"
-  ip_version             = 4
-  source_ip_address      = "0.0.0.0/0"
-  destination_ip_address = "0.0.0.0/0"
-  enabled                = "true"
-}
-
-resource "sbercloud_network_acl_rule" "allow_icmp" {
-  name                   = "allow-icmp"
-  description            = "allow ICMP traffic"
-  ip_version             = 4
-  action                 = "allow"
-  protocol               = "icmp"
-  source_ip_address      = "0.0.0.0/0"
-  destination_ip_address = "0.0.0.0/0"
-  enabled                = "true"
-}
-
-resource "sbercloud_network_acl_rule" "allow_ssh" {
-  name                   = "allow-ssh"
-  description            = "allow default SSH port"
-  ip_version             = 4
-  action                 = "allow"
-  protocol               = "tcp"
-  source_ip_address      = "0.0.0.0/0"
-  destination_ip_address = "0.0.0.0/0"
-  destination_port       = "22"
-  enabled                = "true"
-}
-
-resource "sbercloud_network_acl" "n15" {
-  name = "n15"
-  subnets = [
-    sbercloud_vpc_subnet.public.id,
-  sbercloud_vpc_subnet.private.id]
-  inbound_rules = [
-    sbercloud_network_acl_rule.allow_icmp.id,
-  sbercloud_network_acl_rule.allow_ssh.id]
-  outbound_rules = [sbercloud_network_acl_rule.allow_all.id]
-}
+################################################################################
+# Security group и правила ICMP и SSH
 
 resource "sbercloud_networking_secgroup" "n15" {
   name        = "n15"
   description = "main security group"
 }
 
-resource "sbercloud_networking_secgroup_rule" "allow_all" {
+resource "sbercloud_networking_secgroup_rule" "allow_icmp" {
   direction         = "ingress"
   ethertype         = "IPv4"
   remote_ip_prefix  = "0.0.0.0/0"
+  protocol          = "icmp"
+  description       = "allow all ICMP traffic"
   security_group_id = sbercloud_networking_secgroup.n15.id
 }
+
+resource "sbercloud_networking_secgroup_rule" "allow_ssh" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  description       = "allow default SSH port fron any source"
+  port_range_min    = 22
+  port_range_max    = 22
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = sbercloud_networking_secgroup.n15.id
+}
+
+################################################################################
+# Внешние IP - для public инстанса и NAT Gateway
 
 resource "sbercloud_vpc_eip" "eip_1" {
   publicip {
@@ -98,6 +75,9 @@ resource "sbercloud_vpc_eip" "eip_2" {
   }
 }
 
+################################################################################
+# NAT Gateway и привязка внешнего IP
+
 resource "sbercloud_nat_gateway" "n15" {
   name      = "n15"
   vpc_id    = sbercloud_vpc.n15.id
@@ -111,9 +91,13 @@ resource "sbercloud_nat_snat_rule" "to_nat_gateway" {
   floating_ip_id = sbercloud_vpc_eip.eip_2.id
 }
 
+################################################################################
+# Таблица маршрутизации для private сети с маршрутом через NAT Gateway
+
 resource "sbercloud_vpc_route_table" "private" {
   name        = "private"
   vpc_id      = sbercloud_vpc.n15.id
+  subnets     = [sbercloud_vpc_subnet.private.id]
   description = "route table for private subnet"
 
   route {
