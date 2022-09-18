@@ -9,6 +9,10 @@ resource "yandex_compute_instance_group" "n15" {
   service_account_id  = yandex_iam_service_account.n15.id
   deletion_protection = false
 
+  load_balancer {
+    target_group_name = "n15"
+  }
+
   instance_template {
     platform_id = "standard-v3"
 
@@ -29,8 +33,8 @@ resource "yandex_compute_instance_group" "n15" {
     network_interface {
       network_id = yandex_vpc_network.network.id
       subnet_ids = [yandex_vpc_subnet.public.id]
-      nat       = true
-      ipv6      = false
+      nat        = false
+      ipv6       = false
     }
 
     network_settings {
@@ -38,12 +42,11 @@ resource "yandex_compute_instance_group" "n15" {
     }
 
     metadata = {
-      # user-data = file("./bootstrap.sh")
       user-data = <<EOF
 #!/bin/bash
-echo "<html><img src="https://storage.yandexcloud.net/${yandex_storage_object.netology-logo.bucket}/${yandex_storage_object.netology-logo.key}" alt="Netology logo"></html>" > /var/www/html/index.html
+echo "<html><p>"`cat /etc/hostname`"</p><img src="https://storage.yandexcloud.net/${yandex_storage_object.netology-logo.bucket}/${yandex_storage_object.netology-logo.key}" alt="Netology logo"></html>" > /var/www/html/index.html
 EOF
-      ssh-keys = "ubuntu:${file("../../15.1/yandex/id_rsa_n15.pub")}"
+      ssh-keys  = "ubuntu:${file("../../15.1/yandex/id_rsa_n15.pub")}"
     }
   }
 
@@ -59,8 +62,8 @@ EOF
 
   deploy_policy {
     max_unavailable = 3
-    max_creating    = 3
-    max_expansion   = 3
+    max_expansion   = 0
     max_deleting    = 3
+    max_creating    = 3
   }
 }

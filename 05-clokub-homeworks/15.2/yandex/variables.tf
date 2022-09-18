@@ -1,3 +1,7 @@
+variable "yandex_token" {
+  default = ""
+
+}
 variable "yandex_cloud_id" {
   default = ""
 }
