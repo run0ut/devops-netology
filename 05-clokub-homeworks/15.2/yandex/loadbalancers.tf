@@ -38,24 +38,24 @@ resource "yandex_alb_http_router" "n15-app-lb" {
 }
 
 resource "yandex_alb_backend_group" "n15-app-lb" {
-  name      = "n15-app-lb"
+  name = "n15-app-lb"
 
   http_backend {
-    name = "test-http-backend"
-    weight = 1
-    port = 80
+    name             = "test-http-backend"
+    weight           = 1
+    port             = 80
     target_group_ids = [yandex_compute_instance_group.n15-app-lb.application_load_balancer[0].target_group_id]
     # tls {
     #   sni = "backend-domain.internal"
     # }
     load_balancing_config {
       panic_threshold = 5
-    }    
+    }
     healthcheck {
-      timeout = "1s"
+      timeout  = "1s"
       interval = "1s"
       http_healthcheck {
-        path  = "/"
+        path = "/"
       }
     }
     http2 = "false"
@@ -63,14 +63,14 @@ resource "yandex_alb_backend_group" "n15-app-lb" {
 }
 
 resource "yandex_alb_virtual_host" "n15-app-lb" {
-  name      = "n15-app-lb"
+  name           = "n15-app-lb"
   http_router_id = yandex_alb_http_router.n15-app-lb.id
   route {
     name = "http"
     http_route {
       http_route_action {
         backend_group_id = yandex_alb_backend_group.n15-app-lb.id
-        timeout = "3s"
+        timeout          = "3s"
       }
     }
   }
