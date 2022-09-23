@@ -74,3 +74,13 @@ resource "sbercloud_lb_certificate" "n15" {
     delete = "5m"
   }
 }
+
+# Настройка мониторинга
+resource "sbercloud_lb_monitor" "monitor_https" {
+  pool_id     = sbercloud_lb_pool.n15-secure.id
+  type        = "HTTP"
+  url_path    = "/"
+  delay       = 3
+  timeout     = 2
+  max_retries = 2
+}

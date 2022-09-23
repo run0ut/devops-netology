@@ -45,3 +45,6 @@ key.json
 
 # Sber Cloud credentials
 credentials.csv
+
+# Certificate
+cert/*
