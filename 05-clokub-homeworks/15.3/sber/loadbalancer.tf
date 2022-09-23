@@ -45,22 +45,7 @@ resource "sbercloud_lb_monitor" "monitor_1" {
 ################################################################################
 # HTTPS
 
-# Листенер на порт HTTP
-resource "sbercloud_lb_listener" "n15-secure" {
-  name            = "n15-secure"
-  protocol        = "TERMINATED_HTTPS"
-  protocol_port   = 443
-  loadbalancer_id = sbercloud_lb_loadbalancer.n15.id
-  default_tls_container_ref  = sbercloud_lb_certificate.n15.id
-#   sni_container_refs  = ["*.run0ut.ru", "run0ut.ru"]
-}
-resource "sbercloud_lb_pool" "n15-secure" {
-  name        = "n15-secure"
-  protocol    = "HTTP"
-  lb_method   = "ROUND_ROBIN"
-  listener_id = sbercloud_lb_listener.n15-secure.id
-}
-
+# Сертификат
 resource "sbercloud_lb_certificate" "n15" {
   name        = "certificate_1"
   description = "terraform test certificate"
@@ -73,6 +58,23 @@ resource "sbercloud_lb_certificate" "n15" {
     update = "5m"
     delete = "5m"
   }
+}
+
+# Листенер на порт HTTPS
+resource "sbercloud_lb_listener" "n15-secure" {
+  name            = "n15-secure"
+  protocol        = "TERMINATED_HTTPS"
+  protocol_port   = 443
+  loadbalancer_id = sbercloud_lb_loadbalancer.n15.id
+  default_tls_container_ref  = sbercloud_lb_certificate.n15.id
+}
+
+# Группа инстансов
+resource "sbercloud_lb_pool" "n15-secure" {
+  name        = "n15-secure"
+  protocol    = "HTTP"
+  lb_method   = "ROUND_ROBIN"
+  listener_id = sbercloud_lb_listener.n15-secure.id
 }
 
 # Настройка мониторинга
