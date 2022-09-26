@@ -1,6 +1,6 @@
 resource "yandex_kubernetes_cluster" "n15" {
-  name        = "name"
-  description = "description"
+  name        = "n15"
+  description = "Netology cource, 15.4"
 
   network_id = yandex_vpc_network.network.id
 

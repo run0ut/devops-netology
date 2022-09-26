@@ -3,41 +3,41 @@ resource "yandex_vpc_network" "network" {
 }
 
 resource "yandex_vpc_subnet" "publicA" {
-  name = "public-a"
+  name = "public-A"
   v4_cidr_blocks = ["192.168.0.0/24"]
   zone = "ru-central1-a"
   network_id = yandex_vpc_network.network.id
 }
 
 resource "yandex_vpc_subnet" "publicB" {
-  name = "public-b"
+  name = "public-B"
   v4_cidr_blocks = ["192.168.40.0/24"]
   zone = "ru-central1-b"
   network_id = yandex_vpc_network.network.id
 }
 
 resource "yandex_vpc_subnet" "publicC" {
-  name = "public-c"
+  name = "public-C"
   v4_cidr_blocks = ["192.168.50.0/24"]
   zone = "ru-central1-c"
   network_id = yandex_vpc_network.network.id
 }
 
-resource "yandex_vpc_subnet" "zoneA" {
+resource "yandex_vpc_subnet" "privateA" {
   name = "private-A"
   v4_cidr_blocks = ["192.168.10.0/24"]
   zone = "ru-central1-a"
   network_id = yandex_vpc_network.network.id
 }
 
-resource "yandex_vpc_subnet" "zoneB" {
+resource "yandex_vpc_subnet" "privateB" {
   name = "private-B"
   v4_cidr_blocks = ["192.168.20.0/24"]
   zone = "ru-central1-b"
   network_id = yandex_vpc_network.network.id
 }
 
-resource "yandex_vpc_subnet" "zoneC" {
+resource "yandex_vpc_subnet" "privateC" {
   name = "private-C"
   v4_cidr_blocks = ["192.168.30.0/24"]
   zone = "ru-central1-c"
