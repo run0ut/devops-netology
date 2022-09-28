@@ -112,6 +112,7 @@ resource "yandex_kubernetes_node_group" "n15" {
     }
 
     # > rpc error: code = InvalidArgument desc = Validation error: allocation_policy.locations: auto scale node groups can have only one location
+    # > Доступно только одно расположение при автоматическом масштабировании
     
     # location {
     #   zone      = yandex_vpc_subnet.publicB.zone
