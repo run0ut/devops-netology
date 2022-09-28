@@ -3,7 +3,7 @@ resource "yandex_mdb_mysql_cluster" "n15" {
   environment = "PRESTABLE"
   network_id  = yandex_vpc_network.network.id
   version     = "8.0"
-  deletion_protection = false
+  deletion_protection = true
 
   resources {
     resource_preset_id = "b1.medium" # https://cloud.yandex.com/en-ru/docs/managed-mysql/concepts/instance-types

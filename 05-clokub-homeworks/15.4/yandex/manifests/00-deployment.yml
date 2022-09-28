@@ -29,4 +29,4 @@ spec:
         - name: PMA_PASSWORD 
           value: "servicemode"
         - name: PMA_HOST
-          value: "rc1a-dqudab5qdf2yb8kv.mdb.yandexcloud.net"
+          value: "rc1a-9w48bhbua0fzj72y.mdb.yandexcloud.net"

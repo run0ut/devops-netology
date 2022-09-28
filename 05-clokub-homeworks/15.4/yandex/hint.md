@@ -19,5 +19,5 @@ mysql --host=rc1a-dqudab5qdf2yb8kv.mdb.yandexcloud.net \
 ```bash
 yc managed-kubernetes cluster \
   get-credentials n15 \
-  --external
+  --external --force
 ```
