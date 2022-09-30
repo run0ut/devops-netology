@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: pma
+  name: pma
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pma
+  # strategy:
+  #   type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pma
+    spec:
+      containers:
+      - image: phpmyadmin
+        name: phpmyadmin
+        ports:
+        - containerPort: 80
+        env:
+        - name: PMA_USER
+          value: "root"
+        - name: PMA_PASSWORD 
+          value: "Servicemode1_"
+        - name: PMA_HOST
+          value: "10.10.2.143"
