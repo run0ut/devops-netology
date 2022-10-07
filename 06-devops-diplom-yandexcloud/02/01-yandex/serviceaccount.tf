@@ -1,7 +1,7 @@
 // Create SA
 resource "yandex_iam_service_account" "diploma" {
   folder_id = var.yandex_folder_id
-  name      = "diploma"
+  name      = "diploma-${terraform.workspace}"
 }
 
 // Grant permissions
