@@ -10,10 +10,10 @@ variable "yandex_compute_default_zone" {
   default = ""
 }
 
-variable "yandex_object_storage_access_key" {
-  default = ""
+variable "control_count" {
+  default = "1"
 }
 
-variable "yandex_object_storage_secret_key" {
-  default = ""
+variable "worker_count" {
+  default = "2"
 }
