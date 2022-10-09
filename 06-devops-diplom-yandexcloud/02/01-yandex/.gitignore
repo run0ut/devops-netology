@@ -42,3 +42,6 @@ terraform.rc
 
 # Yandex Cloud credentials
 key.json
+
+# Файлы Ansible формируются терраформом  
+ansible/*

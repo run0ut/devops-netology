@@ -1,6 +1,6 @@
 resource "null_resource" "git_clone" {
   provisioner "local-exec" {
-    command = "git clone https://github.com/kubernetes-sigs/kubespray.git"
+    command = "if [ ! -d 'kubespray' ] ; then git clone https://github.com/kubernetes-sigs/kubespray.git; fi"
   }
 }
 
