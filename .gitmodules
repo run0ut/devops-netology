@@ -1,0 +1,3 @@
+[submodule "06-devops-diplom-yandexcloud/02/03-monitoring"]
+	path = 06-devops-diplom-yandexcloud/02/03-monitoring
+	url = git@github.com:prometheus-operator/kube-prometheus.git
