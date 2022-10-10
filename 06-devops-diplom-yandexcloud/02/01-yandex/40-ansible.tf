@@ -55,7 +55,6 @@ resource "null_resource" "kubespray" {
   }
 
   depends_on = [
-    # null_resource.wait
     null_resource.public_access
   ]
 

@@ -1,19 +1,15 @@
-# output "public_ip_control" {
-#   value = yandex_compute_instance.control[*].network_interface.0.ip_address
-#   description = "Публичный IP инстанса control ноды"
-# }
+output "control_nodes" {
+  value = [
+    for n in yandex_compute_instance.control:
+        "name=${n.name}, public=${n.network_interface.0.nat_ip_address}, private=${n.network_interface.0.ip_address}"
+  ]
+  description = "IP инстансов control нод"
+}
 
-# output "private_ip_control" {
-#   value = yandex_compute_instance.control[*].network_interface.0.ip_address
-#   description = "Приватный IP инстанса control ноды"
-# }
-
-# output "public_ip_worker" {
-#   value = yandex_compute_instance.worker[*].network_interface.0.nat_ip_address
-#   description = "Публичный IP инстанса worker ноды"
-# }
-
-# output "private_ip_worker" {
-#   value = yandex_compute_instance.worker[*].network_interface.0.nat_ip_address
-#   description = "Приватный IP инстанса worker ноды"
-# } 
+output "worker_nodes" {
+  value = [
+    for n in yandex_compute_instance.worker:
+        "name=${n.name}, public=${n.network_interface.0.nat_ip_address}, private=${n.network_interface.0.ip_address}"
+  ]
+  description = "IP инстансов control нод"
+}
