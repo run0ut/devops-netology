@@ -17,6 +17,7 @@ pipeline {
                 script {
                     latestTag = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
                 }
+                echo "latestTag=$latestTag"
             }
         }
         stage("docker login") {
@@ -44,6 +45,14 @@ pipeline {
                 echo " ============== start pushing image =================="
                 sh """
                 docker push runout/diploma-test-app:$latestTag
+                """
+            }
+        }
+        stage("kubectl deploy") {
+            steps {
+                echo " ============== start pushing image =================="
+                sh """
+                kubectl set image deployment.apps/diploma-test-app diploma-test-app=runout/diploma-test-app:$latestTag
                 """
             }
         }
