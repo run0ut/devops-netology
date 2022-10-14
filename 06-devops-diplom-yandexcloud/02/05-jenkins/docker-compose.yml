@@ -1,6 +1,6 @@
 services:
   jenkins:
-    image: jenkins-with-plugins
+    image: runout/jenkins-with-plugins:latest
     # image: jenkins/jenkins:2.361.2-lts-jdk11
     # user: root
     # --group-add=$(stat -c %g /var/run/docker.sock)
