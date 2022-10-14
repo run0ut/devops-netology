@@ -14,6 +14,7 @@ services:
       # - A=B
     volumes:
       - ./data:/var/jenkins_home
+      - ~/.kube/config:/root/.kube/config
       - ./jobs:/var/jenkins_home/jobs
       - ./credentials.xml:/var/jenkins_home/credentials.xml
       - /var/run/docker.sock:/var/run/docker.sock
