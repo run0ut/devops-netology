@@ -43,7 +43,6 @@ https://www.runatlantis.io/docs/configuring-webhooks.html#github-github-enterpri
 
 [Билд образов, пуш в докер и использование креденшелз для docker login](https://www.liatrio.com/blog/building-with-docker-using-jenkins-pipelines)
 
-
 [Youtube, решение подобной задачи со сборкой по коммиту](https://www.youtube.com/watch?v=0D_wKERZ2zo)
 
 [Jenkinsfile из видео](https://github.com/ksemaev/project_template/tree/master/jenkinsfiles)
@@ -52,6 +51,23 @@ https://www.runatlantis.io/docs/configuring-webhooks.html#github-github-enterpri
 
 [Примеры пайплайнов](https://www.jenkins.io/doc/book/pipeline/syntax/#declarative-steps)
 
+[Тригер пайплайнов при появлении тага](https://stackoverflow.com/questions/29742847/jenkins-trigger-build-if-new-tag-is-released)
+
+----
+Добавить комит и таг
+
+```bash
+tag_n=$(git tag --sort version:refname | tail -1 | cut -d . -f 3) && date +%s > dummy && git add . && tag_n=$((tag_n+1)) && git commit -m "tag $tag_n" && git tag v0.0.$tag_n && git push --tags origin main
+```
+Скачать jenkins-cli
+```
+curl http://localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+```
+Выгрузить и загрузить креденшелы. Выгружаются без секретов.
+```
+java -jar jenkins-cli.jar -s http://localhost:8080 list-credentials-as-xml "system::system::jenkins" > jenkins-credentials.xml
+java -jar jenkins-cli.jar -s http://localhost:8080 import-credentials-as-xml "system::system::jenkins" < jenkins-credentials.xml
+```
 ---
 
 Не пригодилось пока:
@@ -61,3 +77,5 @@ https://www.runatlantis.io/docs/configuring-webhooks.html#github-github-enterpri
 [Docker pipeline](https://docs.cloudbees.com/docs/admin-resources/latest/plugins/docker-workflow) - не пригодилось, нет особой разницы между этим и `sh`, `docker cli` всё равно должна быть установлена
 
 [Примеры билда контейнеров с Docker pipeline](https://www.jenkins.io/doc/book/pipeline/docker/#building-containers)
+
+[credentials](https://citizix.com/using-jenkins-cli-to-manage-jenkins-jobs-and-credentials/)
