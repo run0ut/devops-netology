@@ -28,8 +28,8 @@ spec:
         - name: jenkins-home
           mountPath: /var/jenkins_home
         - name: jenkins-credentials
-          mountPath: /var/jenkins_home_temp/exported-credentials.xml.xml
-          subPath: exported-credentials.xml.xml
+          mountPath: /var/jenkins_home_temp/exported-credentials.xml
+          subPath: exported-credentials.xml
         - name: jenkins-job-stage
           mountPath: /var/jenkins_home_temp/jobs/diploma-test-app-stage/config.xml
           subPath: config.xml
@@ -77,7 +77,7 @@ spec:
           name: jenkins-files
           items:
           - key: credentials
-            path: credentials.xml
+            path: exported-credentials.xml
       - name: jenkins-job-stage
         configMap:
           name: jenkins-files
