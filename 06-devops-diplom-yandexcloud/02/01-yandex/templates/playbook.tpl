@@ -26,7 +26,7 @@
     - name: Fetch kube config
       synchronize:
         src: /etc/kubernetes/admin_export.conf
-        dest: ~/.kube/config
+        dest: ../kubeconfig/config-${workspace}
         delete: yes
         recursive: yes
         owner: no
