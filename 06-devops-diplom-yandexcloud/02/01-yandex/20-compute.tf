@@ -2,11 +2,11 @@
 locals {
   control_count_map = {
     stage = 1
-    prod  = 3
+    prod  = 1
   }
   worker_count_map = {
     stage = 1
-    prod  = 3
+    prod  = 1
   }  
 }
 
