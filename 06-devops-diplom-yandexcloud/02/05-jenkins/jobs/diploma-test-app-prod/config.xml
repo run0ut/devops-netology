@@ -48,6 +48,12 @@
         <strategy class="jenkins.branch.DefaultBranchPropertyStrategy">
           <properties class="empty-list"/>
         </strategy>
+        <buildStrategies>
+          <jenkins.branch.buildstrategies.basic.TagBuildStrategyImpl plugin="basic-branch-build-strategies@1.3.2">
+            <atLeastMillis>-1</atLeastMillis>
+            <atMostMillis>604800000</atMostMillis>
+          </jenkins.branch.buildstrategies.basic.TagBuildStrategyImpl>
+        </buildStrategies>
       </jenkins.branch.BranchSource>
     </data>
     <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
