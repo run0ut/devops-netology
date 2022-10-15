@@ -28,8 +28,8 @@ spec:
         - name: jenkins-home
           mountPath: /var/jenkins_home
         - name: jenkins-credentials
-          mountPath: /var/jenkins_home_temp/credentials.xml
-          subPath: credentials.xml
+          mountPath: /var/jenkins_home_temp/exported-credentials.xml.xml
+          subPath: exported-credentials.xml.xml
         - name: jenkins-job-stage
           mountPath: /var/jenkins_home_temp/jobs/diploma-test-app-stage/config.xml
           subPath: config.xml
@@ -46,15 +46,6 @@ spec:
         volumeMounts:
         - name: jenkins-home
           mountPath: /var/jenkins_home
-        # - name: jenkins-credentials
-        #   mountPath: /var/jenkins_home/credentials.xml
-        #   subPath: credentials.xml
-        # - name: jenkins-job-stage
-        #   mountPath: /var/jenkins_home/jobs/diploma-test-app-stage/config.xml
-        #   subPath: config.xml
-        # - name: jenkins-job-prod
-        #   mountPath: /var/jenkins_home/jobs/diploma-test-app-prod/config.xml
-        #   subPath: config.xml
         - name: kubeconfig
           mountPath: /root/.kube/config
           subPath: config

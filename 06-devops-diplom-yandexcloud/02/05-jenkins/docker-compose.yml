@@ -3,7 +3,6 @@ services:
     image: runout/jenkins-with-plugins:latest
     # image: jenkins/jenkins:2.361.2-lts-jdk11
     # user: root
-    # --group-add=$(stat -c %g /var/run/docker.sock)
     # group_add:
     #   - 1001
     privileged: true
@@ -16,5 +15,5 @@ services:
       - ./data:/var/jenkins_home
       - ../01-yandex/kubeconfig/config-stage:/root/.kube/config
       - ./jobs:/var/jenkins_home/jobs
-      - ./credentials.xml:/var/jenkins_home/credentials.xml
+      - ./exported-credentials.xml:/var/jenkins_home/exported-credentials.xml
       - /var/run/docker.sock:/var/run/docker.sock

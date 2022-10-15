@@ -50,7 +50,7 @@ resource "null_resource" "jenkins_configmaps" {
     command = <<EOF
       kubectl --kubeconfig=./kubeconfig/config-${terraform.workspace} \
       create configmap jenkins-files \
-        --from-file=credentials=../05-jenkins/credentials.xml \
+        --from-file=credentials=../05-jenkins/exported-credentials.xml \
         --from-file=diploma-test-app-stage=../05-jenkins/jobs/diploma-test-app-stage/config.xml \
         --from-file=diploma-test-app-prod=../05-jenkins/jobs/diploma-test-app-prod/config.xml \
         --from-file=kubeconfig=kubeconfig/config-prod
