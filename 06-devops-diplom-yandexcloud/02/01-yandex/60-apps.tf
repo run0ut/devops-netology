@@ -31,7 +31,7 @@ data "template_file" "atlantis_statefulset" {
   template = file("${path.module}/templates/atlantis_statefulset.tpl")
 
   vars = {
-    atlantis_ip = "${yandex_compute_instance.control.network_interface.0.nat_ip_address}"
+    atlantis_ip = "${yandex_compute_instance.control.0.network_interface.0.nat_ip_address}"
   }
 
   depends_on = [
@@ -45,7 +45,7 @@ resource "null_resource" "atlantis_manifest" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
-    command = "echo '${data.template_file.kubectl.rendered}' > ../04-atlantis/manifests/ansible/10-satatefulSet.yml.yml"
+    command = "echo '${data.template_file.atlantis_statefulset.rendered}' > ../04-atlantis/manifests/10-satatefulSet.yml"
   }
 
   triggers = {
