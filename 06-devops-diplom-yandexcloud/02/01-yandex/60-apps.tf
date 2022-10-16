@@ -41,7 +41,7 @@ data "template_file" "atlantis_statefulset" {
 
 # -------------------------------------------------
 # Сохранение рендера манифеста в файл
-resource "null_resource" "kubectl_playbook" {
+resource "null_resource" "atlantis_manifest" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
@@ -101,7 +101,7 @@ resource "null_resource" "atlantis" {
 
 
   depends_on = [
-    null_resource.atlantis_statefulset
+    null_resource.atlantis_manifest
   ]
 
   triggers = {
