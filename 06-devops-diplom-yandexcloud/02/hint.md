@@ -86,3 +86,10 @@ java -jar jenkins-cli.jar -s http://localhost:8080 import-credentials-as-xml "sy
 ```bash
 docker-entrypoint.sh server --atlantis-url=http://178.154.204.124:30141/ --var-file-allowlist=/home/atlantis --tf-download-url=https://terraform-mirror.yandexcloud.net/ --repo-config-json='{"repos":[{"id":"/.*/","allowed_overrides":["workflow"],"allow_custom_workflows":true}]}' --log-level=info 
 ```
+https://www.runatlantis.io/docs/server-configuration.html описание аргументов командной строки для запуска сервера
+
+https://www.runatlantis.io/docs/server-side-repo-config.html#allow-repos-to-define-their-own-workflows конфигурация поведения Атлантиса по репозиториям, общий для всех конфиг; подраздел с описанием как разрешить переопределение конфига конфигом atlantis.yaml из препозитория
+
+https://www.runatlantis.io/docs/repo-level-atlantis-yaml.html конфигурация поведения Атлантиса в конкретном репозитории
+
+https://www.runatlantis.io/docs/custom-workflows.html#running-custom-commands примеры workflow, подраздел с примером как выполнять произвольные команды
