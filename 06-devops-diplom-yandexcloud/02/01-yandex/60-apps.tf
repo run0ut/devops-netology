@@ -26,8 +26,6 @@ resource "null_resource" "app" {
 # Statefulset со внешним IP web-интерфейса Atlantis
 # чтобы на Github работал переход в "Details"
 data "template_file" "atlantis_statefulset" {
-  count = (terraform.workspace == "prod") ? 1 : 0
-
   template = file("${path.module}/templates/atlantis_statefulset.tpl")
 
   vars = {
