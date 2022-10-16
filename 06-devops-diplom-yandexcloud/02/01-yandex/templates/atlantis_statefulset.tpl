@@ -63,7 +63,7 @@ spec:
         command: ["docker-entrypoint.sh"] 
         args: 
           - "server"
-          - "--atlantis-url=http://178.154.204.124:30141/"
+          - "--atlantis-url=http://${atlantis_ip}:30141/"
           - "--var-file-allowlist=/home/atlantis"
           - "--tf-download-url=https://terraform-mirror.yandexcloud.net/"
           - "--repo-config=/home/atlantis/server.yaml"
