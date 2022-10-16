@@ -79,3 +79,10 @@ java -jar jenkins-cli.jar -s http://localhost:8080 import-credentials-as-xml "sy
 [Примеры билда контейнеров с Docker pipeline](https://www.jenkins.io/doc/book/pipeline/docker/#building-containers)
 
 [credentials](https://citizix.com/using-jenkins-cli-to-manage-jenkins-jobs-and-credentials/)
+
+# Atlantis
+
+Пример запуска с конфигом в JSON
+```bash
+docker-entrypoint.sh server --atlantis-url=http://178.154.204.124:30141/ --var-file-allowlist=/home/atlantis --tf-download-url=https://terraform-mirror.yandexcloud.net/ --repo-config-json='{"repos":[{"id":"/.*/","allowed_overrides":["workflow"],"allow_custom_workflows":true}]}' --log-level=info 
+```
