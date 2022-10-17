@@ -14,6 +14,6 @@ resource "null_resource" "app" {
   ]
 
   triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
+    cluster_instance_ids = join(",", [join(",", yandex_compute_instance.control.*.id), join(",", yandex_compute_instance.worker.*.id)])
   }
 }

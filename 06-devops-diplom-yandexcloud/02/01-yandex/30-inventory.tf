@@ -4,7 +4,7 @@ data "template_file" "inventory" {
   vars = {
     connection_strings_master = join("\n", formatlist("%s ansible_host=%s ansible_user=ubuntu", yandex_compute_instance.control.*.name, yandex_compute_instance.control.*.network_interface.0.nat_ip_address))
     connection_strings_node   = join("\n", formatlist("%s ansible_host=%s ansible_user=ubuntu", yandex_compute_instance.worker.*.name, yandex_compute_instance.worker.*.network_interface.0.nat_ip_address))
-    list_master               = join("\n",yandex_compute_instance.control.*.name)
+    list_master               = join("\n", yandex_compute_instance.control.*.name)
     list_node                 = join("\n", yandex_compute_instance.worker.*.name)
   }
 

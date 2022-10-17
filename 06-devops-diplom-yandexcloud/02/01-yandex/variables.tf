@@ -19,14 +19,14 @@ variable "dockerhub_login" {
 }
 
 variable "dockerhub_password" {
-  default = ""
+  default   = ""
   sensitive = true
 }
 
 ################################################################################
 # GitHub
 variable "github_personal_access_token" {
-  default = ""
+  default   = ""
   sensitive = true
 }
 

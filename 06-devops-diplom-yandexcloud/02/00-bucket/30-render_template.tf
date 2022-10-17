@@ -21,10 +21,9 @@ data "template_file" "provider" {
 # -------------------------------------------------
 # Сохранение рендера креденшелов в файл
 resource "null_resource" "provider" {
-  count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
-    command = "${format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../01-yandex/provider.tf", data.template_file.provider.rendered)}"
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../01-yandex/provider.tf", data.template_file.provider.rendered)
   }
 
   triggers = {

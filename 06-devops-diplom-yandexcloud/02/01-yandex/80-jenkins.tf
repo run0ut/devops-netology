@@ -9,7 +9,7 @@ data "template_file" "jenkins_credentials" {
   template = file("${path.module}/templates/exported-credentials.tpl")
 
   vars = {
-    login = "${var.dockerhub_login}"
+    login    = "${var.dockerhub_login}"
     password = "${var.dockerhub_password}"
   }
 
@@ -24,7 +24,7 @@ resource "null_resource" "jenkins_credentials" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
-    command = "${format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../05-atlantis/exported-credentials.xml", data.template_file.jenkins_credentials.rendered)}"
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../05-atlantis/exported-credentials.xml", data.template_file.jenkins_credentials.rendered)
   }
 
   triggers = {
@@ -53,7 +53,7 @@ resource "null_resource" "jenkins_configmaps" {
   ]
 
   triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
+    cluster_instance_ids = join(",", [join(",", yandex_compute_instance.control.*.id), join(",", yandex_compute_instance.worker.*.id)])
   }
 }
 
@@ -74,6 +74,6 @@ resource "null_resource" "jenkins" {
   ]
 
   triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
+    cluster_instance_ids = join(",", [join(",", yandex_compute_instance.control.*.id), join(",", yandex_compute_instance.worker.*.id)])
   }
 }

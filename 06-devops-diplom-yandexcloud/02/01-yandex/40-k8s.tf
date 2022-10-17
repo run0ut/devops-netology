@@ -59,7 +59,7 @@ resource "null_resource" "kubespray" {
   ]
 
   triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
+    cluster_instance_ids = join(",", [join(",", yandex_compute_instance.control.*.id), join(",", yandex_compute_instance.worker.*.id)])
   }
 }
 
@@ -98,6 +98,6 @@ resource "null_resource" "kubectl" {
   ]
 
   triggers = {
-    cluster_instance_ids = join(",",null_resource.inventories.*.id)
+    cluster_instance_ids = join(",", null_resource.inventories.*.id)
   }
 }

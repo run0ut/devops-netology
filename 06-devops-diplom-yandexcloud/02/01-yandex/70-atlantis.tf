@@ -22,7 +22,7 @@ resource "null_resource" "atlantis_manifest" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
-    command = "${format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../04-atlantis/manifests/10-satatefulSet.yml", data.template_file.atlantis_statefulset.rendered)}"
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../04-atlantis/manifests/10-satatefulSet.yml", data.template_file.atlantis_statefulset.rendered)
   }
 
   triggers = {
@@ -58,7 +58,7 @@ resource "null_resource" "atlantis_configmaps" {
   ]
 
   triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
+    cluster_instance_ids = join(",", [join(",", yandex_compute_instance.control.*.id), join(",", yandex_compute_instance.worker.*.id)])
   }
 }
 
@@ -82,7 +82,7 @@ resource "null_resource" "atlantis" {
   ]
 
   triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
+    cluster_instance_ids = join(",", [join(",", yandex_compute_instance.control.*.id), join(",", yandex_compute_instance.worker.*.id)])
   }
 }
 
@@ -138,6 +138,6 @@ resource "null_resource" "atlantis_webhook" {
   ]
 
   triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
+    cluster_instance_ids = join(",", [join(",", yandex_compute_instance.control.*.id), join(",", yandex_compute_instance.worker.*.id)])
   }
 }
