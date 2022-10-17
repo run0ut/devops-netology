@@ -24,7 +24,7 @@ resource "null_resource" "jenkins_credentials" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
-    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../05-atlantis/exported-credentials.xml", data.template_file.jenkins_credentials.rendered)
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../05-jenkins/exported-credentials.xml", data.template_file.jenkins_credentials.rendered)
   }
 
   triggers = {
