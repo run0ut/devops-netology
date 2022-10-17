@@ -1,26 +1,5 @@
 ################################################################################
-# Деплой приложения
-
-# 
-resource "null_resource" "app" {
-  provisioner "local-exec" {
-    command = <<EOF
-      kubectl --kubeconfig=./kubeconfig/config-${terraform.workspace} apply -f ../02-app/manifests/
-    EOF
-  }
-
-
-  depends_on = [
-    null_resource.kube_prometheus
-  ]
-
-  triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
-  }
-}
-
-################################################################################
-# Deploy Atlantis
+# Деплой Atlantis
 
 # -------------------------------------------------
 # Statefulset со внешним IP web-интерфейса Atlantis
@@ -43,7 +22,6 @@ resource "null_resource" "atlantis_manifest" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
-    # command = "echo '${data.template_file.atlantis_statefulset.rendered}' > ../04-atlantis/manifests/10-satatefulSet.yml"
     command = "${format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../04-atlantis/manifests/10-satatefulSet.yml", data.template_file.atlantis_statefulset.rendered)}"
   }
 
@@ -68,7 +46,7 @@ resource "null_resource" "atlantis_configmaps" {
       create configmap atlantis-files \
         --from-file=ssh=$HOME/.ssh/id_rsa \
         --from-file=ssh-pub=$HOME/.ssh/id_rsa.pub \
-        --from-file=terraformrc=$HOME/.terraformrc \
+        --from-file=terraformrc=.terraformrc \
         --from-file=auto-tfvars=.auto.tfvars \
         --from-file=key-json=key.json \
         --from-file=server-config=server.yaml
@@ -93,7 +71,7 @@ resource "null_resource" "atlantis" {
 
   provisioner "local-exec" {
     command = <<EOF
-      kubectl --kubeconfig=./kubeconfig/config-${terraform.workspace} create secret generic atlantis-vcs --from-file=../04-atlantis/token --from-file=../04-atlantis/webhook-secret
+      kubectl --kubeconfig=./kubeconfig/config-${terraform.workspace} create secret generic atlantis-vcs --from-literal=token=${var.github_personal_access_token} --from-literal=webhook-secret=${var.github_webhook_secret}
       kubectl --kubeconfig=./kubeconfig/config-${terraform.workspace} apply -f ../04-atlantis/manifests/
     EOF
   }
@@ -108,48 +86,55 @@ resource "null_resource" "atlantis" {
   }
 }
 
-################################################################################
-# Деплой Jenkins
-
 # -------------------------------------------------
-# Конфигурации для провижена Jenkins
-resource "null_resource" "jenkins_configmaps" {
-  count = (terraform.workspace == "prod") ? 1 : 0
+# Настройка веб-хука репозитория для обращения к Atlantis
 
-  provisioner "local-exec" {
-    command = <<EOF
-      kubectl --kubeconfig=./kubeconfig/config-${terraform.workspace} \
-      create configmap jenkins-files \
-        --from-file=credentials=../05-jenkins/exported-credentials.xml \
-        --from-file=diploma-test-app-stage=../05-jenkins/jobs/diploma-test-app-stage/config.xml \
-        --from-file=diploma-test-app-prod=../05-jenkins/jobs/diploma-test-app-prod/config.xml \
-        --from-file=kubeconfig=kubeconfig/config-prod
-    EOF
-  }
-
-  depends_on = [
-    null_resource.app
-  ]
-
-  triggers = {
-    cluster_instance_ids = join(",",[join(",",yandex_compute_instance.control.*.id), join(",",yandex_compute_instance.worker.*.id)])
-  }
+locals {
+  atlantis_ip = yandex_compute_instance.control.0.network_interface.0.nat_ip_address
 }
 
-# -------------------------------------------------
-# Деплой Jenkins в кластер
-resource "null_resource" "jenkins" {
+resource "null_resource" "atlantis_webhook" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
     command = <<EOF
-      kubectl --kubeconfig=./kubeconfig/config-${terraform.workspace} apply -f ../05-jenkins/manifests/
+      # Получить Personal Access Token для доступа к настройкам репозитория
+      id=''
+      hook=''
+      token=$(cat ../04-atlantis/token)
+      # Получить данные о хуках репозитория
+      id=$(curl -sS \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer $token" \
+        https://api.github.com/repos/run0ut/diploma-terraform/hooks | jq .[0].id)
+      if [[ "$id" == "null" ]]; then
+        # Если хука нет, создать
+        echo "Create hook"
+        curl -sS \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $token" \
+          https://api.github.com/repos/run0ut/diploma-terraform/hooks \
+          -d '{"name":"web","active":true,"events":["push","pull_request","pull_request_review","issue_comment"],"config":{"url":"http://${local.atlantis_ip}:30141/events","content_type":"json","insecure_ssl":"0","secret":"diplomasecret"}}'
+      else
+        # Если хук есть, обновить URL
+        echo "Update hook"
+        curl -sS \
+          -X PATCH \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $token" \
+          https://api.github.com/repos/run0ut/diploma-terraform/hooks/$id \
+          -d '{"name":"web","active":true,"events":["push","pull_request","pull_request_review","issue_comment"],"config":{"url":"http://${local.atlantis_ip}:30141/events","content_type":"json","insecure_ssl":"0","secret":"diplomasecret"}}'
+      fi
     EOF
+    interpreter = [
+      "/bin/bash",
+      "-c"
+    ]
   }
 
-
   depends_on = [
-    null_resource.jenkins_configmaps
+    null_resource.atlantis
   ]
 
   triggers = {

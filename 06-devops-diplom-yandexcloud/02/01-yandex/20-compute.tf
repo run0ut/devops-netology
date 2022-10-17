@@ -24,6 +24,8 @@ data "yandex_compute_image" "ubuntu" {
 ################################################################################
 # Хосты Kubernetes кластера
 
+# ------------------------------------------
+# Control nodes
 resource "yandex_compute_instance" "control" {
   count     = local.control_count_map[terraform.workspace]
   name      = "diploma-control-${terraform.workspace}-${count.index}"
@@ -56,6 +58,8 @@ resource "yandex_compute_instance" "control" {
   }
 }
 
+# ------------------------------------------
+# Worker nodes
 resource "yandex_compute_instance" "worker" {
   count     = local.worker_count_map[terraform.workspace]
   name      = "diploma-worker-${terraform.workspace}-${count.index}"
