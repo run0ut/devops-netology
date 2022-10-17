@@ -101,7 +101,7 @@ resource "null_resource" "atlantis_webhook" {
       # Получить Personal Access Token для доступа к настройкам репозитория
       id=''
       hook=''
-      token=$(cat ../04-atlantis/token)
+      token=${var.github_personal_access_token}
       # Получить данные о хуках репозитория
       id=$(curl -sS \
         -H "Accept: application/vnd.github+json" \
