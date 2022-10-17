@@ -18,10 +18,12 @@ workflows:
   custom:
     plan:
       steps:
+      - run: ln -sf /home/atlantis/key.json key.json
       - init
       - run: cp -f /home/atlantis/.auto.tfvars ./
       - plan
     apply:
       steps:
       - run: cp -f /home/atlantis/.auto.tfvars ./
+      - plan
       - apply

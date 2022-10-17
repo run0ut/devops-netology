@@ -43,7 +43,8 @@ resource "null_resource" "atlantis_manifest" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
-    command = "echo '${data.template_file.atlantis_statefulset.rendered}' > ../04-atlantis/manifests/10-satatefulSet.yml"
+    # command = "echo '${data.template_file.atlantis_statefulset.rendered}' > ../04-atlantis/manifests/10-satatefulSet.yml"
+    command = "${format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../04-atlantis/manifests/10-satatefulSet.yml", data.template_file.atlantis_statefulset.rendered)}"
   }
 
   triggers = {
