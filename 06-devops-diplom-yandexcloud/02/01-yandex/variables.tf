@@ -33,3 +33,7 @@ variable "github_personal_access_token" {
 variable "github_webhook_secret" {
   default = "diplomasecret"
 }
+
+variable "github_login" {
+  default = ""
+}

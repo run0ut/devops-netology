@@ -3,6 +3,62 @@
 # Деплой Jenkins
 
 # -------------------------------------------------
+# Формирование задач Jenkins по шаблону, со ссылкой на репозиторий тестового приложения
+data "template_file" "diploma_test_app_stage_config" {
+  template = file("${path.module}/templates/diploma-test-app-stage-config.tpl")
+
+  vars = {
+    login = "${var.github_login}"
+  }
+
+  depends_on = [
+    null_resource.kube_prometheus
+  ]
+}
+
+# -------------------------------------------------
+# Сохранение рендера шаблона в файл
+resource "null_resource" "diploma_test_app_stage_config" {
+  count = (terraform.workspace == "prod") ? 1 : 0
+
+  provisioner "local-exec" {
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../05-jenkins/jobs/diploma-test-app-stage/config.xml", data.template_file.diploma_test_app_stage_config.rendered)
+  }
+
+  triggers = {
+    template = data.template_file.diploma_test_app_stage_config.rendered
+  }
+}
+
+# -------------------------------------------------
+# Формирование задач Jenkins по шаблону, со ссылкой на репозиторий тестового приложения
+data "template_file" "diploma_test_app_prod_config" {
+  template = file("${path.module}/templates/diploma-test-app-stage-config.tpl")
+
+  vars = {
+    login = "${var.github_login}"
+  }
+
+  depends_on = [
+    null_resource.app
+  ]
+}
+
+# -------------------------------------------------
+# Сохранение рендера шаблона в файл
+resource "null_resource" "diploma_test_app_prod_config" {
+  count = (terraform.workspace == "prod") ? 1 : 0
+
+  provisioner "local-exec" {
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../05-jenkins/jobs/diploma-test-app-stage/config.xml", data.template_file.diploma_test_app_prod_config.rendered)
+  }
+
+  triggers = {
+    template = data.template_file.diploma_test_app_prod_config.rendered
+  }
+}
+
+# -------------------------------------------------
 # Файл для импорта логина и пароля к аккаунту Докера
 # в Jenkins Credentials
 data "template_file" "jenkins_credentials" {
@@ -14,7 +70,7 @@ data "template_file" "jenkins_credentials" {
   }
 
   depends_on = [
-    null_resource.app
+    null_resource.kube_prometheus
   ]
 }
 

@@ -93,3 +93,25 @@ https://www.runatlantis.io/docs/server-side-repo-config.html#allow-repos-to-defi
 https://www.runatlantis.io/docs/repo-level-atlantis-yaml.html конфигурация поведения Атлантиса в конкретном репозитории
 
 https://www.runatlantis.io/docs/custom-workflows.html#running-custom-commands примеры workflow, подраздел с примером как выполнять произвольные команды
+
+# Git
+
+Заготовка для создания репозитория автоматом
+```
+{
+  git init 
+  git add *tf {ansible,kubeconfig}/README.md templates/* README.md *yaml--force 
+  git add .gitignore && git add .terraformrc
+  git commit -m'first commit'
+  git branch -M main 
+  repo=diploma-test-app-`date +%s`
+  curl -sS \
+    -X POST \
+    -H "Accept: application/vnd.github+json" \
+    -H "Authorization: Bearer <TOKEN>" \
+    https://api.github.com/user/repos \
+    -d '{"name":"'$repo'","description":"Netology DevOps cource diploma, test application","homepage":"https://github.com","private":false,"is_template":false}'
+  git remote add origin git@github.com:run0ut/$repo.git 
+  git push --set-upstream origin main
+}
+```

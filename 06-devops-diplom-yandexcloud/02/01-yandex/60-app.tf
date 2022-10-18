@@ -1,6 +1,37 @@
 ################################################################################
 # Деплой приложения
 
+
+# -------------------------------------------------
+# Файл для импорта логина и пароля к аккаунту Докера
+# в Jenkins Credentials
+data "template_file" "app_deployment" {
+  template = file("${path.module}/templates/app-deployment.tpl")
+
+  vars = {
+    login = "${var.dockerhub_login}"
+  }
+
+  depends_on = [
+    null_resource.kube_prometheus
+  ]
+}
+
+# -------------------------------------------------
+# Сохранение рендера креденшелов в файл
+resource "null_resource" "app_deployment" {
+
+  provisioner "local-exec" {
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../02-app/manifests/00-deployment.yml", data.template_file.app_deployment.rendered)
+  }
+
+  triggers = {
+    template = data.template_file.app_deployment.rendered
+  }
+}
+
+# -------------------------------------------------
+# Деплой приложения в кластер
 resource "null_resource" "app" {
   provisioner "local-exec" {
     command = <<EOF
@@ -10,7 +41,7 @@ resource "null_resource" "app" {
 
 
   depends_on = [
-    null_resource.kube_prometheus
+    null_resource.app_deployment
   ]
 
   triggers = {
