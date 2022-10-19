@@ -16,7 +16,6 @@
 
 Что нужно настроить:
 - Настройте git на локальной машине для работы с репозиториями в GitHub, должна быть возможность делать push по ключу ssh, без ввода пароля
-- Создайте два репозитория: `diploma-terraform` и `diploma-test-app`
 
 # Как запустить
 
@@ -32,22 +31,17 @@
         terraform apply -auto-approve
         ```
 1. Зайдите в папку [01-yandex](01-yandex)
-    - Отправьте файлы конфигурации Terraform в репозиторий, например:
-        ```bash
-        repo='diploma-terraform`
-        git init 
-        git add *tf {ansible,kubeconfig}/README.md templates/* README.md *yaml--force 
-        git add .gitignore && git add .terraformrc
-        git commit -m'Первый коммит'
-        git branch -M main 
-        git remote add origin git@github.com:run0ut/$repo.git 
-        git push --set-upstream origin main
-        ```
-    - Создайте воркспейсы Тераформ `stage` и `prod` и примените конфигурацию:
+    - Инициализируйте Тераформ:
         ```bash
         terraform init
+        ```
+    - Создайте воркспейсы `stage` и `prod`:
+        ```bash
         terraform workspace new stage
         terraform workspace new prod
+        ```
+    - Примените конфигурацию
+        ```bash
         terraform workspace select stage 
         terraform apply -auto-approve
         terraform workspace select prod 
@@ -55,22 +49,45 @@
         ```
 1. После применения конфигурации prod, Terraform выведет ссылки на все ресурсы, которые должны быть доступны извне: приложение, Grafana, Atlantis, Jenkins.
 
-    Приложение пока будет недоступно.
+    Приблизительно так должен выглядеть вывод:
+    ```console
+    Apply complete! Resources: 28 added, 0 changed, 0 destroyed.
+
+    Outputs:
+
+    control_nodes = [
+    "name=diploma-control-prod-0, public=178.154.231.25, private=10.0.0.12",
+    ]
+    links = <<EOT
+        App: http://178.154.231.25:30080
+    Jenkins: http://178.154.231.25:30808
+    Atlantis: http://178.154.231.25:30141
+    Grafana: http://178.154.231.25:30300
+
+    EOT
+    worker_nodes = [
+    "name=diploma-worker-prod-0, public=178.154.229.32, private=10.0.0.19",
+    ]
+    ```
+
+    Приложение пока будет недоступно. Оно будет работать, когда поднимется Jenkins, соберёт первый билд и отправит в Docker Hub.
 
 1. Зайдите в папку [02-app](02-app):
-    - Отправьте все файлы в репозиторий с кодом приложения
-    - В той же папке несколько раз выполните скрипт, чтобы создать теги и отправить их в репозиторий:
+    - Выполните скрипт, чтобы создать теги и отправить их в репозиторий:
         ```bash
         {
             tag_n=0
             date +%s > dummy
+            git checkout -b dev
             git add dummy 
             tag_n=$((tag_n+1))
             git commit -m "tag $tag_n"
             git tag v0.0.$tag_n
-            git push --tags origin main
+            git push --tags origin dev
         }
         ```
+    - Через пару минут проверьте, что Jenkins собрал докер-образы и отправил в Docker Hub
+1. В репозитории `doploma-test-app` создайте Pull Request из `dev` в `main`, в Atlantis должен появиться лок состояний stage и prod, а в комментариях к реквесту можно будет посмотреть отчёт Atlantis об операции plan в обоих воркспейсах
 
 ## Возможно потребуется создать докер-контейнер Jenkins с плагинами
 

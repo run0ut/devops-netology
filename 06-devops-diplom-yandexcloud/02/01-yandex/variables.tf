@@ -20,14 +20,14 @@ variable "dockerhub_login" {
 
 variable "dockerhub_password" {
   default   = "ПАРОЛЬ НЕ ЗАДАН В .auto.tfvars"
-  # sensitive = true
+  sensitive = true
 }
 
 ################################################################################
 # GitHub
 variable "github_personal_access_token" {
   default   = "ТОКЕН НЕ ЗАДАН В .auto.tfvars"
-  # sensitive = true
+  sensitive = true
 }
 
 variable "github_webhook_secret" {
