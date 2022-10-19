@@ -12,7 +12,6 @@ resource "null_resource" "app_repo" {
       ### Создание репозитория
       hook_id=''
       repo_id=''
-      repo_description='Netology DevOps cource diploma, test application'
       repo_name=diploma-test-app
       repo_name_git=diploma-test-app.git
       token=${var.github_personal_access_token}
@@ -27,7 +26,7 @@ resource "null_resource" "app_repo" {
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer $token" \
           https://api.github.com/user/repos \
-          -d '{"name":"'$repo_name'","description":"'$repo_description'","homepage":"https://github.com","private":false,"is_template":false}'
+          -d '{"name":"'$repo_name'","description":"Netology DevOps cource diploma, test application","homepage":"https://github.com","private":false,"is_template":false}'
       fi
       ##########################################################################
       ### Пуш манифестов в репозиторий
