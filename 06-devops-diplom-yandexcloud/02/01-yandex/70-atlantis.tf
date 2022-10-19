@@ -100,7 +100,6 @@ resource "null_resource" "terraform_repo" {
     command = <<EOF
       ##########################################################################
       ### Создание репозитория
-      set -x
       hook_id=''
       repo_id=''
       repo_name=diploma-terraform
@@ -156,7 +155,6 @@ resource "null_resource" "terraform_repo" {
           https://api.github.com/repos/${var.github_login}/$repo_name/hooks/$hook_id \
           -d '{"name":"web","active":true,"events":["push","pull_request","pull_request_review","issue_comment"],"config":{"url":"http://${local.atlantis_ip}:30141/events","content_type":"json","insecure_ssl":"0","secret":"diplomasecret"}}'
       fi
-      set +x
     EOF
     interpreter = [
       "/bin/bash",
