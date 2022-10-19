@@ -4,7 +4,7 @@ https://cloud.yandex.ru/docs/tutorials/infrastructure-management/terraform-state
 
 https://www.terraform.io/language/settings/backends/s3
 
-# Workspaces
+# Terraform Workspaces
 
 https://www.terraform.io/language/state/workspaces - офф. дока
 
@@ -31,9 +31,19 @@ https://www.runatlantis.io/docs/configuring-webhooks.html#github-github-enterpri
 - [atlantis.yaml](https://github.com/run0ut/devops-netology/blob/main/02-virt-homeworks/misc/74/atlantis.yaml)
 - [server.yaml](https://github.com/run0ut/devops-netology/blob/main/02-virt-homeworks/misc/74/server/server.yaml)
 
-# Jenkins
+Пример запуска с конфигом в JSON
+```bash
+docker-entrypoint.sh server --atlantis-url=http://178.154.204.124:30141/ --var-file-allowlist=/home/atlantis --tf-download-url=https://terraform-mirror.yandexcloud.net/ --repo-config-json='{"repos":[{"id":"/.*/","allowed_overrides":["workflow"],"allow_custom_workflows":true}]}' --log-level=info 
+```
+https://www.runatlantis.io/docs/server-configuration.html описание аргументов командной строки для запуска сервера
 
----
+https://www.runatlantis.io/docs/server-side-repo-config.html#allow-repos-to-define-their-own-workflows конфигурация поведения Атлантиса по репозиториям, общий для всех конфиг; подраздел с описанием как разрешить переопределение конфига конфигом atlantis.yaml из препозитория
+
+https://www.runatlantis.io/docs/repo-level-atlantis-yaml.html конфигурация поведения Атлантиса в конкретном репозитории
+
+https://www.runatlantis.io/docs/custom-workflows.html#running-custom-commands примеры workflow, подраздел с примером как выполнять произвольные команды
+
+# Jenkins
 
 Пригодилось:
 
@@ -80,20 +90,6 @@ java -jar jenkins-cli.jar -s http://localhost:8080 import-credentials-as-xml "sy
 
 [credentials](https://citizix.com/using-jenkins-cli-to-manage-jenkins-jobs-and-credentials/)
 
-# Atlantis
-
-Пример запуска с конфигом в JSON
-```bash
-docker-entrypoint.sh server --atlantis-url=http://178.154.204.124:30141/ --var-file-allowlist=/home/atlantis --tf-download-url=https://terraform-mirror.yandexcloud.net/ --repo-config-json='{"repos":[{"id":"/.*/","allowed_overrides":["workflow"],"allow_custom_workflows":true}]}' --log-level=info 
-```
-https://www.runatlantis.io/docs/server-configuration.html описание аргументов командной строки для запуска сервера
-
-https://www.runatlantis.io/docs/server-side-repo-config.html#allow-repos-to-define-their-own-workflows конфигурация поведения Атлантиса по репозиториям, общий для всех конфиг; подраздел с описанием как разрешить переопределение конфига конфигом atlantis.yaml из препозитория
-
-https://www.runatlantis.io/docs/repo-level-atlantis-yaml.html конфигурация поведения Атлантиса в конкретном репозитории
-
-https://www.runatlantis.io/docs/custom-workflows.html#running-custom-commands примеры workflow, подраздел с примером как выполнять произвольные команды
-
 # Git
 
 Заготовка для создания репозитория автоматом
@@ -104,14 +100,22 @@ https://www.runatlantis.io/docs/custom-workflows.html#running-custom-commands п
   git add .gitignore && git add .terraformrc
   git commit -m'first commit'
   git branch -M main 
-  repo=diploma-test-app-`date +%s`
+  repo=diploma-terraform-`date +%s`
   curl -sS \
     -X POST \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer <TOKEN>" \
     https://api.github.com/user/repos \
     -d '{"name":"'$repo'","description":"Netology DevOps cource diploma, test application","homepage":"https://github.com","private":false,"is_template":false}'
-  git remote add origin git@github.com:run0ut/$repo.git 
+  git remote add origin git@github.com:${var.github_login}/$repo-${local.repocreatedatetime}.git 
   git push --set-upstream origin main
 }
 ```
+
+# Terraform
+
+Создать локальную переменную таймстемпом, напримре для наполнения или имен фалйов и папок
+
+locals {
+  repocreatedatetime = formatdate("YYYYMMDDhhmmss", timestamp())
+}

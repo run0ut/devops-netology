@@ -1,3 +1,5 @@
+################################################################################
+# Загрузка kubespray, установка зависимостей, подгтовка папки для инвентаризации
 resource "null_resource" "git_clone" {
   provisioner "local-exec" {
     command = "if [ ! -d 'kubespray' ] ; then git clone https://github.com/kubernetes-sigs/kubespray.git; fi"
