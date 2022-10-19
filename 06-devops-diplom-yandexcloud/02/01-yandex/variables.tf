@@ -9,7 +9,7 @@ variable "yandex_folder_id" {
 }
 
 variable "yandex_compute_default_zone" {
-  default = "ЗОНА ДОСТУПНОСТИ НЕ ЗАДАНА В .auto.tfvars"
+  default = "ru-central1-a"
 }
 
 ################################################################################
