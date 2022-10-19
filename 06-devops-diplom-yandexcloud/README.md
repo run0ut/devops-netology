@@ -1,14 +1,14 @@
 # Дипломный практикум в Yandex.Cloud
 
 >  * [Цели:](#цели)
+>  * [Как правильно задавать вопросы дипломному руководителю?](#как-правильно-задавать-вопросы-дипломному-руководителю)
+>  * [Что необходимо для сдачи задания?](#что-необходимо-для-сдачи-задания)
 >  * [Этапы выполнения:](#этапы-выполнения)
 >     * [Создание облачной инфраструктуры](#создание-облачной-инфраструктуры)
 >     * [Создание Kubernetes кластера](#создание-kubernetes-кластера)
 >     * [Создание тестового приложения](#создание-тестового-приложения)
 >     * [Подготовка cистемы мониторинга и деплой приложения](#подготовка-cистемы-мониторинга-и-деплой-приложения)
 >     * [Установка и настройка CI/CD](#установка-и-настройка-cicd)
->  * [Что необходимо для сдачи задания?](#что-необходимо-для-сдачи-задания)
->  * [Как правильно задавать вопросы дипломному руководителю?](#как-правильно-задавать-вопросы-дипломному-руководителю)
 
 <details><summary>Как правильно задавать вопросы дипломному руководителю?</summary>
 
@@ -38,6 +38,46 @@
 > 4. Настроить и автоматизировать сборку тестового приложения с использованием Docker-контейнеров.
 > 5. Настроить CI для автоматической сборки и тестирования.
 > 6. Настроить CD для автоматического развёртывания приложения.
+
+---
+## Что необходимо для сдачи задания?
+
+> 1. Репозиторий с конфигурационными файлами Terraform и готовность продемонстрировать создание всех ресурсов с нуля.
+
+[Репозиторий](https://github.com/run0ut/diploma-terraform)
+
+> 2. Пример pull request с комментариями созданными atlantis'ом или снимки экрана из Terraform Cloud.
+
+[Pull request](https://github.com/run0ut/diploma-terraform/pull/1)
+
+[Atlantis](http://62.84.118.184:30141/)
+
+> 3. Репозиторий с конфигурацией ansible, если был выбран способ создания Kubernetes кластера при помощи ansible.
+
+Использовал Kubespray, который [разворачиваю терафомом](./02/01-yandex/40-k8s.tf). Вся конфигурация [из шаблонов](./02/01-yandex/00-prepare.tf#L19-L27), сгенерировал только файлы инвентаризации и [один файл](./02/01-yandex/kubespray/inventory/diplomacluster/group_vars/k8s_cluster/k8s-cluster.yml#L279) с переменными для доступа в кластер по внешнему IP
+
+[Ссылка на конфигурацию](./02/01-yandex/kubespray/inventory/diplomacluster)
+
+> 4. Репозиторий с Dockerfile тестового приложения и ссылка на собранный docker image.
+
+[Репозиторий](https://github.com/run0ut/diploma-test-app)
+
+[DockerHub](https://hub.docker.com/repository/docker/runout/diploma-test-app)
+
+> 5. Репозиторий с конфигурацией Kubernetes кластера.
+
+- [Тестовое приложение](./02/02-app/manifests)
+- [Service и NetworkPolicy](./02/03-monitoring/grafana-nodeport) для доступа к Grafana извне; воспользовался [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), который [разворачиваю с Teraform](./02/01-yandex/50-monitoring.tf) 
+- [Atlantis](./02/04-atlantis/manifests)
+- [Jenkins](./02/05-jenkins/manifests); Jenkins разворачивается сразу с заданиями, которые [разворачиваются](./02/01-yandex/80-jenkins.tf) Тераформом из шаблонов
+
+> 6. Ссылка на тестовое приложение и веб интерфейс Grafana с данными доступа.
+
+- [Приложение](http://62.84.118.184:30080/)
+- [Grafana](http://62.84.118.184:30300/login)
+    - Логин `admin`
+    - Пароль `admin`
+- [Jenkins](http://62.84.118.184:30808/)
 
 ---
 ## Этапы выполнения
@@ -148,6 +188,9 @@
 > 1. Git репозиторий с тестовым приложением и Dockerfile.
 > 2. Регистр с собранным docker image. В качестве регистра может быть DockerHub или [Yandex Container Registry](https://cloud.yandex.ru/services/container-registry), созданный также с помощью terraform.
 
+[Репозиторий](https://github.com/run0ut/diploma-test-app)
+
+[DockerHub](https://hub.docker.com/repository/docker/runout/diploma-test-app)
 
 ---
 ### Подготовка cистемы мониторинга и деплой приложения
@@ -224,43 +267,3 @@
 - Задание, которое отслеживает появление новых тегов, собирает образ, отправляет в регистри и разворачивает в Kubernetes
 
     ![diploma-jenkins-prod.png](media/diploma-jenkins-prod.png)
-
----
-## Что необходимо для сдачи задания?
-
-> 1. Репозиторий с конфигурационными файлами Terraform и готовность продемонстрировать создание всех ресурсов с нуля.
-
-[Репозиторий](https://github.com/run0ut/diploma-terraform)
-
-> 2. Пример pull request с комментариями созданными atlantis'ом или снимки экрана из Terraform Cloud.
-
-[Pull request](https://github.com/run0ut/diploma-terraform/pull/1)
-
-[Atlantis](http://62.84.118.184:30141/)
-
-> 3. Репозиторий с конфигурацией ansible, если был выбран способ создания Kubernetes кластера при помощи ansible.
-
-Использовал Kubespray, который [разворачиваю терафомом](./02/01-yandex/40-k8s.tf). Вся конфигурация [из шаблонов](./02/01-yandex/00-prepare.tf#L19-L27), сгенерировал только файлы инвентаризации и [один файл](./02/01-yandex/kubespray/inventory/diplomacluster/group_vars/k8s_cluster/k8s-cluster.yml#L279) с переменными для доступа в кластер по внешнему IP
-
-[Ссылка на конфигурацию](./02/01-yandex/kubespray/inventory/diplomacluster)
-
-> 4. Репозиторий с Dockerfile тестового приложения и ссылка на собранный docker image.
-
-[Репозиторий](https://github.com/run0ut/diploma-test-app)
-
-[DockerHub](https://hub.docker.com/repository/docker/runout/diploma-test-app)
-
-> 5. Репозиторий с конфигурацией Kubernetes кластера.
-
-- [Тестовое приложение](./02/02-app/manifests)
-- [Service и NetworkPolicy](./02/03-monitoring/grafana-nodeport) для доступа к Grafana извне; воспользовался [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), который [разворачиваю с Teraform](./02/01-yandex/50-monitoring.tf) 
-- [Atlantis](./02/04-atlantis/manifests)
-- [Jenkins](./02/05-jenkins/manifests); Jenkins разворачивается сразу с заданиями, которые [разворачиваются](./02/01-yandex/80-jenkins.tf) Тераформом из шаблонов
-
-> 6. Ссылка на тестовое приложение и веб интерфейс Grafana с данными доступа.
-
-- [Приложение](http://62.84.118.184:30080/)
-- [Grafana](http://62.84.118.184:30300/login)
-    - Логин `admin`
-    - Пароль `admin`
-- [Jenkins](http://62.84.118.184:30808/)
