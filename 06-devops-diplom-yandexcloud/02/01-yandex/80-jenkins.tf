@@ -19,7 +19,7 @@ resource "null_resource" "app_repo" {
       repo_id=$(curl -sS\
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer $token" \
-        https://api.github.com/repos/run0ut/$repo_name | jq .id)
+        https://api.github.com/repos/${var.github_login}/$repo_name | jq .id)
       if [[ "$repo_id" == "null" ]]; then
         curl -sS \
           -X POST \

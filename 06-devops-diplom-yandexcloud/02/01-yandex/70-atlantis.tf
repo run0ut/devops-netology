@@ -4,11 +4,12 @@
 # -------------------------------------------------
 # Statefulset со внешним IP web-интерфейса Atlantis
 # чтобы на Github работал переход в "Details"
-data "template_file" "atlantis_statefulset" {
+data "template_file" "atlantis_manifest" {
   template = file("${path.module}/templates/atlantis_statefulset.tpl")
 
   vars = {
     atlantis_ip = "${yandex_compute_instance.control.0.network_interface.0.nat_ip_address}"
+    login = "${var.github_login}"
   }
 
   depends_on = [
@@ -22,7 +23,35 @@ resource "null_resource" "atlantis_manifest" {
   count = (terraform.workspace == "prod") ? 1 : 0
 
   provisioner "local-exec" {
-    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../04-atlantis/manifests/10-satatefulSet.yml", data.template_file.atlantis_statefulset.rendered)
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../04-atlantis/manifests/10-satatefulSet.yml", data.template_file.atlantis_manifest.rendered)
+  }
+
+  triggers = {
+    template = data.template_file.kubectl.rendered
+  }
+}
+
+# -------------------------------------------------
+# Серверный конфиг Атлантис
+data "template_file" "atlantis_repo_config" {
+  template = file("${path.module}/templates/server.tpl")
+
+  vars = {
+    login = "${var.github_login}"
+  }
+
+  depends_on = [
+    null_resource.app
+  ]
+}
+
+# -------------------------------------------------
+# Сохранение рендера конфига в файл
+resource "null_resource" "atlantis_repo_config" {
+  count = (terraform.workspace == "prod") ? 1 : 0
+
+  provisioner "local-exec" {
+    command = format("cat <<\"EOF\" > \"%s\"\n%s\nEOF", "../01-yandex/server.yaml", data.template_file.atlantis_repo_config.rendered)
   }
 
   triggers = {
@@ -54,7 +83,8 @@ resource "null_resource" "atlantis_configmaps" {
   }
 
   depends_on = [
-    null_resource.app
+    null_resource.atlantis_manifest,
+    null_resource.atlantis_repo_config
   ]
 
   triggers = {
@@ -109,7 +139,7 @@ resource "null_resource" "terraform_repo" {
       repo_id=$(curl -sS\
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer $token" \
-        https://api.github.com/repos/run0ut/$repo_name | jq .id)
+        https://api.github.com/repos/${var.github_login}/$repo_name | jq .id)
       if [[ "$repo_id" == "null" ]]; then
         curl -sS \
           -X POST \
