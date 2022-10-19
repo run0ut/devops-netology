@@ -21,6 +21,6 @@ devops-netology
 
 * 27 июля — 6 сентября
 
-## [Дипломный блок профессии DevOps-инженер](./06-devops-diplom-yandexcloud/README.md)
+## [Дипломный блок профессии DevOps-инженер](./06-devops-diplom-yandexcloud/)
 
 * с 7 ноября, 4 недели 
