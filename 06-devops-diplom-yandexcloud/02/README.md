@@ -6,6 +6,7 @@
 - pip3
 - git
 - kubectl
+- jq
 
 Необходимые реквизиты:
 - Аккаунт GitHub и Personal Access Token

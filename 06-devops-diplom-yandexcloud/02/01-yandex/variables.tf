@@ -1,33 +1,33 @@
 ################################################################################
 # Yandex IDs
 variable "yandex_cloud_id" {
-  default = ""
+  default = "ID ОБЛАКА НЕ ЗАДАН В .auto.tfvars"
 }
 
 variable "yandex_folder_id" {
-  default = ""
+  default = "ID ПАПКИ НЕ ЗАДАН В .auto.tfvars"
 }
 
 variable "yandex_compute_default_zone" {
-  default = ""
+  default = "ЗОНА ДОСТУПНОСТИ НЕ ЗАДАНА В .auto.tfvars"
 }
 
 ################################################################################
 # DockerHub
 variable "dockerhub_login" {
-  default = ""
+  default = "ЛОГИН НЕ ЗАДАН В .auto.tfvars"
 }
 
 variable "dockerhub_password" {
-  default   = ""
-  sensitive = true
+  default   = "ПАРОЛЬ НЕ ЗАДАН В .auto.tfvars"
+  # sensitive = true
 }
 
 ################################################################################
 # GitHub
 variable "github_personal_access_token" {
-  default   = ""
-  sensitive = true
+  default   = "ТОКЕН НЕ ЗАДАН В .auto.tfvars"
+  # sensitive = true
 }
 
 variable "github_webhook_secret" {
@@ -35,5 +35,5 @@ variable "github_webhook_secret" {
 }
 
 variable "github_login" {
-  default = ""
+  default = "ЛОГИН НЕ ЗАДАН В .auto.tfvars"
 }

@@ -7,8 +7,8 @@
 - [40-k8s.tf](40-k8s.tf) - разворачивает Kubernetes и сохраняет конфигурационный файл `kubectl`
 - [50-monitoring.tf](50-monitoring.tf) - разворачивает в кластере `kube-prometheus`
 - [60-app.tf](60-app.tf) - разворачивает тестовое приложение
-- [70-atlantis.tf](70-apps.tf) - в воркспейсе `prod` разворачивает `Atlantis`
-- [80-jenkins.tf](80-apps.tf) - в воркспейсе `prod` разворачивает `Jenkins`
+- [70-atlantis.tf](70-atlantis.tf) - в воркспейсе `prod` разворачивает `Atlantis`
+- [80-jenkins.tf](80-jenkins.tf) - в воркспейсе `prod` разворачивает `Jenkins`
 - [outputs.tf](outputs.tf) - выводит IP нод и ссылки на тестовое приложение, Grafana, Jenkins и Atlantis
 - [provider.tf](provider.tf) - настройки провайдера и бекенда
 - [variables.tf](variables.tf) - переменные, требует файла `tfvars` в корне, например `.auto.tfvars`

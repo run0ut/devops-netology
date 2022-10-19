@@ -1,1 +1,1 @@
-variables.tf
+../01-yandex/variables.tf
