@@ -254,7 +254,7 @@
 
 - [Тестовое приложение](./02/02-app/manifests)
 - [Service и NetworkPolicy](./02/03-monitoring/grafana-nodeport) для доступа к Grafana извне; воспользовался [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), который [разворачиваю с Teraform](./02/01-yandex/50-monitoring.tf) 
-- [Atlantis](./0202/04-atlantis/manifests)
+- [Atlantis](./02/04-atlantis/manifests)
 - [Jenkins](./02/05-jenkins/manifests); Jenkins разворачивается сразу с заданиями, которые [разворачиваются](./02/01-yandex/80-jenkins.tf) Тераформом из шаблонов
 
 > 6. Ссылка на тестовое приложение и веб интерфейс Grafana с данными доступа.
