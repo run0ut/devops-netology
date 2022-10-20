@@ -66,6 +66,14 @@
 
 > 5. Репозиторий с конфигурацией Kubernetes кластера.
 
+Все сервисы так же разворачиваются при применении конфигурации Terraform:
+- [Terraform/Тестовое приложение](./02/01-yandex/60-app.tf)
+- [Terraform/Atlantis](./02/01-yandex/70-atlantis.tf)
+- [Terraform/Jenkins](./02/01-yandex/80-jenkins.tf)
+
+Некоторые манифесты для Kubernetes геренируются из [шаблонов](./02/01-yandex/templates/), т.к. часть данных в них параметризируются, например IP-адреса для сервисов.
+
+ Получившиеся манифесты:
 - [Тестовое приложение](./02/02-app/manifests)
 - [Service и NetworkPolicy](./02/03-monitoring/grafana-nodeport) для доступа к Grafana извне; воспользовался [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), который [разворачиваю с Teraform](./02/01-yandex/50-monitoring.tf) 
 - [Atlantis](./02/04-atlantis/manifests)
