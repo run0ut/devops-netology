@@ -268,10 +268,12 @@
 
     ![diploma-jenkins-main.png](media/diploma-jenkins-main.png)
 
-- Задание, которое собирает и отправляет latest образ при любом коммите
+- Задание, которое собирает и отправляет latest образ при любом коммите. Ошибка второго билда произошла, т.к. я успел сменить пароль Docker; поправил Credentials и запустил третий билд.
 
     ![diploma-jenkins-stage.png](media/diploma-jenkins-stage.png)
 
-- Задание, которое отслеживает появление новых тегов, собирает образ, отправляет в регистри и разворачивает в Kubernetes
+- Задание, которое отслеживает появление новых тегов, собирает образ, отправляет в регистри и разворачивает в Kubernetes. Ошибка первого билда тега `v0.0.2` произошла, т.к. я успел сменить пароль Docker; поправил Credentials и запустил повторный билд.
 
+    ![diploma-jenkins-prod-tags.png](media/diploma-jenkins-prod-tags.png)
     ![diploma-jenkins-prod.png](media/diploma-jenkins-prod.png)
+    ![diploma-jenkins-prod-tag2-builds.png](media/diploma-jenkins-prod-tag2-builds.png)

@@ -78,12 +78,11 @@
         {
             tag_n=0
             date +%s > dummy
-            git checkout -b dev
             git add dummy 
             tag_n=$((tag_n+1))
             git commit -m "tag $tag_n"
             git tag v0.0.$tag_n
-            git push --tags origin dev
+            git push --tags origin main
         }
         ```
     - Через пару минут проверьте, что Jenkins собрал докер-образы и отправил в Docker Hub
